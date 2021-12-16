@@ -1,144 +1,110 @@
 import "package:flutter/material.dart";
 
-///What needs to be done
-///Ensure that the dropdown itself and the text widget are modular and are not aware of each other's internal states.
-///
-///
-/// TextWidget's args:
-///   FocusNode,
-///   Controller,
-///   Other TextWidget's args
-///
-/// DropDown's args:
-///   searchItems,
-///   currentSearchQuery,
-///   textFieldWidget (for CompositedTransformTarget),
-///   position (Offset class),
-///   width,
-///   height,
-///   containerBorderRadius,
-///   backgroundColor (accepts LinearGradient),
-///   suggestionColor (accepts LinearGradient),
-///   spaceBetweenSearchItems,
-///   onSelect,
-///   borderColor,
-///   borderThickness,
-///   someAnimationArgs...
-///
-///
-///
-
-class CardXTextDropdown extends StatefulWidget {
-  //Input variables
-  final String hintText;
-  final EdgeInsets inputPadding;
-  final Color inputBorderColor;
-  final double inputBorderThickness;
-
+class CustomDropdown extends StatefulWidget {
   //Dropdown variables
   final Color backgroundColor;
-  final double dropDownTopPadding;
+  final double dropdownTopMargin;
   final List<String> dropdownValues;
   final Color dropdownBorderColor;
   final double dropdownBorderThickness;
   final double dropdownElevation;
+  final double maxHeight;
+
+  ///Target to attach the dropdown to
+  final Widget target;
   final Function(String selectedValue) onValueSelect;
 
   ///Provide 1 color in the colors array for a solid, single color
   final LinearGradient highlightColor;
 
-  const CardXTextDropdown(
+  const CustomDropdown(
       {required this.onValueSelect,
-      required this.dropDownTopPadding,
       required this.backgroundColor,
       required this.highlightColor,
       required this.dropdownElevation,
-      required this.hintText,
       required this.dropdownValues,
-      required this.inputPadding,
-      required this.inputBorderColor,
       required this.dropdownBorderColor,
       required this.dropdownBorderThickness,
-      required this.inputBorderThickness,
+      required this.maxHeight,
+      required this.target,
+      this.dropdownTopMargin = 0,
       Key? key})
       : super(key: key);
 
   @override
-  _CardXTextDropdownState createState() => _CardXTextDropdownState();
+  _CustomDropdownState createState() => _CustomDropdownState();
 }
 
-class _CardXTextDropdownState extends State<CardXTextDropdown> {
-  final TextEditingController _controller = TextEditingController();
-
-  final FocusNode _focusNode = FocusNode();
-
+class _CustomDropdownState extends State<CustomDropdown> {
   late OverlayEntry _overlayEntry;
+
+  GlobalKey key = GlobalKey();
 
   final LayerLink _layerLink = LayerLink();
 
+  bool buildOverlayEntry = true;
+
+  List<String> valuesToDisplay = [];
+
   @override
   void initState() {
+    valuesToDisplay = widget.dropdownValues;
     super.initState();
-
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        _overlayEntry = _buildOverlayEntry();
-        Overlay.of(context)!.insert(_overlayEntry);
-      } else {
-        _overlayEntry.remove();
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: Padding(
-        padding: widget.inputPadding,
-        child: Row(
-          children: [
-            Flexible(
-              child: TextField(
-                  textAlignVertical: TextAlignVertical.center,
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  decoration:
-                      InputDecoration.collapsed(hintText: widget.hintText)),
-            ),
-            Icon(Icons.arrow_downward_rounded),
-          ],
-        ),
+      child: GestureDetector(
+        key: key,
+        onTap: () {
+          if (buildOverlayEntry) {
+            _overlayEntry = _buildOverlayEntry();
+            Overlay.of(context)!.insert(_overlayEntry);
+            setState(() {
+              buildOverlayEntry = false;
+            });
+          } else {
+            _overlayEntry.remove();
+            setState(() {
+              buildOverlayEntry = true;
+            });
+          }
+        },
+        child: widget.target,
+        // child: Container(
+        //     color: Colors.red,
+        //     padding: EdgeInsets.all(8),
+        //     child: Text("loooooooooooooooooooooooooooooooooooong text")),
       ),
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
 
   OverlayEntry _buildOverlayEntry() {
-    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
     return OverlayEntry(
-        builder: (context) => SizedBox(
-              width: 1 / 0,
-              height: 1 / 0,
-              child: Stack(
-                children: [
-                  const FullScreenDismissibleArea(),
-                  Positioned(
-                    width: size.width,
-                    child: CompositedTransformFollower(
-                      offset:
-                          Offset(0, size.height + widget.dropDownTopPadding),
-                      link: _layerLink,
-                      showWhenUnlinked: false,
+        builder: (context) => Stack(
+              children: [
+                Positioned(
+                  width: size.width,
+                  child: CompositedTransformFollower(
+                    offset: Offset(0, size.height + widget.dropdownTopMargin),
+                    link: _layerLink,
+                    showWhenUnlinked: false,
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxHeight: widget.maxHeight,
+                      ),
                       child: Material(
+                          clipBehavior: Clip.antiAlias,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(9),
                               side: BorderSide(
@@ -148,46 +114,28 @@ class _CardXTextDropdownState extends State<CardXTextDropdown> {
                               )),
                           color: widget.backgroundColor,
                           elevation: widget.dropdownElevation,
-                          child: ListView(
+                          child: ListView.builder(
+                            itemCount: valuesToDisplay.length,
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
-                            children: widget.dropdownValues
-                                .map((string) => GestureDetector(
-                                    child: ListTile(
-                                        onTap: () {
-                                          widget.onValueSelect(string);
-                                          _controller.text = string;
-                                          FocusScope.of(context).unfocus();
-                                        },
-                                        title: Text(string))))
-                                .toList(),
+                            itemBuilder: (context, index) =>
+                                _buildDropdownRow(valuesToDisplay[index]),
                           )),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ));
   }
-}
 
-class FullScreenDismissibleArea extends StatelessWidget {
-  const FullScreenDismissibleArea({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: 0,
-      top: 0,
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Container(
-          color: Colors.transparent,
-          width: 1 / 0,
-          height: 1 / 0,
-        ),
-      ),
-    );
+  Widget _buildDropdownRow(
+    String str,
+  ) {
+    return ListTile(
+        onTap: () {
+          widget.onValueSelect(str);
+          FocusScope.of(context).unfocus();
+        },
+        title: Text(str));
   }
 }
