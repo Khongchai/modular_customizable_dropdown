@@ -1,113 +1,113 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:really_customizable_dropdown/really_customizable_text_dropdown/really_customizable_text_dropdown.dart';
+import 'package:flutter/rendering.dart';
+import 'package:really_customizable_dropdown/textfield.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<StatefulWidget> createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  GlobalKey<State> key = GlobalKey();
+
+  double fabOpacity = 1.0;
+
+  String selectedValue = "Violin";
+  List<String> values = [
+    "Violin",
+    "Viola",
+    "Cello",
+    "Double Bass",
+    "Piano",
+    "Conductor"
+  ];
+  bool showDropdown = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Scrolling."),
+        ),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          padding: const EdgeInsets.only(top: 100),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            CustomDropdown(
+                onValueSelect: (newValue) => debugPrint(newValue),
+                backgroundColor: Colors.purple,
+                dropdownElevation: 2,
+                dropdownValues: values,
+                dropdownBorderColor: Colors.grey,
+                dropdownBorderThickness: 2,
+                maxHeight: 200,
+                target: Container(
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        color: Colors.brown),
+                    padding: EdgeInsets.all(8),
+                    child:
+                        Text("loooooooooooooooooooooooooooooooooooong text")))
+          ]),
+        ),
+        floatingActionButton: Opacity(
+          opacity: fabOpacity,
+          child: FloatingActionButton(
+            onPressed: () {
+              print("YAY");
+            },
+          ),
+        ),
       ),
-      home: const MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  static const searchList = [
-    "Apple",
-    "Banana",
-    "Grape",
-    "Guava",
-    "Kiwi",
-    "Watermelon"
-  ];
+class MyObservableWidget extends StatefulWidget {
+  const MyObservableWidget({Key? key}) : super(key: key);
 
   @override
+  State<StatefulWidget> createState() => MyObservableWidgetState();
+}
+
+class MyObservableWidgetState extends State<MyObservableWidget> {
+  @override
   Widget build(BuildContext context) {
-    final halfWidth = MediaQuery.of(context).size.width / 2;
-    return SafeArea(
-      child: Scaffold(
-          body: SizedBox(
-              child: Center(
-                  child: SizedBox(
-                      width: halfWidth,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: ReallyCustomizableTextDropdown(
-                                  dropDownTopPadding: 8,
-                                  searchItems: searchList),
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.green,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.blue,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.green,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.blue,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.green,
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: halfWidth,
-                              height: 100,
-                              color: Colors.blue,
-                            ),
-                          ],
-                        ),
-                      ))))),
+    return Container(height: 100.0, color: Colors.green);
+  }
+}
+
+class ContainerWithBorder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(border: Border.all(), color: Colors.grey),
     );
   }
+}
+
+enum VisibilityStats { onscreen, offscreen }
+
+VisibilityStats detectVisibility(GlobalKey widgetKey, BuildContext context) {
+  VisibilityStats visStat = VisibilityStats.offscreen;
+
+  final RenderObject? box = widgetKey.currentContext?.findRenderObject();
+  if (box != null) {
+    final double yPosition = (box as RenderBox).localToGlobal(Offset.zero).dy;
+    if (0 < yPosition && yPosition < context.size!.height) {
+      visStat = VisibilityStats.onscreen;
+    } else {
+      visStat = VisibilityStats.offscreen;
+    }
+  }
+
+  return visStat;
 }

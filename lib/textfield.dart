@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import "package:flutter/material.dart";
+import 'package:test_app/full_screen_dismissible_area.dart';
 
 class CustomDropdown extends StatefulWidget {
   //Dropdown variables
@@ -12,6 +13,7 @@ class CustomDropdown extends StatefulWidget {
   final double dropdownElevation;
   final double maxHeight;
   final bool collapseOnSelect;
+  final bool barrierDismissible;
 
   ///Target to attach the dropdown to
   final Widget target;
@@ -28,6 +30,7 @@ class CustomDropdown extends StatefulWidget {
       required this.target,
       this.collapseOnSelect = true,
       this.dropdownTopMargin = 0,
+      this.barrierDismissible = true,
       Key? key})
       : super(key: key);
 
@@ -59,7 +62,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
           if (buildOverlayEntry) {
             addOverlay();
           } else {
-            removeOverlay();
+            dismissOverlay();
           }
         },
         child: widget.target,
@@ -76,42 +79,54 @@ class _CustomDropdownState extends State<CustomDropdown> {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
-    return OverlayEntry(
-        builder: (context) => Stack(
-              children: [
-                Positioned(
-                  width: size.width,
-                  child: CompositedTransformFollower(
-                    offset: Offset(0, size.height + widget.dropdownTopMargin),
-                    link: _layerLink,
-                    showWhenUnlinked: false,
-                    child: Container(
-                      constraints: BoxConstraints(
-                        maxHeight: widget.maxHeight,
-                      ),
-                      child: Material(
-                          clipBehavior: Clip.antiAlias,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(9),
-                              side: BorderSide(
-                                width: widget.dropdownBorderThickness,
-                                style: BorderStyle.solid,
-                                color: widget.dropdownBorderColor,
-                              )),
-                          color: widget.backgroundColor,
-                          elevation: widget.dropdownElevation,
-                          child: ListView.builder(
-                            itemCount: valuesToDisplay.length,
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) =>
-                                _buildDropdownRow(valuesToDisplay[index]),
-                          )),
-                    ),
-                  ),
-                ),
-              ],
-            ));
+    Widget content = Positioned(
+      width: size.width,
+      child: CompositedTransformFollower(
+        offset: Offset(0, size.height + widget.dropdownTopMargin),
+        link: _layerLink,
+        showWhenUnlinked: false,
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: widget.maxHeight,
+          ),
+          child: Material(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9),
+                  side: BorderSide(
+                    width: widget.dropdownBorderThickness,
+                    style: BorderStyle.solid,
+                    color: widget.dropdownBorderColor,
+                  )),
+              color: widget.backgroundColor,
+              elevation: widget.dropdownElevation,
+              child: ListView.builder(
+                itemCount: valuesToDisplay.length,
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemBuilder: (context, index) =>
+                    _buildDropdownRow(valuesToDisplay[index]),
+              )),
+        ),
+      ),
+    );
+
+    Widget dismissibleWrapper({required Widget child}) =>
+        widget.barrierDismissible
+            ? SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Stack(children: [
+                  FullScreenDismissibleArea(dismissOverlay: dismissOverlay),
+                  content,
+                ]))
+            : Stack(children: [content]);
+
+    OverlayEntry overlayEntry = OverlayEntry(
+      builder: (context) => dismissibleWrapper(child: content),
+    );
+
+    return overlayEntry;
   }
 
   Widget _buildDropdownRow(
@@ -121,7 +136,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         onTap: () {
           widget.onValueSelect(str);
           if (widget.collapseOnSelect) {
-            removeOverlay();
+            dismissOverlay();
           }
         },
         title: Text(str));
@@ -135,7 +150,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
     });
   }
 
-  void removeOverlay() {
+  void dismissOverlay() {
     _overlayEntry.remove();
     setState(() {
       buildOverlayEntry = true;
