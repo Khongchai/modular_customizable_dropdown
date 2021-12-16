@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import "package:flutter/material.dart";
 
 class CustomDropdown extends StatefulWidget {
@@ -9,24 +11,22 @@ class CustomDropdown extends StatefulWidget {
   final double dropdownBorderThickness;
   final double dropdownElevation;
   final double maxHeight;
+  final bool collapseOnSelect;
 
   ///Target to attach the dropdown to
   final Widget target;
   final Function(String selectedValue) onValueSelect;
 
-  ///Provide 1 color in the colors array for a solid, single color
-  final LinearGradient highlightColor;
-
   const CustomDropdown(
       {required this.onValueSelect,
       required this.backgroundColor,
-      required this.highlightColor,
       required this.dropdownElevation,
       required this.dropdownValues,
       required this.dropdownBorderColor,
       required this.dropdownBorderThickness,
       required this.maxHeight,
       required this.target,
+      this.collapseOnSelect = true,
       this.dropdownTopMargin = 0,
       Key? key})
       : super(key: key);
@@ -37,8 +37,6 @@ class CustomDropdown extends StatefulWidget {
 
 class _CustomDropdownState extends State<CustomDropdown> {
   late OverlayEntry _overlayEntry;
-
-  GlobalKey key = GlobalKey();
 
   final LayerLink _layerLink = LayerLink();
 
@@ -57,26 +55,14 @@ class _CustomDropdownState extends State<CustomDropdown> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: GestureDetector(
-        key: key,
         onTap: () {
           if (buildOverlayEntry) {
-            _overlayEntry = _buildOverlayEntry();
-            Overlay.of(context)!.insert(_overlayEntry);
-            setState(() {
-              buildOverlayEntry = false;
-            });
+            addOverlay();
           } else {
-            _overlayEntry.remove();
-            setState(() {
-              buildOverlayEntry = true;
-            });
+            removeOverlay();
           }
         },
         child: widget.target,
-        // child: Container(
-        //     color: Colors.red,
-        //     padding: EdgeInsets.all(8),
-        //     child: Text("loooooooooooooooooooooooooooooooooooong text")),
       ),
     );
   }
@@ -87,7 +73,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
   }
 
   OverlayEntry _buildOverlayEntry() {
-    RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
+    RenderBox renderBox = context.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
     return OverlayEntry(
@@ -134,8 +120,39 @@ class _CustomDropdownState extends State<CustomDropdown> {
     return ListTile(
         onTap: () {
           widget.onValueSelect(str);
-          FocusScope.of(context).unfocus();
+          if (widget.collapseOnSelect) {
+            removeOverlay();
+          }
         },
         title: Text(str));
   }
+
+  void addOverlay() {
+    _overlayEntry = _buildOverlayEntry();
+    Overlay.of(context)!.insert(_overlayEntry);
+    setState(() {
+      buildOverlayEntry = false;
+    });
+  }
+
+  void removeOverlay() {
+    _overlayEntry.remove();
+    setState(() {
+      buildOverlayEntry = true;
+    });
+  }
+}
+
+List<String> _filterOutValuesThatDoNotMatchQueryString(
+    {required String queryString, required List<String> valuesToFilter}) {
+  if (queryString == "" || queryString == " ") {
+    return valuesToFilter;
+  }
+
+  RegExp reg = RegExp(
+    "(${RegExp.escape(queryString)})\\S*",
+    caseSensitive: false,
+    multiLine: false,
+  );
+  return valuesToFilter.where((value) => reg.hasMatch(value)).toList();
 }
