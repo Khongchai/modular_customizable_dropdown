@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:really_customizable_dropdown/dropdown.dart';
+import 'package:really_customizable_dropdown/text_dropdown.dart';
 
 void main() => runApp(const MyApp());
 
@@ -28,6 +28,8 @@ class MyAppState extends State<MyApp> {
   ];
   bool showDropdown = false;
 
+  TextEditingController textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -41,7 +43,8 @@ class MyAppState extends State<MyApp> {
           padding: const EdgeInsets.only(top: 100),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            ReallyCustomizableDropdown(
+            ReallyCustomizableTextDropdown(
+                textController: textController,
                 onValueSelect: (newValue) => debugPrint(newValue),
                 elevation: 2,
                 dropdownValues: values,
@@ -51,7 +54,9 @@ class MyAppState extends State<MyApp> {
                       borderRadius: BorderRadius.all(Radius.circular(8)),
                       color: Colors.brown),
                   padding: const EdgeInsets.all(8),
-                  child: TextFormField(),
+                  child: TextFormField(
+                    controller: textController,
+                  ),
                 ))
           ]),
         ),
