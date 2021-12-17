@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:really_customizable_dropdown/textfield.dart';
+import 'package:really_customizable_dropdown/dropdown.dart';
 
 void main() => runApp(const MyApp());
 
@@ -41,21 +41,18 @@ class MyAppState extends State<MyApp> {
           padding: const EdgeInsets.only(top: 100),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            CustomDropdown(
+            ReallyCustomizableDropdown(
                 onValueSelect: (newValue) => debugPrint(newValue),
-                backgroundColor: Colors.purple,
-                dropdownElevation: 2,
+                elevation: 2,
                 dropdownValues: values,
-                dropdownBorderColor: Colors.grey,
-                dropdownBorderThickness: 2,
                 maxHeight: 200,
                 target: Container(
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: Colors.brown),
-                    padding: EdgeInsets.all(8),
-                    child:
-                        Text("loooooooooooooooooooooooooooooooooooong text")))
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      color: Colors.brown),
+                  padding: const EdgeInsets.all(8),
+                  child: TextFormField(),
+                ))
           ]),
         ),
         floatingActionButton: Opacity(
