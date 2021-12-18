@@ -1,5 +1,9 @@
 import "package:flutter/material.dart";
 
+///To allow for both gradient and solid color, in many places, the LinearGradient class is used instead of the Color class.
+///
+///If a solid, single color is what you want, simply provide LinearGradient(colors: [yourSingleColor, yourSingleColor]) --
+///in other words, a LinearGradient instance with the same color provided at least twice in the colors array.
 class DropdownStyle {
   final Color borderColor;
   final double borderThickness;

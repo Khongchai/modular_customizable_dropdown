@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:really_customizable_dropdown/dropdown.dart';
 import 'package:really_customizable_dropdown/text_dropdown.dart';
 
 void main() => runApp(const MyApp());
@@ -45,10 +46,19 @@ class MyAppState extends State<MyApp> {
           padding: const EdgeInsets.only(top: 100),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Text("Selected value: $selectedValue"),
+            const SizedBox(height: 50),
+            ReallyCustomizableDropdown.displayOnTap(
+                onValueSelect: ((newValue) =>
+                    setState(() => selectedValue = newValue)),
+                dropdownValues: values,
+                target: SizedBox(width: 200, child: Text(selectedValue))),
+            const SizedBox(height: 50),
             ReallyCustomizableTextDropdown(
               setTextToControllerOnSelect: true,
               textController: _textController,
-              onValueSelect: (newValue) => debugPrint(newValue),
+              onValueSelect: ((newValue) =>
+                  setState(() => selectedValue = newValue)),
               elevation: 2,
               dropdownValues: values,
               maxHeight: 200,

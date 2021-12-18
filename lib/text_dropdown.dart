@@ -48,14 +48,13 @@ class ReallyCustomizableTextDropdown extends StatefulWidget {
   ///The dropdown itself does not have a padding, so setting this would be equivalent to setting the dropdown's background color.
   final LinearGradient defaultItemColor;
 
-  final Widget Function(
-      FocusNode focusNode, TextEditingController textController) targetBuilder;
-
   final TextStyle defaultTextStyle;
 
   ///Style for dropdown text when tapped
   final TextStyle onTapTextStyle;
 
+  final Widget Function(
+      FocusNode focusNode, TextEditingController textController) targetBuilder;
   final TextEditingController textController;
   final FocusNode focusNode;
   final bool setTextToControllerOnSelect;

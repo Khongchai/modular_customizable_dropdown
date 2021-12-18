@@ -1,40 +1,61 @@
 import "package:flutter/material.dart";
 import 'package:really_customizable_dropdown/utils/dropdown_style.dart';
+import 'package:really_customizable_dropdown/utils/mode.dart';
 
 import 'widgets/full_screen_dismissible_area.dart';
 import 'widgets/list_tile_that_changes_color_on_tap.dart';
 
-///A dropdown extension for any widget.
+/// A dropdown extension for any widget.
 ///
-///Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
-///the widget when you click on it!
-///
-///To allow for both gradient and solid color, in many places, the LinearGradient class is used instead of the Color class.
-///
-///If a solid, single color is what you want, simply provide LinearGradient(colors: [yourSingleColor, yourSingleColor]) --
-///in other words, a LinearGradient instance with the same color provided at least twice in the colors array.
+/// Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
+/// the widget when you click on it!
 class ReallyCustomizableDropdown extends StatefulWidget {
-  final List<String> dropdownValues;
-  final Function(String selectedValue) onValueSelect;
-
-  ///Allows user to click outside dropdown to dismiss
-  ///
-  ///Setting this to false may cause the dropdown to flow over other elements while scrolling(including the appbar).
-  final bool barrierDismissible;
-
-  ///Target to attach the dropdown to
-  final Widget target;
-
   final DropdownStyle style;
 
+  /// When the asTextFieldDropdown factory constructor is called, dropdown will allow
+  /// an additional ability to filter the list based on the textController's value.
+  final List<String> dropdownValues;
+
+  /// Action to perform when the value is tapped.
+  final Function(String selectedValue) onValueSelect;
+
+  /// Allows user to click outside dropdown to dismiss
+  ///
+  /// Setting this to false may cause the dropdown to flow over other elements while scrolling(including the appbar).
+  final bool barrierDismissible;
+
+  /// Target to attach the dropdown to
+  final Widget target;
+
+  final ReactMode reactMode;
+
   const ReallyCustomizableDropdown({
+    required this.reactMode,
     required this.onValueSelect,
     required this.dropdownValues,
     required this.target,
-    this.barrierDismissible = true,
-    this.style = const DropdownStyle(),
+    required this.barrierDismissible,
+    required this.style,
     Key? key,
   }) : super(key: key);
+
+  factory ReallyCustomizableDropdown.displayOnTap({
+    required Function(String selectedValue) onValueSelect,
+    required List<String> dropdownValues,
+    required Widget target,
+    bool barrierDismissible = true,
+    DropdownStyle style = const DropdownStyle(),
+    Key? key,
+  }) {
+    return ReallyCustomizableDropdown(
+      reactMode: ReactMode.tapReact,
+      onValueSelect: onValueSelect,
+      dropdownValues: dropdownValues,
+      target: target,
+      style: style,
+      barrierDismissible: barrierDismissible,
+    );
+  }
 
   @override
   _ReallyCustomizableDropdownState createState() =>
