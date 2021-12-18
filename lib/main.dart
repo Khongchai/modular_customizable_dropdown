@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:really_customizable_dropdown/card_x_text_dropdown.dart';
 import 'package:really_customizable_dropdown/text_dropdown.dart';
 
 void main() => runApp(const MyApp());
@@ -28,14 +29,16 @@ class MyAppState extends State<MyApp> {
   ];
   bool showDropdown = false;
 
-  TextEditingController textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
+
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Scrolling."),
+          title: const Text("Scrolling."),
         ),
         body: Container(
           width: double.infinity,
@@ -44,20 +47,38 @@ class MyAppState extends State<MyApp> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             ReallyCustomizableTextDropdown(
-                textController: textController,
+              setTextToControllerOnSelect: true,
+              textController: _textController,
+              onValueSelect: (newValue) => debugPrint(newValue),
+              elevation: 2,
+              dropdownValues: values,
+              maxHeight: 200,
+              targetBuilder: (focusNode, textController) => Container(
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    color: Colors.brown),
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  focusNode: focusNode,
+                  controller: textController,
+                ),
+              ),
+              focusNode: _focusNode,
+            ),
+            const SizedBox(height: 100),
+            CardXTextDropdown(
                 onValueSelect: (newValue) => debugPrint(newValue),
-                elevation: 2,
+                backgroundColor: Colors.blue,
+                highlightColor:
+                    const LinearGradient(colors: [Colors.red, Colors.white]),
+                dropdownElevation: 2,
+                hintText: "type something",
                 dropdownValues: values,
-                maxHeight: 200,
-                target: Container(
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      color: Colors.brown),
-                  padding: const EdgeInsets.all(8),
-                  child: TextFormField(
-                    controller: textController,
-                  ),
-                ))
+                inputPadding: EdgeInsets.zero,
+                dropdownBorderColor: Colors.grey,
+                dropdownBorderThickness: 2,
+                maxHeight: 300,
+                trailingArrowDownIcon: const Icon(Icons.arrow_back))
           ]),
         ),
         floatingActionButton: Opacity(

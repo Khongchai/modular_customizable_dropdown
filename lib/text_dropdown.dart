@@ -4,10 +4,14 @@ import 'package:really_customizable_dropdown/utils/filter_out_values_that_do_not
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
-///A dropdown extension for any widget.
+///A dropdown extension for a text widget.
 ///
-///Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
-///the widget when you click on it!
+/// Instead of a tap-based overlay, this widget displays the dropdown based on the focus state of the target
+/// text input.
+///
+/// Do not explicitly pass the focusNode and textController to your textField, rather, use
+/// the one passes by this dropdown instead. This is to ensure that the dropdown and the target
+/// share the same focus node and controller.
 ///
 ///To allow for both gradient and solid color, in many places, the LinearGradient class is used instead of the Color class.
 ///
@@ -44,8 +48,8 @@ class ReallyCustomizableTextDropdown extends StatefulWidget {
   ///The dropdown itself does not have a padding, so setting this would be equivalent to setting the dropdown's background color.
   final LinearGradient defaultItemColor;
 
-  ///Target to attach the dropdown to
-  final Widget target;
+  final Widget Function(
+      FocusNode focusNode, TextEditingController textController) targetBuilder;
 
   final TextStyle defaultTextStyle;
 
@@ -54,13 +58,15 @@ class ReallyCustomizableTextDropdown extends StatefulWidget {
 
   final TextEditingController textController;
   final FocusNode focusNode;
+  final bool setTextToControllerOnSelect;
 
   const ReallyCustomizableTextDropdown({
     required this.onValueSelect,
     required this.dropdownValues,
-    required this.target,
+    required this.targetBuilder,
     required this.focusNode,
     required this.textController,
+    required this.setTextToControllerOnSelect,
     this.boxShadow = const [
       BoxShadow(
         color: Color.fromRGBO(0, 0, 0, 0.5),
@@ -104,14 +110,13 @@ class _ReallyCustomizableTextDropdownState
 
   @override
   void initState() {
-    _valuesToDisplay = widget.dropdownValues;
     super.initState();
 
     widget.focusNode.addListener(() {
       if (widget.focusNode.hasFocus) {
-        addOverlay();
+        buildAndAddOverlay();
       } else {
-        dismissOverlay();
+        _overlayEntry.remove();
       }
     });
 
@@ -127,9 +132,8 @@ class _ReallyCustomizableTextDropdownState
   @override
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
-      link: _layerLink,
-      child: widget.target,
-    );
+        link: _layerLink,
+        child: widget.targetBuilder(widget.focusNode, widget.textController));
   }
 
   @override
@@ -141,42 +145,6 @@ class _ReallyCustomizableTextDropdownState
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
-    Widget content = Positioned(
-      width: size.width,
-      child: CompositedTransformFollower(
-        offset: Offset(0, size.height + widget.topMargin),
-        link: _layerLink,
-        showWhenUnlinked: false,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: widget.borderRadius,
-            boxShadow: widget.boxShadow,
-          ),
-          constraints: BoxConstraints(
-            maxHeight: widget.maxHeight,
-          ),
-          child: Material(
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                  borderRadius: widget.borderRadius,
-                  side: BorderSide(
-                    width: widget.borderThickness,
-                    style: BorderStyle.solid,
-                    color: widget.borderColor,
-                  )),
-              color: Colors.transparent,
-              elevation: 0,
-              child: ListView.builder(
-                itemCount: _valuesToDisplay.length,
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemBuilder: (context, index) =>
-                    _buildDropdownRow(_valuesToDisplay[index]),
-              )),
-        ),
-      ),
-    );
-
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible
             ? SizedBox(
@@ -184,15 +152,48 @@ class _ReallyCustomizableTextDropdownState
                 height: double.infinity,
                 child: Stack(children: [
                   FullScreenDismissibleArea(dismissOverlay: dismissOverlay),
-                  content,
+                  child,
                 ]))
-            : Stack(children: [content]);
+            : Stack(children: [child]);
 
-    OverlayEntry overlayEntry = OverlayEntry(
-      builder: (context) => dismissibleWrapper(child: content),
+    return OverlayEntry(
+      builder: (context) => dismissibleWrapper(
+          child: Positioned(
+        width: size.width,
+        child: CompositedTransformFollower(
+          offset: Offset(0, size.height + widget.topMargin),
+          link: _layerLink,
+          showWhenUnlinked: false,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: widget.borderRadius,
+              boxShadow: widget.boxShadow,
+            ),
+            constraints: BoxConstraints(
+              maxHeight: widget.maxHeight,
+            ),
+            child: Material(
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                    borderRadius: widget.borderRadius,
+                    side: BorderSide(
+                      width: widget.borderThickness,
+                      style: BorderStyle.solid,
+                      color: widget.borderColor,
+                    )),
+                color: Colors.transparent,
+                elevation: 0,
+                child: ListView.builder(
+                    itemCount: _valuesToDisplay.length,
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return _buildDropdownRow(_valuesToDisplay[index]);
+                    })),
+          ),
+        ),
+      )),
     );
-
-    return overlayEntry;
   }
 
   Widget _buildDropdownRow(
@@ -200,7 +201,12 @@ class _ReallyCustomizableTextDropdownState
   ) {
     return ListTileThatChangesColorOnTap(
       onTap: () {
+        if (widget.setTextToControllerOnSelect) {
+          widget.textController.text = str;
+        }
+
         widget.onValueSelect(str);
+
         if (widget.collapseOnSelect) {
           FocusScope.of(context).unfocus();
         }
@@ -213,12 +219,12 @@ class _ReallyCustomizableTextDropdownState
     );
   }
 
-  void addOverlay() {
+  void buildAndAddOverlay() {
     _overlayEntry = _buildOverlayEntry();
     Overlay.of(context)!.insert(_overlayEntry);
   }
 
   void dismissOverlay() {
-    _overlayEntry.remove();
+    widget.focusNode.unfocus();
   }
 }
