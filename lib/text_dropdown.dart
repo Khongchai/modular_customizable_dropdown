@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import 'package:really_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
-import 'full_screen_dismissible_area.dart';
-import 'list_tile_that_changes_color_on_tap.dart';
+import 'widgets/full_screen_dismissible_area.dart';
+import 'widgets/list_tile_that_changes_color_on_tap.dart';
 
 ///A dropdown extension for a text widget.
 ///

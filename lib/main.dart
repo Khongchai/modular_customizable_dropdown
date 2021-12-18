@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:really_customizable_dropdown/card_x_text_dropdown.dart';
 import 'package:really_customizable_dropdown/text_dropdown.dart';
 
 void main() => runApp(const MyApp());
@@ -64,21 +63,7 @@ class MyAppState extends State<MyApp> {
                 ),
               ),
               focusNode: _focusNode,
-            ),
-            const SizedBox(height: 100),
-            CardXTextDropdown(
-                onValueSelect: (newValue) => debugPrint(newValue),
-                backgroundColor: Colors.blue,
-                highlightColor:
-                    const LinearGradient(colors: [Colors.red, Colors.white]),
-                dropdownElevation: 2,
-                hintText: "type something",
-                dropdownValues: values,
-                inputPadding: EdgeInsets.zero,
-                dropdownBorderColor: Colors.grey,
-                dropdownBorderThickness: 2,
-                maxHeight: 300,
-                trailingArrowDownIcon: const Icon(Icons.arrow_back))
+            )
           ]),
         ),
         floatingActionButton: Opacity(
