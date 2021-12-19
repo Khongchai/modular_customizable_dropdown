@@ -224,7 +224,7 @@ class _ReallyCustomizableDropdownState
           dismissOverlay();
         }
       },
-      onTapColorTrantitionDuration: widget.style.onTapColorTransitionDuration,
+      onTapColorTransitionDuration: widget.style.onTapColorTransitionDuration,
       defaultBackgroundColor: widget.style.defaultItemColor,
       onTapBackgroundColor: widget.style.onTapItemColor,
       defaultTextStyle: widget.style.defaultTextStyle,
