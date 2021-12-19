@@ -50,7 +50,7 @@ class MyAppState extends State<MyApp> {
             ReallyCustomizableDropdown.displayOnTap(
                 onValueSelect: ((newValue) =>
                     setState(() => selectedValue = newValue)),
-                dropdownValues: values,
+                allDropdownValues: values,
                 target: SizedBox(width: 200, child: Text(selectedValue))),
             const SizedBox(height: 50),
             ReallyCustomizableDropdown.displayOnFocus(
@@ -101,6 +101,8 @@ class MyObservableWidgetState extends State<MyObservableWidget> {
 }
 
 class ContainerWithBorder extends StatelessWidget {
+  const ContainerWithBorder({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(

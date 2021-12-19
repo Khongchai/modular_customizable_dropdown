@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
+import 'package:really_customizable_dropdown/classes_and_enums/dropdown_action_repository.dart';
 import 'package:really_customizable_dropdown/classes_and_enums/dropdown_style.dart';
 import 'package:really_customizable_dropdown/classes_and_enums/focus_react_params.dart';
 import 'package:really_customizable_dropdown/classes_and_enums/mode.dart';
@@ -18,7 +19,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
 
   /// When the asTextFieldDropdown factory constructor is called, dropdown will allow
   /// an additional ability to filter the list based on the textController's value.
-  final List<String> dropdownValues;
+  final List<String> allDropdownValues;
 
   /// Action to perform when the value is tapped.
   final Function(String selectedValue) onValueSelect;
@@ -36,7 +37,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
   const ReallyCustomizableDropdown({
     required this.reactMode,
     required this.onValueSelect,
-    required this.dropdownValues,
+    required this.allDropdownValues,
     required this.barrierDismissible,
     required this.style,
     this.tapReactParams,
@@ -48,7 +49,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
 
   factory ReallyCustomizableDropdown.displayOnTap({
     required Function(String selectedValue) onValueSelect,
-    required List<String> dropdownValues,
+    required List<String> allDropdownValues,
     required Widget target,
     bool barrierDismissible = true,
     DropdownStyle style = const DropdownStyle(),
@@ -57,7 +58,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
     return ReallyCustomizableDropdown(
       reactMode: ReactMode.tapReact,
       onValueSelect: onValueSelect,
-      dropdownValues: dropdownValues,
+      allDropdownValues: allDropdownValues,
       tapReactParams: TapReactParams(target: target),
       style: style,
       barrierDismissible: barrierDismissible,
@@ -80,7 +81,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
     return ReallyCustomizableDropdown(
       reactMode: ReactMode.focusReact,
       onValueSelect: onValueSelect,
-      dropdownValues: dropdownValues,
+      allDropdownValues: dropdownValues,
       focusReactParams: FocusReactParams(
           textController: textController,
           focusNode: focusNode,
@@ -100,16 +101,28 @@ class _ReallyCustomizableDropdownState
     extends State<ReallyCustomizableDropdown> {
   late OverlayEntry _overlayEntry;
 
+  late final DropdownActionRepository dropdownActionRepository;
+
   final LayerLink _layerLink = LayerLink();
 
   bool buildOverlayEntry = true;
 
-  List<String> _valuesToDisplay = [];
+  List<String> valuesToDisplay = [];
 
   @override
   void initState() {
+    // dropdownActionRepository = DropdownActionRepository(
+    //     reactMode: widget.reactMode,
+    //     setState: (fn) => setState(() {
+    //           fn();
+    //         }));
+    // dropdownActionRepository.initState(
+    //     valuesToDisplay: valuesToDisplay,
+    //     allDropdownValues: widget.allDropdownValues,
+    //     dismissOverlay: dismissOverlay,
+    //     buildAndAddOverlay: buildAndAddOverlay);
     if (widget.reactMode == ReactMode.tapReact) {
-      _valuesToDisplay = widget.dropdownValues;
+      valuesToDisplay = widget.allDropdownValues;
     } else {
       widget.focusReactParams!.focusNode.addListener(() {
         if (widget.focusReactParams!.focusNode.hasFocus) {
@@ -120,9 +133,9 @@ class _ReallyCustomizableDropdownState
       });
 
       widget.focusReactParams!.textController.addListener(() {
-        _valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
+        valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
             queryString: widget.focusReactParams!.textController.text,
-            valuesToFilter: widget.dropdownValues);
+            valuesToFilter: widget.allDropdownValues);
       });
     }
 
@@ -198,11 +211,11 @@ class _ReallyCustomizableDropdownState
                 color: Colors.transparent,
                 elevation: 0,
                 child: ListView.builder(
-                    itemCount: _valuesToDisplay.length,
+                    itemCount: valuesToDisplay.length,
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return _buildDropdownRow(_valuesToDisplay[index]);
+                      return _buildDropdownRow(valuesToDisplay[index]);
                     })),
           ),
         ),

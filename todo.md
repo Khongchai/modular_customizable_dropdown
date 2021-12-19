@@ -1,7 +1,4 @@
-Combine text_dropdown.dart with dropdown.dart;
-
+See if you can refactor all the action into a repository
 
 
 Gradient fade transition time;
-
-Break the dropdown into: a dropdown that focuses based on the tap mode and the focus mode.
