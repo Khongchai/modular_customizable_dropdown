@@ -1,6 +1,10 @@
 import "package:flutter/material.dart";
-import 'package:really_customizable_dropdown/utils/dropdown_style.dart';
-import 'package:really_customizable_dropdown/utils/mode.dart';
+import 'package:flutter/rendering.dart';
+import 'package:really_customizable_dropdown/classes_and_enums/dropdown_style.dart';
+import 'package:really_customizable_dropdown/classes_and_enums/focus_react_params.dart';
+import 'package:really_customizable_dropdown/classes_and_enums/mode.dart';
+import 'package:really_customizable_dropdown/classes_and_enums/tap_react_params.dart';
+import 'package:really_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
 import 'widgets/full_screen_dismissible_area.dart';
 import 'widgets/list_tile_that_changes_color_on_tap.dart';
@@ -24,20 +28,23 @@ class ReallyCustomizableDropdown extends StatefulWidget {
   /// Setting this to false may cause the dropdown to flow over other elements while scrolling(including the appbar).
   final bool barrierDismissible;
 
-  /// Target to attach the dropdown to
-  final Widget target;
-
+  ///Declare mode separately for explicitness.
   final ReactMode reactMode;
+  final TapReactParams? tapReactParams;
+  final FocusReactParams? focusReactParams;
 
   const ReallyCustomizableDropdown({
     required this.reactMode,
     required this.onValueSelect,
     required this.dropdownValues,
-    required this.target,
     required this.barrierDismissible,
     required this.style,
+    this.tapReactParams,
+    this.focusReactParams,
     Key? key,
-  }) : super(key: key);
+  })  : assert((tapReactParams != null && reactMode == ReactMode.tapReact) ||
+            (focusReactParams != null && reactMode == ReactMode.focusReact)),
+        super(key: key);
 
   factory ReallyCustomizableDropdown.displayOnTap({
     required Function(String selectedValue) onValueSelect,
@@ -51,7 +58,34 @@ class ReallyCustomizableDropdown extends StatefulWidget {
       reactMode: ReactMode.tapReact,
       onValueSelect: onValueSelect,
       dropdownValues: dropdownValues,
-      target: target,
+      tapReactParams: TapReactParams(target: target),
+      style: style,
+      barrierDismissible: barrierDismissible,
+    );
+  }
+
+  factory ReallyCustomizableDropdown.displayOnFocus({
+    required Function(String selectedValue) onValueSelect,
+    required List<String> dropdownValues,
+    required Widget Function(
+            FocusNode focusNode, TextEditingController textController)
+        targetBuilder,
+    required TextEditingController textController,
+    required FocusNode focusNode,
+    required bool setTextToControllerOnSelect,
+    bool barrierDismissible = true,
+    DropdownStyle style = const DropdownStyle(),
+    Key? key,
+  }) {
+    return ReallyCustomizableDropdown(
+      reactMode: ReactMode.focusReact,
+      onValueSelect: onValueSelect,
+      dropdownValues: dropdownValues,
+      focusReactParams: FocusReactParams(
+          textController: textController,
+          focusNode: focusNode,
+          setTextToControllerOnSelect: setTextToControllerOnSelect,
+          targetBuilder: targetBuilder),
       style: style,
       barrierDismissible: barrierDismissible,
     );
@@ -70,11 +104,28 @@ class _ReallyCustomizableDropdownState
 
   bool buildOverlayEntry = true;
 
-  List<String> valuesToDisplay = [];
+  List<String> _valuesToDisplay = [];
 
   @override
   void initState() {
-    valuesToDisplay = widget.dropdownValues;
+    if (widget.reactMode == ReactMode.tapReact) {
+      _valuesToDisplay = widget.dropdownValues;
+    } else {
+      widget.focusReactParams!.focusNode.addListener(() {
+        if (widget.focusReactParams!.focusNode.hasFocus) {
+          buildAndAddOverlay();
+        } else {
+          _overlayEntry.remove();
+        }
+      });
+
+      widget.focusReactParams!.textController.addListener(() {
+        _valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
+            queryString: widget.focusReactParams!.textController.text,
+            valuesToFilter: widget.dropdownValues);
+      });
+    }
+
     super.initState();
   }
 
@@ -85,12 +136,16 @@ class _ReallyCustomizableDropdownState
       child: GestureDetector(
         onTap: () {
           if (buildOverlayEntry) {
-            addOverlay();
+            buildAndAddOverlay();
           } else {
             dismissOverlay();
           }
         },
-        child: widget.target,
+        child: widget.reactMode == ReactMode.tapReact
+            ? widget.tapReactParams!.target
+            : widget.focusReactParams!.targetBuilder(
+                widget.focusReactParams!.focusNode,
+                widget.focusReactParams!.textController),
       ),
     );
   }
@@ -104,42 +159,6 @@ class _ReallyCustomizableDropdownState
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
-    Widget content = Positioned(
-      width: size.width,
-      child: CompositedTransformFollower(
-        offset: Offset(0, size.height + widget.style.topMargin),
-        link: _layerLink,
-        showWhenUnlinked: false,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: widget.style.borderRadius,
-            boxShadow: widget.style.boxShadow,
-          ),
-          constraints: BoxConstraints(
-            maxHeight: widget.style.maxHeight,
-          ),
-          child: Material(
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                  borderRadius: widget.style.borderRadius,
-                  side: BorderSide(
-                    width: widget.style.borderThickness,
-                    style: BorderStyle.solid,
-                    color: widget.style.borderColor,
-                  )),
-              color: Colors.transparent,
-              elevation: 0,
-              child: ListView.builder(
-                itemCount: valuesToDisplay.length,
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemBuilder: (context, index) =>
-                    _buildDropdownRow(valuesToDisplay[index]),
-              )),
-        ),
-      ),
-    );
-
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible
             ? SizedBox(
@@ -147,15 +166,48 @@ class _ReallyCustomizableDropdownState
                 height: double.infinity,
                 child: Stack(children: [
                   FullScreenDismissibleArea(dismissOverlay: dismissOverlay),
-                  content,
+                  child,
                 ]))
-            : Stack(children: [content]);
+            : Stack(children: [child]);
 
-    OverlayEntry overlayEntry = OverlayEntry(
-      builder: (context) => dismissibleWrapper(child: content),
+    return OverlayEntry(
+      builder: (context) => dismissibleWrapper(
+          child: Positioned(
+        width: size.width,
+        child: CompositedTransformFollower(
+          offset: Offset(0, size.height + widget.style.topMargin),
+          link: _layerLink,
+          showWhenUnlinked: false,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: widget.style.borderRadius,
+              boxShadow: widget.style.boxShadow,
+            ),
+            constraints: BoxConstraints(
+              maxHeight: widget.style.maxHeight,
+            ),
+            child: Material(
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                    borderRadius: widget.style.borderRadius,
+                    side: BorderSide(
+                      width: widget.style.borderThickness,
+                      style: BorderStyle.solid,
+                      color: widget.style.borderColor,
+                    )),
+                color: Colors.transparent,
+                elevation: 0,
+                child: ListView.builder(
+                    itemCount: _valuesToDisplay.length,
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return _buildDropdownRow(_valuesToDisplay[index]);
+                    })),
+          ),
+        ),
+      )),
     );
-
-    return overlayEntry;
   }
 
   Widget _buildDropdownRow(
@@ -163,6 +215,10 @@ class _ReallyCustomizableDropdownState
   ) {
     return ListTileThatChangesColorOnTap(
       onTap: () {
+        if (widget.reactMode == ReactMode.focusReact &&
+            widget.focusReactParams!.setTextToControllerOnSelect) {
+          widget.focusReactParams!.textController.text = str;
+        }
         widget.onValueSelect(str);
         if (widget.style.collapseOnSelect) {
           dismissOverlay();
@@ -176,7 +232,7 @@ class _ReallyCustomizableDropdownState
     );
   }
 
-  void addOverlay() {
+  void buildAndAddOverlay() {
     _overlayEntry = _buildOverlayEntry();
     Overlay.of(context)!.insert(_overlayEntry);
     setState(() {
@@ -185,9 +241,13 @@ class _ReallyCustomizableDropdownState
   }
 
   void dismissOverlay() {
-    _overlayEntry.remove();
-    setState(() {
-      buildOverlayEntry = true;
-    });
+    if (widget.reactMode == ReactMode.tapReact) {
+      _overlayEntry.remove();
+      setState(() {
+        buildOverlayEntry = true;
+      });
+    } else {
+      widget.focusReactParams!.focusNode.unfocus();
+    }
   }
 }

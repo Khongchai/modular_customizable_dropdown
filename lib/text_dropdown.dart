@@ -17,6 +17,8 @@ import 'widgets/list_tile_that_changes_color_on_tap.dart';
 ///
 ///If a solid, single color is what you want, simply provide LinearGradient(colors: [yourSingleColor, yourSingleColor]) --
 ///in other words, a LinearGradient instance with the same color provided at least twice in the colors array.
+@Deprecated(
+    "This is kept only as a reference, will be removed in the first stable version of the plugin")
 class ReallyCustomizableTextDropdown extends StatefulWidget {
   final Color borderColor;
   final double borderThickness;
@@ -120,11 +122,9 @@ class _ReallyCustomizableTextDropdownState
     });
 
     widget.textController.addListener(() {
-      setState(() {
-        _valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
-            queryString: widget.textController.text,
-            valuesToFilter: widget.dropdownValues);
-      });
+      _valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
+          queryString: widget.textController.text,
+          valuesToFilter: widget.dropdownValues);
     });
   }
 
