@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:really_customizable_dropdown/classes_and_enums/dropdown_style.dart';
 import 'package:really_customizable_dropdown/dropdown.dart';
 
 void main() => runApp(const MyApp());
@@ -56,6 +57,9 @@ class MyAppState extends State<MyApp> {
             ReallyCustomizableDropdown.displayOnFocus(
               setTextToControllerOnSelect: true,
               textController: _textController,
+              style: const DropdownStyle(
+                onTapColorTransitionDuration: Duration(milliseconds: 100),
+              ),
               onValueSelect: ((newValue) =>
                   setState(() => selectedValue = newValue)),
               dropdownValues: values,

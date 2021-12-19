@@ -8,6 +8,7 @@ class ListTileThatChangesColorOnTap extends StatefulWidget {
   final TextStyle onTapTextStyle;
   final TextStyle defaultTextStyle;
   final String title;
+  final Duration onTapColorTrantitionDuration;
 
   const ListTileThatChangesColorOnTap(
       {required this.title,
@@ -16,6 +17,7 @@ class ListTileThatChangesColorOnTap extends StatefulWidget {
       required this.defaultBackgroundColor,
       required this.onTapTextStyle,
       required this.onTap,
+      required this.onTapColorTrantitionDuration,
       Key? key})
       : super(key: key);
 
@@ -53,8 +55,10 @@ class _ListTileThatChangesColorOnTapState
                 MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(14)),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap));
 
-    final container = Container(
-        decoration: BoxDecoration(gradient: backgroundGradient), child: tile);
+    final container = AnimatedContainer(
+        duration: widget.onTapColorTrantitionDuration,
+        decoration: BoxDecoration(gradient: backgroundGradient),
+        child: tile);
 
     return Listener(
         onPointerDown: (_) => isTapping(),

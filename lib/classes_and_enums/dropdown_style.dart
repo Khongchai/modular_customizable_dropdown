@@ -33,6 +33,8 @@ class DropdownStyle {
   ///Style for dropdown text when tapped
   final TextStyle onTapTextStyle;
 
+  final Duration onTapColorTransitionDuration;
+
   const DropdownStyle({
     this.boxShadow = const [
       BoxShadow(
@@ -58,5 +60,6 @@ class DropdownStyle {
     this.collapseOnSelect = true,
     this.topMargin = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
+    this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
   });
 }
