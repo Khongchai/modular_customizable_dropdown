@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
-import 'package:really_customizable_dropdown/classes_and_enums/dropdown_action_repository.dart';
 import 'package:really_customizable_dropdown/classes_and_enums/dropdown_style.dart';
 import 'package:really_customizable_dropdown/classes_and_enums/focus_react_params.dart';
 import 'package:really_customizable_dropdown/classes_and_enums/mode.dart';
@@ -101,8 +100,6 @@ class _ReallyCustomizableDropdownState
     extends State<ReallyCustomizableDropdown> {
   late OverlayEntry _overlayEntry;
 
-  late final DropdownActionRepository dropdownActionRepository;
-
   final LayerLink _layerLink = LayerLink();
 
   bool buildOverlayEntry = true;
@@ -111,16 +108,6 @@ class _ReallyCustomizableDropdownState
 
   @override
   void initState() {
-    // dropdownActionRepository = DropdownActionRepository(
-    //     reactMode: widget.reactMode,
-    //     setState: (fn) => setState(() {
-    //           fn();
-    //         }));
-    // dropdownActionRepository.initState(
-    //     valuesToDisplay: valuesToDisplay,
-    //     allDropdownValues: widget.allDropdownValues,
-    //     dismissOverlay: dismissOverlay,
-    //     buildAndAddOverlay: buildAndAddOverlay);
     if (widget.reactMode == ReactMode.tapReact) {
       valuesToDisplay = widget.allDropdownValues;
     } else {
