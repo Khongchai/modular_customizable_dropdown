@@ -106,7 +106,7 @@ class _ModularCustomizableDropdownState
 
   List<String> valuesToDisplay = [];
 
-  bool tappedDown = false;
+  bool pointerDown = false;
 
   @override
   void initState() {
@@ -136,15 +136,21 @@ class _ModularCustomizableDropdownState
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
         link: _layerLink,
-        child: GestureDetector(
-          ///TODO, find a way to allow tapping here even when child is a button (right now button absorbs the pointer event).
+        child: Listener(
+          //Using pointer down and up to create a custom onTap event.
+          //This allow the child to still react to pointer events and call functions or display animations
+          //while still showing dropdowns.
           ///TODO, also make sure only the main file and the DropdownStyle are exported.
-          onTap: () {
+          onPointerDown: (_) {
+            setState(() => pointerDown = true);
+          },
+          onPointerUp: (_) {
             if (buildOverlayEntry) {
               buildAndAddOverlay();
             } else {
               dismissOverlay();
             }
+            setState(() => pointerDown = false);
           },
           child: widget.reactMode == ReactMode.tapReact
               ? widget.tapReactParams!.target
