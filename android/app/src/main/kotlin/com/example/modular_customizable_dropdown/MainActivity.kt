@@ -1,4 +1,4 @@
-package com.example.really_customizable_dropdown
+package com.example.modular_customizable_dropdown
 
 import io.flutter.embedding.android.FlutterActivity
 

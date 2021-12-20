@@ -1,19 +1,19 @@
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
-import 'package:really_customizable_dropdown/classes_and_enums/dropdown_style.dart';
-import 'package:really_customizable_dropdown/classes_and_enums/focus_react_params.dart';
-import 'package:really_customizable_dropdown/classes_and_enums/mode.dart';
-import 'package:really_customizable_dropdown/classes_and_enums/tap_react_params.dart';
-import 'package:really_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
+import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
-import 'widgets/full_screen_dismissible_area.dart';
-import 'widgets/list_tile_that_changes_color_on_tap.dart';
+import '../classes_and_enums/dropdown_style.dart';
+import '../classes_and_enums/focus_react_params.dart';
+import '../classes_and_enums/mode.dart';
+import '../classes_and_enums/tap_react_params.dart';
+import 'full_screen_dismissible_area.dart';
+import 'list_tile_that_changes_color_on_tap.dart';
 
 /// A dropdown extension for any widget.
 ///
 /// Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
 /// the widget when you click on it!
-class ReallyCustomizableDropdown extends StatefulWidget {
+class ModularCustomizableDropdown extends StatefulWidget {
   final DropdownStyle style;
 
   /// When the asTextFieldDropdown factory constructor is called, dropdown will allow
@@ -33,7 +33,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
   final TapReactParams? tapReactParams;
   final FocusReactParams? focusReactParams;
 
-  const ReallyCustomizableDropdown({
+  const ModularCustomizableDropdown({
     required this.reactMode,
     required this.onValueSelect,
     required this.allDropdownValues,
@@ -46,7 +46,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
             (focusReactParams != null && reactMode == ReactMode.focusReact)),
         super(key: key);
 
-  factory ReallyCustomizableDropdown.displayOnTap({
+  factory ModularCustomizableDropdown.displayOnTap({
     required Function(String selectedValue) onValueSelect,
     required List<String> allDropdownValues,
     required Widget target,
@@ -54,7 +54,7 @@ class ReallyCustomizableDropdown extends StatefulWidget {
     DropdownStyle style = const DropdownStyle(),
     Key? key,
   }) {
-    return ReallyCustomizableDropdown(
+    return ModularCustomizableDropdown(
       reactMode: ReactMode.tapReact,
       onValueSelect: onValueSelect,
       allDropdownValues: allDropdownValues,
@@ -64,9 +64,9 @@ class ReallyCustomizableDropdown extends StatefulWidget {
     );
   }
 
-  factory ReallyCustomizableDropdown.displayOnFocus({
+  factory ModularCustomizableDropdown.displayOnFocus({
     required Function(String selectedValue) onValueSelect,
-    required List<String> dropdownValues,
+    required List<String> allDropdownValues,
     required Widget Function(
             FocusNode focusNode, TextEditingController textController)
         targetBuilder,
@@ -77,10 +77,10 @@ class ReallyCustomizableDropdown extends StatefulWidget {
     DropdownStyle style = const DropdownStyle(),
     Key? key,
   }) {
-    return ReallyCustomizableDropdown(
+    return ModularCustomizableDropdown(
       reactMode: ReactMode.focusReact,
       onValueSelect: onValueSelect,
-      allDropdownValues: dropdownValues,
+      allDropdownValues: allDropdownValues,
       focusReactParams: FocusReactParams(
           textController: textController,
           focusNode: focusNode,
@@ -92,12 +92,12 @@ class ReallyCustomizableDropdown extends StatefulWidget {
   }
 
   @override
-  _ReallyCustomizableDropdownState createState() =>
-      _ReallyCustomizableDropdownState();
+  _ModularCustomizableDropdownState createState() =>
+      _ModularCustomizableDropdownState();
 }
 
-class _ReallyCustomizableDropdownState
-    extends State<ReallyCustomizableDropdown> {
+class _ModularCustomizableDropdownState
+    extends State<ModularCustomizableDropdown> {
   late OverlayEntry _overlayEntry;
 
   final LayerLink _layerLink = LayerLink();
@@ -106,12 +106,15 @@ class _ReallyCustomizableDropdownState
 
   List<String> valuesToDisplay = [];
 
+  bool tappedDown = false;
+
   @override
   void initState() {
     if (widget.reactMode == ReactMode.tapReact) {
       valuesToDisplay = widget.allDropdownValues;
     } else {
       widget.focusReactParams!.focusNode.addListener(() {
+        print("focuses");
         if (widget.focusReactParams!.focusNode.hasFocus) {
           buildAndAddOverlay();
         } else {
@@ -132,22 +135,23 @@ class _ReallyCustomizableDropdownState
   @override
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
-      link: _layerLink,
-      child: GestureDetector(
-        onTap: () {
-          if (buildOverlayEntry) {
-            buildAndAddOverlay();
-          } else {
-            dismissOverlay();
-          }
-        },
-        child: widget.reactMode == ReactMode.tapReact
-            ? widget.tapReactParams!.target
-            : widget.focusReactParams!.targetBuilder(
-                widget.focusReactParams!.focusNode,
-                widget.focusReactParams!.textController),
-      ),
-    );
+        link: _layerLink,
+        child: GestureDetector(
+          ///TODO, find a way to allow tapping here even when child is a button (right now button absorbs the pointer event).
+          ///TODO, also make sure only the main file and the DropdownStyle are exported.
+          onTap: () {
+            if (buildOverlayEntry) {
+              buildAndAddOverlay();
+            } else {
+              dismissOverlay();
+            }
+          },
+          child: widget.reactMode == ReactMode.tapReact
+              ? widget.tapReactParams!.target
+              : widget.focusReactParams!.targetBuilder(
+                  widget.focusReactParams!.focusNode,
+                  widget.focusReactParams!.textController),
+        ));
   }
 
   @override

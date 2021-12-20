@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.modular_customizable_dropdown">
+    package="com.example.example">
    <application
-        android:label="modular_customizable_dropdown"
+        android:label="example"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
