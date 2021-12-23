@@ -66,7 +66,9 @@ class MyAppState extends State<MyApp> {
                   barrierDismissible: true,
                   style: const DropdownStyle(
                     borderColor: Colors.black,
+                    widthScale: 1.2,
                     borderThickness: 1,
+                    dropdownAlignment: DropdownAlignment.right,
                   ),
                   target: ElevatedButton(
                     child: SizedBox(

@@ -14,7 +14,7 @@ import 'list_tile_that_changes_color_on_tap.dart';
 /// Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
 /// the widget when you click on it!
 class ModularCustomizableDropdown extends StatefulWidget {
-  final DropdownStyle style;
+  final DropdownStyle dropdownStyle;
 
   /// When the asTextFieldDropdown factory constructor is called, dropdown will allow
   /// an additional ability to filter the list based on the textController's value.
@@ -33,12 +33,16 @@ class ModularCustomizableDropdown extends StatefulWidget {
   final TapReactParams? tapReactParams;
   final FocusReactParams? focusReactParams;
 
+  ///Whether to expose the function for calling dropdown in the target builder function
+  final bool exposeDropdownHandler;
+
   const ModularCustomizableDropdown({
     required this.reactMode,
     required this.onValueSelect,
     required this.allDropdownValues,
     required this.barrierDismissible,
-    required this.style,
+    required this.exposeDropdownHandler,
+    required this.dropdownStyle,
     this.tapReactParams,
     this.focusReactParams,
     Key? key,
@@ -59,8 +63,9 @@ class ModularCustomizableDropdown extends StatefulWidget {
       onValueSelect: onValueSelect,
       allDropdownValues: allDropdownValues,
       tapReactParams: TapReactParams(target: target),
-      style: style,
+      dropdownStyle: style,
       barrierDismissible: barrierDismissible,
+      exposeDropdownHandler: false,
     );
   }
 
@@ -86,10 +91,14 @@ class ModularCustomizableDropdown extends StatefulWidget {
           focusNode: focusNode,
           setTextToControllerOnSelect: setTextToControllerOnSelect,
           targetBuilder: targetBuilder),
-      style: style,
+      dropdownStyle: style,
       barrierDismissible: barrierDismissible,
+      exposeDropdownHandler: false,
     );
   }
+
+  //TODO expose a function for displaying the dropdown manually
+  // factory ModularCustomizableDropdown.customControl({})
 
   @override
   _ModularCustomizableDropdownState createState() =>
@@ -114,7 +123,6 @@ class _ModularCustomizableDropdownState
       valuesToDisplay = widget.allDropdownValues;
     } else {
       widget.focusReactParams!.focusNode.addListener(() {
-        print("focuses");
         if (widget.focusReactParams!.focusNode.hasFocus) {
           buildAndAddOverlay();
         } else {
@@ -137,10 +145,10 @@ class _ModularCustomizableDropdownState
     return CompositedTransformTarget(
         link: _layerLink,
         child: Listener(
+          //TODO check what happens to all the focus based components
           //Using pointer down and up to create a custom onTap event.
           //This allow the child to still react to pointer events and call functions or display animations
           //while still showing dropdowns.
-          ///TODO, also make sure only the main file and the DropdownStyle are exported.
           onPointerDown: (_) {
             setState(() => pointerDown = true);
           },
@@ -169,6 +177,12 @@ class _ModularCustomizableDropdownState
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
+    final alignment = widget.dropdownStyle.dropdownAlignment.x;
+    final width = widget.dropdownStyle.width ?? size.width;
+    final dropdownWidth = (width) * widget.dropdownStyle.widthScale;
+    final diff = ((dropdownWidth - size.width) / 2);
+    final centerOffset = -diff + (diff * alignment * -1);
+
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible
             ? SizedBox(
@@ -183,27 +197,28 @@ class _ModularCustomizableDropdownState
     return OverlayEntry(
       builder: (context) => dismissibleWrapper(
           child: Positioned(
-        width: size.width,
+        width: dropdownWidth,
         child: CompositedTransformFollower(
-          offset: Offset(0, size.height + widget.style.topMargin),
+          offset: Offset(
+              centerOffset, size.height + widget.dropdownStyle.topMargin),
           link: _layerLink,
           showWhenUnlinked: false,
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: widget.style.borderRadius,
-              boxShadow: widget.style.boxShadow,
+              borderRadius: widget.dropdownStyle.borderRadius,
+              boxShadow: widget.dropdownStyle.boxShadow,
             ),
             constraints: BoxConstraints(
-              maxHeight: widget.style.maxHeight,
+              maxHeight: widget.dropdownStyle.maxHeight,
             ),
             child: Material(
                 clipBehavior: Clip.antiAlias,
                 shape: RoundedRectangleBorder(
-                    borderRadius: widget.style.borderRadius,
+                    borderRadius: widget.dropdownStyle.borderRadius,
                     side: BorderSide(
-                      width: widget.style.borderThickness,
+                      width: widget.dropdownStyle.borderThickness,
                       style: BorderStyle.solid,
-                      color: widget.style.borderColor,
+                      color: widget.dropdownStyle.borderColor,
                     )),
                 color: Colors.transparent,
                 elevation: 0,
@@ -230,15 +245,16 @@ class _ModularCustomizableDropdownState
           widget.focusReactParams!.textController.text = str;
         }
         widget.onValueSelect(str);
-        if (widget.style.collapseOnSelect) {
+        if (widget.dropdownStyle.collapseOnSelect) {
           dismissOverlay();
         }
       },
-      onTapColorTransitionDuration: widget.style.onTapColorTransitionDuration,
-      defaultBackgroundColor: widget.style.defaultItemColor,
-      onTapBackgroundColor: widget.style.onTapItemColor,
-      defaultTextStyle: widget.style.defaultTextStyle,
-      onTapTextStyle: widget.style.onTapTextStyle,
+      onTapColorTransitionDuration:
+          widget.dropdownStyle.onTapColorTransitionDuration,
+      defaultBackgroundColor: widget.dropdownStyle.defaultItemColor,
+      onTapBackgroundColor: widget.dropdownStyle.onTapItemColor,
+      defaultTextStyle: widget.dropdownStyle.defaultTextStyle,
+      onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
       title: str,
     );
   }

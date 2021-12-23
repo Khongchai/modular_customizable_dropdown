@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 
+import 'dropdown_alignment.dart';
+
 ///To allow for both gradient and solid color, in many places, the LinearGradient class is used instead of the Color class.
 ///
 ///If a solid, single color is what you want, simply provide LinearGradient(colors: [yourSingleColor, yourSingleColor]) --
@@ -28,12 +30,20 @@ class DropdownStyle {
   ///The dropdown itself does not have a padding, so setting this would be equivalent to setting the dropdown's background color.
   final LinearGradient defaultItemColor;
 
-  final TextStyle defaultTextStyle;
+  ///Scale the width of the dropdown relative to either the parent's width, or the provided dropdownWidth.
+  final double widthScale;
+
+  ///If provided, the dropdown will no longer scale itself according to the width of its parent.
+  final double? width;
 
   ///Style for dropdown text when tapped
   final TextStyle onTapTextStyle;
 
   final Duration onTapColorTransitionDuration;
+
+  final TextStyle defaultTextStyle;
+
+  final DropdownAlignment dropdownAlignment;
 
   const DropdownStyle({
     this.boxShadow = const [
@@ -52,6 +62,7 @@ class DropdownStyle {
     this.defaultItemColor =
         const LinearGradient(colors: [Color(0xff5fbce8), Color(0xff5ffce8)]),
     this.defaultTextStyle = const TextStyle(color: Colors.white),
+    this.dropdownAlignment = DropdownAlignment.center,
     this.onTapTextStyle = const TextStyle(color: Colors.black),
     this.elevation = 3,
     this.borderColor = const Color(0x00000000),
@@ -61,5 +72,7 @@ class DropdownStyle {
     this.topMargin = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
+    this.widthScale = 1,
+    this.width,
   });
 }
