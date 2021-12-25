@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
-import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
+import 'package:modular_customizable_dropdown/widgets/filter_capable_listview.dart';
 
 import '../classes_and_enums/dropdown_style.dart';
 import '../classes_and_enums/focus_react_params.dart';
@@ -26,6 +26,8 @@ class ModularCustomizableDropdown extends StatefulWidget {
   /// Allows user to click outside dropdown to dismiss
   ///
   /// Setting this to false may cause the dropdown to flow over other elements while scrolling(including the appbar).
+  ///
+  /// So, most of the time, pass true. Pass false when you wanna test something.
   final bool barrierDismissible;
 
   ///Declare mode separately for explicitness.
@@ -113,15 +115,15 @@ class _ModularCustomizableDropdownState
 
   bool buildOverlayEntry = true;
 
-  List<String> valuesToDisplay = [];
+  List<String> _valuesToDisplay = [];
 
   bool pointerDown = false;
 
+  bool beginQuerying = false;
+
   @override
   void initState() {
-    if (widget.reactMode == ReactMode.tapReact) {
-      valuesToDisplay = widget.allDropdownValues;
-    } else {
+    if (widget.reactMode == ReactMode.focusReact) {
       widget.focusReactParams!.focusNode.addListener(() {
         if (widget.focusReactParams!.focusNode.hasFocus) {
           buildAndAddOverlay();
@@ -130,11 +132,11 @@ class _ModularCustomizableDropdownState
         }
       });
 
-      widget.focusReactParams!.textController.addListener(() {
-        valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
-            queryString: widget.focusReactParams!.textController.text,
-            valuesToFilter: widget.allDropdownValues);
-      });
+      // widget.focusReactParams!.textController.addListener(() {
+      //   _valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
+      //       queryString: widget.focusReactParams!.textController.text,
+      //       valuesToFilter: widget.allDropdownValues);
+      // });
     }
 
     super.initState();
@@ -212,30 +214,30 @@ class _ModularCustomizableDropdownState
               maxHeight: widget.dropdownStyle.maxHeight,
             ),
             child: Material(
-                clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                    borderRadius: widget.dropdownStyle.borderRadius,
-                    side: BorderSide(
-                      width: widget.dropdownStyle.borderThickness,
-                      style: BorderStyle.solid,
-                      color: widget.dropdownStyle.borderColor,
-                    )),
-                color: Colors.transparent,
-                elevation: 0,
-                child: ListView.builder(
-                    itemCount: valuesToDisplay.length,
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return _buildDropdownRow(valuesToDisplay[index]);
-                    })),
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                  borderRadius: widget.dropdownStyle.borderRadius,
+                  side: BorderSide(
+                    width: widget.dropdownStyle.borderThickness,
+                    style: BorderStyle.solid,
+                    color: widget.dropdownStyle.borderColor,
+                  )),
+              color: Colors.transparent,
+              elevation: 0,
+              child: FilterCapableListView(
+                allDropdownValues: widget.allDropdownValues,
+                listBuilder: (dropdownValue) =>
+                    _buildDropdownRow(dropdownValue),
+                queryString: widget.focusReactParams?.textController.text ?? "",
+              ),
+            ),
           ),
         ),
       )),
     );
   }
 
-  Widget _buildDropdownRow(
+  _buildDropdownRow(
     String str,
   ) {
     return ListTileThatChangesColorOnTap(

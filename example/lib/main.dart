@@ -29,6 +29,14 @@ class MyAppState extends State<MyApp> {
     "Piano",
     "Conductor"
   ];
+  List<String> dropdownValues2 = [
+    "Mathematician",
+    "Scientist",
+    "Programmer",
+    "Engineer",
+    "Teacher"
+  ];
+
   bool showDropdown = false;
 
   ReactMode currentMode = ReactMode.focusReact;
@@ -36,6 +44,8 @@ class MyAppState extends State<MyApp> {
   final TextEditingController _textController = TextEditingController();
 
   final FocusNode _focusNode = FocusNode();
+
+  bool valuesToggle = true;
 
   @override
   Widget build(BuildContext context) {
@@ -57,32 +67,38 @@ class MyAppState extends State<MyApp> {
                 const SizedBox(height: 63),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   _buildDropdownCycleButton(),
+                  _buildValuesToggleButton(),
                 ]),
                 const SizedBox(height: 63),
-                ModularCustomizableDropdown.displayOnTap(
+                ModularCustomizableDropdown.displayOnFocus(
+                  focusNode: _focusNode,
+                  setTextToControllerOnSelect: true,
+                  textController: _textController,
                   onValueSelect: (String newVal) =>
                       setState(() => selectedValue = newVal),
-                  allDropdownValues: dropdownValues,
-                  barrierDismissible: true,
+                  allDropdownValues:
+                      valuesToggle ? dropdownValues : dropdownValues2,
+                  barrierDismissible: false,
                   style: const DropdownStyle(
                     borderColor: Colors.black,
                     borderThickness: 1,
                     dropdownAlignment: DropdownAlignment.center,
                   ),
-                  target: ElevatedButton(
-                    child: SizedBox(
-                        width: 150, child: Align(child: Text(selectedValue))),
-                    style: ElevatedButton.styleFrom(
-                        side: const BorderSide(
-                      width: 1.0,
-                      color: Colors.black,
-                    )),
-                    onPressed: () {},
+                  targetBuilder: (focusNode, textController) => TextField(
+                    controller: textController,
+                    focusNode: focusNode,
                   ),
                 )
               ])),
         ),
       ),
+    );
+  }
+
+  Widget _buildValuesToggleButton() {
+    return TextButton(
+      child: Text(valuesToggle ? "First List" : "Second List"),
+      onPressed: () => setState(() => valuesToggle = !valuesToggle),
     );
   }
 
