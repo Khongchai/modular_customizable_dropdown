@@ -66,7 +66,6 @@ class MyAppState extends State<MyApp> {
                   children: [
                 const SizedBox(height: 63),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  _buildDropdownCycleButton(),
                   _buildValuesToggleButton(),
                 ]),
                 const SizedBox(height: 63),
@@ -84,9 +83,39 @@ class MyAppState extends State<MyApp> {
                     borderThickness: 1,
                     dropdownAlignment: DropdownAlignment.center,
                   ),
-                  targetBuilder: (focusNode, textController) => TextField(
-                    controller: textController,
-                    focusNode: focusNode,
+                  targetBuilder: (focusNode, textController) => SizedBox(
+                    width: 200,
+                    child: TextField(
+                      controller: textController,
+                      focusNode: focusNode,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                ModularCustomizableDropdown.displayOnTap(
+                  onValueSelect: (String newVal) {
+                    setState(() {
+                      selectedValue = newVal;
+                    });
+                    _textController.text = newVal;
+                  },
+                  allDropdownValues:
+                      valuesToggle ? dropdownValues : dropdownValues2,
+                  barrierDismissible: false,
+                  style: const DropdownStyle(
+                    borderColor: Colors.black,
+                    borderThickness: 1,
+                    dropdownAlignment: DropdownAlignment.center,
+                  ),
+                  target: ElevatedButton(
+                    child: SizedBox(
+                        width: 150, child: Align(child: Text(selectedValue))),
+                    style: ElevatedButton.styleFrom(
+                        side: const BorderSide(
+                      width: 1.0,
+                      color: Colors.black,
+                    )),
+                    onPressed: () {},
                   ),
                 )
               ])),
@@ -97,30 +126,8 @@ class MyAppState extends State<MyApp> {
 
   Widget _buildValuesToggleButton() {
     return TextButton(
-      child: Text(valuesToggle ? "First List" : "Second List"),
+      child: Text(valuesToggle ? "Music List" : "Other List"),
       onPressed: () => setState(() => valuesToggle = !valuesToggle),
     );
-  }
-
-  Widget _buildDropdownCycleButton() {
-    if (currentMode == ReactMode.tapReact) {
-      return TextButton(
-          onPressed: () => setState(() => currentMode = ReactMode.focusReact),
-          child: Row(
-            children: const [
-              Text("Tap-based"),
-              Icon(Icons.chevron_right_rounded),
-            ],
-          ));
-    } else {
-      return TextButton(
-          onPressed: () => setState(() => currentMode = ReactMode.tapReact),
-          child: Row(
-            children: const [
-              Icon(Icons.chevron_left_rounded),
-              Text("Focus-based"),
-            ],
-          ));
-    }
   }
 }

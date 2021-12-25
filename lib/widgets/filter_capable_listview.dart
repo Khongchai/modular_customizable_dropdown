@@ -19,6 +19,7 @@ class FilterCapableListView extends StatefulWidget {
 class _FilterCapableListViewState extends State<FilterCapableListView> {
   @override
   Widget build(BuildContext context) {
+    debugPrint(widget.queryString);
     return ListView.builder(
         itemCount: widget.allDropdownValues.length,
         padding: EdgeInsets.zero,

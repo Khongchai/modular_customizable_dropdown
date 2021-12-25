@@ -115,8 +115,6 @@ class _ModularCustomizableDropdownState
 
   bool buildOverlayEntry = true;
 
-  List<String> _valuesToDisplay = [];
-
   bool pointerDown = false;
 
   bool beginQuerying = false;
@@ -131,12 +129,6 @@ class _ModularCustomizableDropdownState
           _overlayEntry.remove();
         }
       });
-
-      // widget.focusReactParams!.textController.addListener(() {
-      //   _valuesToDisplay = filterOutValuesThatDoNotMatchQueryString(
-      //       queryString: widget.focusReactParams!.textController.text,
-      //       valuesToFilter: widget.allDropdownValues);
-      // });
     }
 
     super.initState();
@@ -147,15 +139,16 @@ class _ModularCustomizableDropdownState
     return CompositedTransformTarget(
         link: _layerLink,
         child: Listener(
-          //TODO check what happens to all the focus based components
-          //Using pointer down and up to create a custom onTap event.
-          //This allow the child to still react to pointer events and call functions or display animations
-          //while still showing dropdowns.
           onPointerDown: (_) {
             setState(() => pointerDown = true);
           },
+          onPointerCancel: (_) => setState(() {
+            pointerDown = false;
+          }),
           onPointerUp: (_) {
-            if (buildOverlayEntry) {
+            if (buildOverlayEntry &&
+                pointerDown &&
+                widget.reactMode == ReactMode.tapReact) {
               buildAndAddOverlay();
             } else {
               dismissOverlay();
@@ -192,7 +185,7 @@ class _ModularCustomizableDropdownState
                 height: double.infinity,
                 child: Stack(children: [
                   FullScreenDismissibleArea(dismissOverlay: dismissOverlay),
-                  child,
+                  child
                 ]))
             : Stack(children: [child]);
 
@@ -226,8 +219,9 @@ class _ModularCustomizableDropdownState
               elevation: 0,
               child: FilterCapableListView(
                 allDropdownValues: widget.allDropdownValues,
-                listBuilder: (dropdownValue) =>
-                    _buildDropdownRow(dropdownValue),
+                listBuilder: (dropdownValue) {
+                  return _buildDropdownRow(dropdownValue);
+                },
                 queryString: widget.focusReactParams?.textController.text ?? "",
               ),
             ),
