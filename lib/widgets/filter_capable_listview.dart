@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
-class FilterCapableListView extends StatefulWidget {
+class FilterCapableListView extends StatelessWidget {
   final List<String> allDropdownValues;
   final String queryString;
   final Widget Function(String dropdownValue) listBuilder;
@@ -13,22 +13,16 @@ class FilterCapableListView extends StatefulWidget {
       : super(key: key);
 
   @override
-  _FilterCapableListViewState createState() => _FilterCapableListViewState();
-}
-
-class _FilterCapableListViewState extends State<FilterCapableListView> {
-  @override
   Widget build(BuildContext context) {
-    debugPrint(widget.queryString);
     return ListView.builder(
-        itemCount: widget.allDropdownValues.length,
+        itemCount: allDropdownValues.length,
         padding: EdgeInsets.zero,
         shrinkWrap: true,
         itemBuilder: (context, index) {
           if (filterOutValueThatDoNotMatchQueryString(
-              queryString: widget.queryString,
-              valueToFilter: widget.allDropdownValues[index])) {
-            return widget.listBuilder(widget.allDropdownValues[index]);
+              queryString: queryString,
+              valueToFilter: allDropdownValues[index])) {
+            return listBuilder(allDropdownValues[index]);
           }
 
           return const SizedBox();
