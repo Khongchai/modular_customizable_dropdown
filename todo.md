@@ -15,3 +15,8 @@ widget retains reference to old widget state
 
     Same as above, but use a listenerbuilder, or whatever it's called to rebuild the object after the value has been updated.
 
+Dropdown should wrap around not when maxheight exceeds screen hegiht, but when the height of the dropdown itself does
+
+basically just calculate if offscreen in the child widget itself.
+https://coderedirect.com/questions/608320/how-to-know-the-size-of-a-widget-before-painting-it
+
