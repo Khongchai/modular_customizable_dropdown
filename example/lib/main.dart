@@ -68,7 +68,7 @@ class MyAppState extends State<MyApp> {
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   _buildValuesToggleButton(),
                 ]),
-                const SizedBox(height: 63),
+                const SizedBox(height: 300),
                 ModularCustomizableDropdown.displayOnFocus(
                   focusNode: _focusNode,
                   setTextToControllerOnSelect: true,
@@ -77,7 +77,6 @@ class MyAppState extends State<MyApp> {
                       setState(() => selectedValue = newVal),
                   allDropdownValues:
                       valuesToggle ? dropdownValues : dropdownValues2,
-                  barrierDismissible: false,
                   style: const DropdownStyle(
                     borderColor: Colors.black,
                     borderThickness: 1,

@@ -38,13 +38,16 @@ class ModularCustomizableDropdown extends StatefulWidget {
   ///Whether to expose the function for calling dropdown in the target builder function
   final bool exposeDropdownHandler;
 
+  final void Function(bool visible)? onDropdownVisibilityChange;
+
   const ModularCustomizableDropdown({
     required this.reactMode,
     required this.onValueSelect,
     required this.allDropdownValues,
-    required this.barrierDismissible,
     required this.exposeDropdownHandler,
+    required this.barrierDismissible,
     required this.dropdownStyle,
+    this.onDropdownVisibilityChange,
     this.tapReactParams,
     this.focusReactParams,
     Key? key,
@@ -56,6 +59,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required Function(String selectedValue) onValueSelect,
     required List<String> allDropdownValues,
     required Widget target,
+    Function(bool)? onDropdownVisible,
     bool barrierDismissible = true,
     DropdownStyle style = const DropdownStyle(),
     Key? key,
@@ -66,7 +70,8 @@ class ModularCustomizableDropdown extends StatefulWidget {
       allDropdownValues: allDropdownValues,
       tapReactParams: TapReactParams(target: target),
       dropdownStyle: style,
-      barrierDismissible: barrierDismissible,
+      onDropdownVisibilityChange: onDropdownVisible,
+      barrierDismissible: true,
       exposeDropdownHandler: false,
     );
   }
@@ -80,7 +85,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required TextEditingController textController,
     required FocusNode focusNode,
     required bool setTextToControllerOnSelect,
-    bool barrierDismissible = true,
+    Function(bool)? onDropdownVisible,
     DropdownStyle style = const DropdownStyle(),
     Key? key,
   }) {
@@ -94,7 +99,8 @@ class ModularCustomizableDropdown extends StatefulWidget {
           setTextToControllerOnSelect: setTextToControllerOnSelect,
           targetBuilder: targetBuilder),
       dropdownStyle: style,
-      barrierDismissible: barrierDismissible,
+      onDropdownVisibilityChange: onDropdownVisible,
+      barrierDismissible: true,
       exposeDropdownHandler: false,
     );
   }
@@ -109,7 +115,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
 class _ModularCustomizableDropdownState
     extends State<ModularCustomizableDropdown> {
-  late OverlayEntry _overlayEntry;
+  OverlayEntry? _overlayEntry;
 
   final LayerLink _layerLink = LayerLink();
 
@@ -117,21 +123,24 @@ class _ModularCustomizableDropdownState
 
   bool pointerDown = false;
 
-  bool beginQuerying = false;
-
   @override
   void initState() {
     if (widget.reactMode == ReactMode.focusReact) {
       widget.focusReactParams!.focusNode.addListener(() {
         if (widget.focusReactParams!.focusNode.hasFocus) {
-          buildAndAddOverlay();
+          _buildAndAddOverlay();
         } else {
-          _overlayEntry.remove();
+          _overlayEntry!.remove();
         }
       });
     }
 
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -149,9 +158,9 @@ class _ModularCustomizableDropdownState
             if (buildOverlayEntry &&
                 pointerDown &&
                 widget.reactMode == ReactMode.tapReact) {
-              buildAndAddOverlay();
+              _buildAndAddOverlay();
             } else {
-              dismissOverlay();
+              _dismissOverlay();
             }
             setState(() => pointerDown = false);
           },
@@ -169,14 +178,30 @@ class _ModularCustomizableDropdownState
   }
 
   OverlayEntry _buildOverlayEntry() {
-    RenderBox renderBox = context.findRenderObject() as RenderBox;
-    Size size = renderBox.size;
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final Size targetSize = renderBox.size;
+    final targetPos = renderBox.localToGlobal(Offset.zero);
 
+    //Calculate alignment
     final alignment = widget.dropdownStyle.dropdownAlignment.x;
-    final width = widget.dropdownStyle.width ?? size.width;
+    final width = widget.dropdownStyle.width ?? targetSize.width;
     final dropdownWidth = (width) * widget.dropdownStyle.widthScale;
-    final diff = ((dropdownWidth - size.width) / 2);
-    final centerOffset = -diff + (diff * alignment * -1);
+    final diff = ((dropdownWidth - targetSize.width) / 2);
+    final dropdownXPos = -diff + (diff * alignment * -1);
+
+    //Calculate whether to wrap to the top of the target
+    final dropdownBottomPos = targetPos.dy +
+        targetSize.height +
+        widget.dropdownStyle.topMargin +
+        widget.dropdownStyle.maxHeight;
+    final isOffScreen = dropdownBottomPos > MediaQuery.of(context).size.height;
+    final dropdownYPos = isOffScreen
+        //Wrap to top of target
+        ? targetSize.height -
+            widget.dropdownStyle.maxHeight -
+            targetSize.height -
+            widget.dropdownStyle.topMargin
+        : targetSize.height + widget.dropdownStyle.topMargin;
 
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible
@@ -184,51 +209,51 @@ class _ModularCustomizableDropdownState
                 width: double.infinity,
                 height: double.infinity,
                 child: Stack(children: [
-                  FullScreenDismissibleArea(dismissOverlay: dismissOverlay),
+                  FullScreenDismissibleArea(dismissOverlay: _dismissOverlay),
                   child
                 ]))
             : Stack(children: [child]);
 
     return OverlayEntry(
-      builder: (context) => dismissibleWrapper(
-          child: Positioned(
-        width: dropdownWidth,
-        child: CompositedTransformFollower(
-          offset: Offset(
-              centerOffset, size.height + widget.dropdownStyle.topMargin),
-          link: _layerLink,
-          showWhenUnlinked: false,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: widget.dropdownStyle.borderRadius,
-              boxShadow: widget.dropdownStyle.boxShadow,
-            ),
-            constraints: BoxConstraints(
-              maxHeight: widget.dropdownStyle.maxHeight,
-            ),
-            child: Material(
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                  borderRadius: widget.dropdownStyle.borderRadius,
-                  side: BorderSide(
-                    width: widget.dropdownStyle.borderThickness,
-                    style: BorderStyle.solid,
-                    color: widget.dropdownStyle.borderColor,
-                  )),
-              color: Colors.transparent,
-              elevation: 0,
-              child: FilterCapableListView(
-                allDropdownValues: widget.allDropdownValues,
-                listBuilder: (dropdownValue) {
-                  return _buildDropdownRow(dropdownValue);
-                },
-                queryString: widget.focusReactParams?.textController.text ?? "",
+        builder: (context) => dismissibleWrapper(
+              child: Positioned(
+                width: dropdownWidth,
+                child: CompositedTransformFollower(
+                  offset: Offset(dropdownXPos, dropdownYPos),
+                  link: _layerLink,
+                  showWhenUnlinked: false,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: widget.dropdownStyle.borderRadius,
+                      boxShadow: widget.dropdownStyle.boxShadow,
+                    ),
+                    constraints: BoxConstraints(
+                      maxHeight: widget.dropdownStyle.maxHeight,
+                    ),
+                    child: Material(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: widget.dropdownStyle.borderRadius,
+                          side: BorderSide(
+                            width: widget.dropdownStyle.borderThickness,
+                            style: BorderStyle.solid,
+                            color: widget.dropdownStyle.borderColor,
+                          )),
+                      color: Colors.transparent,
+                      elevation: 0,
+                      child: FilterCapableListView(
+                        allDropdownValues: widget.allDropdownValues,
+                        listBuilder: (dropdownValue) {
+                          return _buildDropdownRow(dropdownValue);
+                        },
+                        queryString:
+                            widget.focusReactParams?.textController.text ?? "",
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      )),
-    );
+            ));
   }
 
   _buildDropdownRow(
@@ -242,7 +267,7 @@ class _ModularCustomizableDropdownState
         }
         widget.onValueSelect(str);
         if (widget.dropdownStyle.collapseOnSelect) {
-          dismissOverlay();
+          _dismissOverlay();
         }
       },
       onTapColorTransitionDuration:
@@ -255,22 +280,30 @@ class _ModularCustomizableDropdownState
     );
   }
 
-  void buildAndAddOverlay() {
+  void _buildAndAddOverlay() {
     _overlayEntry = _buildOverlayEntry();
-    Overlay.of(context)!.insert(_overlayEntry);
+    Overlay.of(context)!.insert(_overlayEntry!);
     setState(() {
       buildOverlayEntry = false;
     });
+    _onDropdownVisible(true);
   }
 
-  void dismissOverlay() {
+  void _dismissOverlay() {
     if (widget.reactMode == ReactMode.tapReact) {
-      _overlayEntry.remove();
+      _overlayEntry!.remove();
       setState(() {
         buildOverlayEntry = true;
       });
     } else {
       widget.focusReactParams!.focusNode.unfocus();
+    }
+    _onDropdownVisible(false);
+  }
+
+  void _onDropdownVisible(bool dropdownVisible) {
+    if (widget.onDropdownVisibilityChange != null) {
+      widget.onDropdownVisibilityChange!(dropdownVisible);
     }
   }
 }
