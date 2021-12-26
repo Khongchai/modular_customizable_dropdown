@@ -67,7 +67,7 @@ class DropdownStyle {
     this.elevation = 3,
     this.borderColor = const Color(0x00000000),
     this.borderThickness = 0,
-    this.maxHeight = 200,
+    this.maxHeight = 220,
     this.collapseOnSelect = true,
     this.topMargin = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),

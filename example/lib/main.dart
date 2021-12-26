@@ -26,8 +26,6 @@ class MyAppState extends State<MyApp> {
     "Viola",
     "Cello",
     "Double Bass",
-    "Piano",
-    "Conductor"
   ];
   List<String> dropdownValues2 = [
     "Mathematician",

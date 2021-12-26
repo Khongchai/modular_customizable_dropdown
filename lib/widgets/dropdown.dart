@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
 import 'package:modular_customizable_dropdown/widgets/filter_capable_listview.dart';
@@ -123,6 +125,9 @@ class _ModularCustomizableDropdownState
 
   bool pointerDown = false;
 
+  ///For obtaining size before paint
+  GlobalKey offstageListTileKey = GlobalKey();
+
   @override
   void initState() {
     if (widget.reactMode == ReactMode.focusReact) {
@@ -164,11 +169,28 @@ class _ModularCustomizableDropdownState
             }
             setState(() => pointerDown = false);
           },
-          child: widget.reactMode == ReactMode.tapReact
-              ? widget.tapReactParams!.target
-              : widget.focusReactParams!.targetBuilder(
-                  widget.focusReactParams!.focusNode,
-                  widget.focusReactParams!.textController),
+          child: Column(
+            children: [
+              Offstage(
+                  offstage: true,
+                  child: ListTileThatChangesColorOnTap(
+                    onTap: () {},
+                    key: offstageListTileKey,
+                    onTapColorTransitionDuration: const Duration(seconds: 0),
+                    defaultBackgroundColor:
+                        widget.dropdownStyle.defaultItemColor,
+                    onTapBackgroundColor: widget.dropdownStyle.onTapItemColor,
+                    defaultTextStyle: widget.dropdownStyle.defaultTextStyle,
+                    onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
+                    title: "",
+                  )),
+              widget.reactMode == ReactMode.tapReact
+                  ? widget.tapReactParams!.target
+                  : widget.focusReactParams!.targetBuilder(
+                      widget.focusReactParams!.focusNode,
+                      widget.focusReactParams!.textController),
+            ],
+          ),
         ));
   }
 
@@ -190,15 +212,25 @@ class _ModularCustomizableDropdownState
     final dropdownXPos = -diff + (diff * alignment * -1);
 
     //Calculate whether to wrap to the top of the target
+
+    //Offstage widget size
+    final singleTileHeight =
+        ((offstageListTileKey.currentContext!.findRenderObject()) as RenderBox)
+            .size
+            .height;
+    final expectedDropdownHeight = min(
+        singleTileHeight * widget.allDropdownValues.length,
+        widget.dropdownStyle.maxHeight);
     final dropdownBottomPos = targetPos.dy +
         targetSize.height +
         widget.dropdownStyle.topMargin +
-        widget.dropdownStyle.maxHeight;
+        expectedDropdownHeight;
     final isOffScreen = dropdownBottomPos > MediaQuery.of(context).size.height;
     final dropdownYPos = isOffScreen
         //Wrap to top of target
+        //If the height of the dropdown widget is known, replace the maxHeight with the hegiht of the dropdown.
         ? targetSize.height -
-            widget.dropdownStyle.maxHeight -
+            expectedDropdownHeight -
             targetSize.height -
             widget.dropdownStyle.topMargin
         : targetSize.height + widget.dropdownStyle.topMargin;
