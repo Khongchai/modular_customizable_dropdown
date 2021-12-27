@@ -70,6 +70,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required List<String> allDropdownValues,
     required Widget target,
     Function(bool)? onDropdownVisible,
+    bool invertYAxisAlignmentWhenOverflow = false,
     bool barrierDismissible = true,
     DropdownStyle style = const DropdownStyle(),
     Key? key,
@@ -83,7 +84,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
       onDropdownVisibilityChange: onDropdownVisible,
       barrierDismissible: barrierDismissible,
       exposeDropdownHandler: false,
-      invertYAxisAlignmentWhenOverflow: true,
+      invertYAxisAlignmentWhenOverflow: invertYAxisAlignmentWhenOverflow,
     );
   }
 
@@ -96,6 +97,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required TextEditingController textController,
     required FocusNode focusNode,
     required bool setTextToControllerOnSelect,
+    bool invertYAxisAlignmentWhenOverflow = false,
     bool barrierDismissible = true,
     Function(bool)? onDropdownVisible,
     DropdownStyle style = const DropdownStyle(),
@@ -114,7 +116,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
       onDropdownVisibilityChange: onDropdownVisible,
       barrierDismissible: barrierDismissible,
       exposeDropdownHandler: false,
-      invertYAxisAlignmentWhenOverflow: true,
+      invertYAxisAlignmentWhenOverflow: invertYAxisAlignmentWhenOverflow,
     );
   }
 
@@ -237,21 +239,20 @@ class _ModularCustomizableDropdownState
         singleTileHeight * widget.allDropdownValues.length,
         widget.dropdownStyle.maxHeight);
     final yCenter = expectedDropdownHeight / 2 + targetHeight / 2;
-    final dropdownYPos = targetHeight - yCenter + (yCenter * yAlignment);
+    //TODO => right now, this only works for 1, -1, 0
+    final dropdownTopPos = targetPos.dy + yAlignment * expectedDropdownHeight;
+    final dropdownBottomPos = dropdownTopPos + expectedDropdownHeight;
 
-    //Find out if we should invert the dropdown's position
-    // final dropdownBottomPos = targetPos.dy +
-    //     targetSize.height +
-    //     widget.dropdownStyle.topMargin +
-    //     expectedDropdownHeight;
-    // final isOffScreen = dropdownBottomPos > MediaQuery.of(context).size.height;
-    // final dropdownYPos = isOffScreen
-    //     //Wrap to top of target
-    //     ? targetSize.height -
-    //         expectedDropdownHeight -
-    //         targetSize.height -
-    //         widget.dropdownStyle.topMargin
-    //     : targetSize.height + widget.dropdownStyle.topMargin;
+    //Once threshold exceeded,
+    //invert the y alignment if invertYAxisAlignmentWhenOverflow == true
+    const screenTop = 0;
+    final isYOverflow =
+        dropdownBottomPos > MediaQuery.of(context).size.height ||
+            dropdownTopPos < screenTop;
+
+    final dropdownYPos = isYOverflow && widget.invertYAxisAlignmentWhenOverflow
+        ? targetHeight - yCenter + (yCenter * -yAlignment)
+        : targetHeight - yCenter + (yCenter * yAlignment);
 
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible

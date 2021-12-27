@@ -60,7 +60,7 @@ class MyAppState extends State<MyApp> {
               const SizedBox(height: 100),
               const Text("Display on Focus",
                   style: TextStyle(color: Colors.blue)),
-              const SizedBox(height: 20),
+              const SizedBox(height: 100),
               ModularCustomizableDropdown.displayOnFocus(
                 focusNode: _focusNode,
                 setTextToControllerOnSelect: true,
@@ -71,8 +71,9 @@ class MyAppState extends State<MyApp> {
                 style: const DropdownStyle(
                   borderColor: Colors.black,
                   borderThickness: 1,
-                  dropdownAlignment: DropdownAlignment.bottomCenter,
+                  dropdownAlignment: DropdownAlignment.topCenter,
                 ),
+                invertYAxisAlignmentWhenOverflow: true,
                 targetBuilder: (focusNode, textController) => SizedBox(
                   width: 200,
                   child: TextField(
@@ -99,7 +100,8 @@ class MyAppState extends State<MyApp> {
                   borderColor: Colors.black,
                   borderThickness: 1,
                   //Bottom center with a bit of extra margin
-                  dropdownAlignment: DropdownAlignment(0, 1.04),
+                  dropdownAlignment: DropdownAlignment.bottomCenter,
+                  // dropdownAlignment: DropdownAlignment(0, 1.04),
                 ),
                 target: ElevatedButton(
                   child: SizedBox(
