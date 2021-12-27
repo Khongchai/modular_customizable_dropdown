@@ -73,7 +73,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
       tapReactParams: TapReactParams(target: target),
       dropdownStyle: style,
       onDropdownVisibilityChange: onDropdownVisible,
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       exposeDropdownHandler: false,
     );
   }
@@ -87,6 +87,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required TextEditingController textController,
     required FocusNode focusNode,
     required bool setTextToControllerOnSelect,
+    bool barrierDismissible = true,
     Function(bool)? onDropdownVisible,
     DropdownStyle style = const DropdownStyle(),
     Key? key,
@@ -102,7 +103,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
           targetBuilder: targetBuilder),
       dropdownStyle: style,
       onDropdownVisibilityChange: onDropdownVisible,
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       exposeDropdownHandler: false,
     );
   }
@@ -211,9 +212,8 @@ class _ModularCustomizableDropdownState
     final diff = ((dropdownWidth - targetSize.width) / 2);
     final dropdownXPos = -diff + (diff * alignment * -1);
 
-    //Calculate whether to wrap to the top of the target
-
-    //Offstage widget size
+    //Offstage widget size to see whether we need to move the dropdown to the
+    //top of the current widget when height exceeds screen height.
     final singleTileHeight =
         ((offstageListTileKey.currentContext!.findRenderObject()) as RenderBox)
             .size
@@ -221,6 +221,8 @@ class _ModularCustomizableDropdownState
     final expectedDropdownHeight = min(
         singleTileHeight * widget.allDropdownValues.length,
         widget.dropdownStyle.maxHeight);
+
+    //Calculate dropdown pos
     final dropdownBottomPos = targetPos.dy +
         targetSize.height +
         widget.dropdownStyle.topMargin +
@@ -228,7 +230,6 @@ class _ModularCustomizableDropdownState
     final isOffScreen = dropdownBottomPos > MediaQuery.of(context).size.height;
     final dropdownYPos = isOffScreen
         //Wrap to top of target
-        //If the height of the dropdown widget is known, replace the maxHeight with the hegiht of the dropdown.
         ? targetSize.height -
             expectedDropdownHeight -
             targetSize.height -
@@ -254,35 +255,38 @@ class _ModularCustomizableDropdownState
                   offset: Offset(dropdownXPos, dropdownYPos),
                   link: _layerLink,
                   showWhenUnlinked: false,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: widget.dropdownStyle.borderRadius,
-                      boxShadow: widget.dropdownStyle.boxShadow,
-                    ),
-                    constraints: BoxConstraints(
-                      maxHeight: widget.dropdownStyle.maxHeight,
-                    ),
-                    child: Material(
-                      clipBehavior: Clip.antiAlias,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: widget.dropdownStyle.borderRadius,
-                          side: BorderSide(
-                            width: widget.dropdownStyle.borderThickness,
-                            style: BorderStyle.solid,
-                            color: widget.dropdownStyle.borderColor,
-                          )),
-                      color: Colors.transparent,
-                      elevation: 0,
-                      child: FilterCapableListView(
-                        allDropdownValues: widget.allDropdownValues,
-                        listBuilder: (dropdownValue) {
-                          return _buildDropdownRow(dropdownValue);
-                        },
-                        queryString:
-                            widget.focusReactParams?.textController.text ?? "",
+                  child: StatefulBuilder(builder: (context, setState) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: widget.dropdownStyle.borderRadius,
+                        boxShadow: widget.dropdownStyle.boxShadow,
                       ),
-                    ),
-                  ),
+                      constraints: BoxConstraints(
+                        maxHeight: widget.dropdownStyle.maxHeight,
+                      ),
+                      child: Material(
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: widget.dropdownStyle.borderRadius,
+                            side: BorderSide(
+                              width: widget.dropdownStyle.borderThickness,
+                              style: BorderStyle.solid,
+                              color: widget.dropdownStyle.borderColor,
+                            )),
+                        color: Colors.transparent,
+                        elevation: 0,
+                        child: FilterCapableListView(
+                          allDropdownValues: widget.allDropdownValues,
+                          listBuilder: (dropdownValue) {
+                            return _buildDropdownRow(dropdownValue);
+                          },
+                          queryString:
+                              widget.focusReactParams?.textController.text ??
+                                  "",
+                        ),
+                      ),
+                    );
+                  }),
                 ),
               ),
             ));

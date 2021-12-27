@@ -26,6 +26,9 @@ class MyAppState extends State<MyApp> {
     "Viola",
     "Cello",
     "Double Bass",
+    "Piano",
+    "Conductor",
+    "Flautist",
   ];
   List<String> dropdownValues2 = [
     "Mathematician",
@@ -44,6 +47,8 @@ class MyAppState extends State<MyApp> {
   final FocusNode _focusNode = FocusNode();
 
   bool valuesToggle = true;
+
+  final itemToAppend = "happy";
 
   @override
   Widget build(BuildContext context) {
