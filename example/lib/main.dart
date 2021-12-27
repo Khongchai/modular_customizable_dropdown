@@ -26,16 +26,9 @@ class MyAppState extends State<MyApp> {
     "Viola",
     "Cello",
     "Double Bass",
+    "Flautist",
     "Piano",
     "Conductor",
-    "Flautist",
-  ];
-  List<String> dropdownValues2 = [
-    "Mathematician",
-    "Scientist",
-    "Programmer",
-    "Engineer",
-    "Teacher"
   ];
 
   bool showDropdown = false;
@@ -45,8 +38,6 @@ class MyAppState extends State<MyApp> {
   final TextEditingController _textController = TextEditingController();
 
   final FocusNode _focusNode = FocusNode();
-
-  bool valuesToggle = true;
 
   final itemToAppend = "happy";
 
@@ -64,72 +55,70 @@ class MyAppState extends State<MyApp> {
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                const SizedBox(height: 63),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  _buildValuesToggleButton(),
-                ]),
-                const SizedBox(height: 300),
-                ModularCustomizableDropdown.displayOnFocus(
-                  focusNode: _focusNode,
-                  setTextToControllerOnSelect: true,
-                  textController: _textController,
-                  onValueSelect: (String newVal) =>
-                      setState(() => selectedValue = newVal),
-                  allDropdownValues:
-                      valuesToggle ? dropdownValues : dropdownValues2,
-                  style: const DropdownStyle(
-                    borderColor: Colors.black,
-                    borderThickness: 1,
-                    dropdownAlignment: DropdownAlignment.center,
-                  ),
-                  targetBuilder: (focusNode, textController) => SizedBox(
-                    width: 200,
-                    child: TextField(
-                      controller: textController,
-                      focusNode: focusNode,
-                    ),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const SizedBox(height: 100),
+              const Text("Display on Focus",
+                  style: TextStyle(color: Colors.blue)),
+              const SizedBox(height: 20),
+              ModularCustomizableDropdown.displayOnFocus(
+                focusNode: _focusNode,
+                setTextToControllerOnSelect: true,
+                textController: _textController,
+                onValueSelect: (String newVal) =>
+                    setState(() => selectedValue = newVal),
+                allDropdownValues: dropdownValues,
+                style: const DropdownStyle(
+                  borderColor: Colors.black,
+                  borderThickness: 1,
+                  dropdownAlignment: DropdownAlignment.bottomCenter,
+                ),
+                targetBuilder: (focusNode, textController) => SizedBox(
+                  width: 200,
+                  child: TextField(
+                    controller: textController,
+                    focusNode: focusNode,
                   ),
                 ),
-                const SizedBox(height: 40),
-                ModularCustomizableDropdown.displayOnTap(
-                  onValueSelect: (String newVal) {
-                    setState(() {
-                      selectedValue = newVal;
-                    });
-                    _textController.text = newVal;
-                  },
-                  allDropdownValues:
-                      valuesToggle ? dropdownValues : dropdownValues2,
-                  barrierDismissible: false,
-                  style: const DropdownStyle(
-                    borderColor: Colors.black,
-                    borderThickness: 1,
-                    dropdownAlignment: DropdownAlignment.center,
-                  ),
-                  target: ElevatedButton(
-                    child: SizedBox(
-                        width: 150, child: Align(child: Text(selectedValue))),
-                    style: ElevatedButton.styleFrom(
-                        side: const BorderSide(
-                      width: 1.0,
-                      color: Colors.black,
-                    )),
-                    onPressed: () {},
-                  ),
-                )
-              ])),
+              ),
+              const SizedBox(height: 100),
+              const Text("Display on Tap",
+                  style: TextStyle(color: Colors.blue)),
+              const SizedBox(height: 20),
+              ModularCustomizableDropdown.displayOnTap(
+                onValueSelect: (String newVal) {
+                  setState(() {
+                    selectedValue = newVal;
+                  });
+                  _textController.text = newVal;
+                },
+                allDropdownValues: dropdownValues,
+                barrierDismissible: false,
+                style: const DropdownStyle(
+                  widthScale: 0.8,
+                  borderColor: Colors.black,
+                  borderThickness: 1,
+                  //Bottom center with a bit of extra margin
+                  dropdownAlignment: DropdownAlignment(0, 1.04),
+                ),
+                target: ElevatedButton(
+                  child: SizedBox(
+                      width: 150, child: Align(child: Text(selectedValue))),
+                  style: ElevatedButton.styleFrom(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      side: const BorderSide(
+                        width: 1.0,
+                        color: Colors.black,
+                      )),
+                  onPressed: () {},
+                ),
+              ),
+              const SizedBox(height: 200),
+              Text("Selected Value: " + selectedValue),
+            ]),
+          ),
         ),
       ),
-    );
-  }
-
-  Widget _buildValuesToggleButton() {
-    return TextButton(
-      child: Text(valuesToggle ? "Music List" : "Other List"),
-      onPressed: () => setState(() => valuesToggle = !valuesToggle),
     );
   }
 }

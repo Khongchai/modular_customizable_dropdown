@@ -12,9 +12,6 @@ class DropdownStyle {
   final BorderRadius borderRadius;
   final List<BoxShadow> boxShadow;
 
-  ///Space between the dropdown and the target widget.
-  final double topMargin;
-
   ///Your standard material elevation.
   final double elevation;
 
@@ -62,14 +59,13 @@ class DropdownStyle {
     this.defaultItemColor =
         const LinearGradient(colors: [Color(0xff5fbce8), Color(0xff5ffce8)]),
     this.defaultTextStyle = const TextStyle(color: Colors.white),
-    this.dropdownAlignment = DropdownAlignment.center,
+    this.dropdownAlignment = DropdownAlignment.bottomCenter,
     this.onTapTextStyle = const TextStyle(color: Colors.black),
     this.elevation = 3,
     this.borderColor = const Color(0x00000000),
     this.borderThickness = 0,
     this.maxHeight = 220,
     this.collapseOnSelect = true,
-    this.topMargin = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
     this.widthScale = 1,

@@ -13,6 +13,9 @@ import 'list_tile_that_changes_color_on_tap.dart';
 
 /// A dropdown extension for any widget.
 ///
+/// I have provided two simple factory constructors to help you get started,
+/// but you are welcome to assemble your own using the component's constructor.
+///
 /// Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
 /// the widget when you click on it!
 class ModularCustomizableDropdown extends StatefulWidget {
@@ -37,10 +40,14 @@ class ModularCustomizableDropdown extends StatefulWidget {
   final TapReactParams? tapReactParams;
   final FocusReactParams? focusReactParams;
 
-  ///Whether to expose the function for calling dropdown in the target builder function
+  ///Whether to expose the function for calling dropdown in the target builder function or not.
   final bool exposeDropdownHandler;
 
   final void Function(bool visible)? onDropdownVisibilityChange;
+
+  ///Whether or not to swap the alignment, for example, from bottomCenter to topCenter when
+  ///the bottom of the dropdown exceeds the screen height.
+  final bool invertYAxisAlignmentWhenOverflow;
 
   const ModularCustomizableDropdown({
     required this.reactMode,
@@ -49,6 +56,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required this.exposeDropdownHandler,
     required this.barrierDismissible,
     required this.dropdownStyle,
+    required this.invertYAxisAlignmentWhenOverflow,
     this.onDropdownVisibilityChange,
     this.tapReactParams,
     this.focusReactParams,
@@ -75,6 +83,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
       onDropdownVisibilityChange: onDropdownVisible,
       barrierDismissible: barrierDismissible,
       exposeDropdownHandler: false,
+      invertYAxisAlignmentWhenOverflow: true,
     );
   }
 
@@ -105,6 +114,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
       onDropdownVisibilityChange: onDropdownVisible,
       barrierDismissible: barrierDismissible,
       exposeDropdownHandler: false,
+      invertYAxisAlignmentWhenOverflow: true,
     );
   }
 
@@ -172,6 +182,8 @@ class _ModularCustomizableDropdownState
           },
           child: Column(
             children: [
+              //Offstage widget size to see whether we need to move the dropdown to the
+              //top of the current widget when height exceeds screen height.
               Offstage(
                   offstage: true,
                   child: ListTileThatChangesColorOnTap(
@@ -203,38 +215,43 @@ class _ModularCustomizableDropdownState
   OverlayEntry _buildOverlayEntry() {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final Size targetSize = renderBox.size;
+
     final targetPos = renderBox.localToGlobal(Offset.zero);
+    final dropdownAlignment = widget.dropdownStyle.dropdownAlignment;
 
-    //Calculate alignment
-    final alignment = widget.dropdownStyle.dropdownAlignment.x;
-    final width = widget.dropdownStyle.width ?? targetSize.width;
-    final dropdownWidth = (width) * widget.dropdownStyle.widthScale;
-    final diff = ((dropdownWidth - targetSize.width) / 2);
-    final dropdownXPos = -diff + (diff * alignment * -1);
+    //Calculate x alignment
+    final xAlignment = dropdownAlignment.x;
+    final targetWidth = widget.dropdownStyle.width ?? targetSize.width;
+    final dropdownWidth = (targetWidth) * widget.dropdownStyle.widthScale;
+    final xCenter = ((dropdownWidth - targetSize.width) / 2);
+    final dropdownXPos = (xCenter * -xAlignment) - xCenter;
 
-    //Offstage widget size to see whether we need to move the dropdown to the
-    //top of the current widget when height exceeds screen height.
+    //Calculate y alignment
+    final yAlignment = dropdownAlignment.y;
     final singleTileHeight =
         ((offstageListTileKey.currentContext!.findRenderObject()) as RenderBox)
             .size
             .height;
+    final targetHeight = targetSize.height;
     final expectedDropdownHeight = min(
         singleTileHeight * widget.allDropdownValues.length,
         widget.dropdownStyle.maxHeight);
+    final yCenter = expectedDropdownHeight / 2 + targetHeight / 2;
+    final dropdownYPos = targetHeight - yCenter + (yCenter * yAlignment);
 
-    //Calculate dropdown pos
-    final dropdownBottomPos = targetPos.dy +
-        targetSize.height +
-        widget.dropdownStyle.topMargin +
-        expectedDropdownHeight;
-    final isOffScreen = dropdownBottomPos > MediaQuery.of(context).size.height;
-    final dropdownYPos = isOffScreen
-        //Wrap to top of target
-        ? targetSize.height -
-            expectedDropdownHeight -
-            targetSize.height -
-            widget.dropdownStyle.topMargin
-        : targetSize.height + widget.dropdownStyle.topMargin;
+    //Find out if we should invert the dropdown's position
+    // final dropdownBottomPos = targetPos.dy +
+    //     targetSize.height +
+    //     widget.dropdownStyle.topMargin +
+    //     expectedDropdownHeight;
+    // final isOffScreen = dropdownBottomPos > MediaQuery.of(context).size.height;
+    // final dropdownYPos = isOffScreen
+    //     //Wrap to top of target
+    //     ? targetSize.height -
+    //         expectedDropdownHeight -
+    //         targetSize.height -
+    //         widget.dropdownStyle.topMargin
+    //     : targetSize.height + widget.dropdownStyle.topMargin;
 
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible
