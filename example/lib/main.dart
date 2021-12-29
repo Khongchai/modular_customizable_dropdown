@@ -96,12 +96,13 @@ class MyAppState extends State<MyApp> {
                 allDropdownValues: dropdownValues,
                 barrierDismissible: false,
                 style: const DropdownStyle(
-                  widthScale: 0.8,
+                  widthScale: 1.2,
                   borderColor: Colors.black,
                   borderThickness: 1,
-                  //Bottom center with a bit of extra margin
-                  dropdownAlignment: DropdownAlignment.bottomCenter,
-                  // dropdownAlignment: DropdownAlignment(0, 1.04),
+                  //Bottom center with a bit of extra relative margin
+                  dropdownAlignment: DropdownAlignment(0, 1.03),
+                  //Can also do explicit margin, of course, though a bit verbose...
+                  // explicitMarginBetweenDropdownAndTarget: 5,
                 ),
                 target: ElevatedButton(
                   child: SizedBox(

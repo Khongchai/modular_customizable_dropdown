@@ -33,6 +33,17 @@ class DropdownStyle {
   ///If provided, the dropdown will no longer scale itself according to the width of its parent.
   final double? width;
 
+  ///### Why
+  ///While DropdownAlignment is also capable of providing margin between the target and the dropdown,
+  ///situation sometimes calls for explicit margins in pixels. This is the param for that.
+  ///
+  ///### But
+  ///
+  ///If you use this with alignment positions that position the dropdown over the target widget -- the dropdown
+  ///is positioned in such a way that you don't really see any margin, because it's right on top of the target widget,
+  ///then using this is pointless.
+  final double explicitMarginBetweenDropdownAndTarget;
+
   ///Style for dropdown text when tapped
   final TextStyle onTapTextStyle;
 
@@ -54,6 +65,7 @@ class DropdownStyle {
         blurRadius: 25,
       ),
     ],
+    this.explicitMarginBetweenDropdownAndTarget = 0,
     this.onTapItemColor =
         const LinearGradient(colors: [Color(0xff63e9f2), Color(0xff65dbc2)]),
     this.defaultItemColor =

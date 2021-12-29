@@ -2,6 +2,7 @@ import 'dart:math';
 
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
+import 'package:modular_customizable_dropdown/utils/calculate_dropdown_pos.dart';
 import 'package:modular_customizable_dropdown/widgets/filter_capable_listview.dart';
 
 import '../classes_and_enums/dropdown_style.dart';
@@ -219,46 +220,33 @@ class _ModularCustomizableDropdownState
     final Size targetSize = renderBox.size;
 
     final targetPos = renderBox.localToGlobal(Offset.zero);
-    final dropdownAlignment = widget.dropdownStyle.dropdownAlignment;
-
-    //Calculate x alignment
-    final xAlignment = dropdownAlignment.x;
     final targetWidth = widget.dropdownStyle.width ?? targetSize.width;
-    final dropdownWidth = (targetWidth) * widget.dropdownStyle.widthScale;
-    final xCenter = ((dropdownWidth - targetSize.width) / 2);
-    final dropdownRelativeXOffset = (xCenter * -xAlignment) - xCenter;
+    final targetHeight = targetSize.height;
 
-    //Calculate y alignment
-    final yAlignment = dropdownAlignment.y;
     final singleTileHeight =
         ((offstageListTileKey.currentContext!.findRenderObject()) as RenderBox)
             .size
             .height;
-    final targetHeight = targetSize.height;
     final expectedDropdownHeight = min(
         singleTileHeight * widget.allDropdownValues.length,
         widget.dropdownStyle.maxHeight);
-    final yCenter = expectedDropdownHeight / 2 + targetHeight / 2;
-    //For y values, 1 unit of alignment equals half of th dropdown height + target's half of target's height.
-    final yOffset = yCenter * yAlignment;
-    final dropdownRelativeYOffset = targetHeight -
-        yCenter +
-        yOffset; //<< everything after this is just to calculate the wrap around
+    final dropdownWidth = targetWidth * widget.dropdownStyle.widthScale;
+    final dropdownAlignment = widget.dropdownStyle.dropdownAlignment;
 
-    final dropdownAbsoluteYOffset = targetPos.dy + dropdownRelativeYOffset;
-    final dropdownBottomPos = dropdownAbsoluteYOffset + expectedDropdownHeight;
+    final dropdownOffset = calculateDropdownPos(
+        dropdownAlignment: dropdownAlignment,
+        dropdownHeight: expectedDropdownHeight,
+        dropdownWidth: dropdownWidth,
+        targetAbsoluteY: targetPos.dy,
+        targetHeight: targetHeight,
+        targetWidth: targetWidth,
+        screenHeight: MediaQuery.of(context).size.height,
+        invertYAxisAlignmentWhenOverflow:
+            widget.invertYAxisAlignmentWhenOverflow);
 
-    //Once threshold exceeded,
-    //invert the y alignment if invertYAxisAlignmentWhenOverflow == true
-    const screenTop = 0;
-    final isYOverflow =
-        dropdownBottomPos > MediaQuery.of(context).size.height ||
-            dropdownAbsoluteYOffset < screenTop;
-
-    final wrapAroundCalculatedDropdownYPos =
-        isYOverflow && widget.invertYAxisAlignmentWhenOverflow
-            ? targetHeight - yCenter + (yCenter * -yAlignment)
-            : targetHeight - yCenter + (yCenter * yAlignment);
+    final explicitDropdownTargetMargin =
+        widget.dropdownStyle.explicitMarginBetweenDropdownAndTarget *
+            (dropdownAlignment.y > 0 ? 1 : -1);
 
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible
@@ -276,8 +264,8 @@ class _ModularCustomizableDropdownState
               child: Positioned(
                 width: dropdownWidth,
                 child: CompositedTransformFollower(
-                  offset: Offset(dropdownRelativeXOffset,
-                      wrapAroundCalculatedDropdownYPos),
+                  offset: Offset(dropdownOffset.x,
+                      dropdownOffset.y + explicitDropdownTargetMargin),
                   link: _layerLink,
                   showWhenUnlinked: false,
                   child: StatefulBuilder(builder: (context, setState) {
