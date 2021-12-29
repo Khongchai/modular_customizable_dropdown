@@ -60,7 +60,7 @@ class MyAppState extends State<MyApp> {
               const SizedBox(height: 100),
               const Text("Display on Focus",
                   style: TextStyle(color: Colors.blue)),
-              const SizedBox(height: 100),
+              const SizedBox(height: 20),
               ModularCustomizableDropdown.displayOnFocus(
                 focusNode: _focusNode,
                 setTextToControllerOnSelect: true,
@@ -77,6 +77,7 @@ class MyAppState extends State<MyApp> {
                 targetBuilder: (focusNode, textController) => SizedBox(
                   width: 200,
                   child: TextField(
+                    textAlign: TextAlign.center,
                     controller: textController,
                     focusNode: focusNode,
                   ),
@@ -94,7 +95,6 @@ class MyAppState extends State<MyApp> {
                   _textController.text = newVal;
                 },
                 allDropdownValues: dropdownValues,
-                barrierDismissible: false,
                 style: const DropdownStyle(
                   widthScale: 1.2,
                   borderColor: Colors.black,

@@ -122,7 +122,8 @@ class ModularCustomizableDropdown extends StatefulWidget {
   }
 
   //TODO expose a function for displaying the dropdown manually
-  // factory ModularCustomizableDropdown.customControl({})
+  ///Expose the control for when to trigger the dropdown build and dispose
+  // factory ModularCustomizableDropdown.customControl({
 
   @override
   _ModularCustomizableDropdownState createState() =>
