@@ -71,7 +71,7 @@ class MyAppState extends State<MyApp> {
                 style: const DropdownStyle(
                   borderColor: Colors.black,
                   borderThickness: 1,
-                  dropdownAlignment: DropdownAlignment.topCenter,
+                  dropdownAlignment: DropdownAlignment(0, 1.1),
                 ),
                 invertYAxisAlignmentWhenOverflow: true,
                 targetBuilder: (focusNode, textController) => SizedBox(

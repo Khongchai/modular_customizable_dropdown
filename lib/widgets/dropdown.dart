@@ -226,7 +226,7 @@ class _ModularCustomizableDropdownState
     final targetWidth = widget.dropdownStyle.width ?? targetSize.width;
     final dropdownWidth = (targetWidth) * widget.dropdownStyle.widthScale;
     final xCenter = ((dropdownWidth - targetSize.width) / 2);
-    final dropdownXPos = (xCenter * -xAlignment) - xCenter;
+    final dropdownRelativeXOffset = (xCenter * -xAlignment) - xCenter;
 
     //Calculate y alignment
     final yAlignment = dropdownAlignment.y;
@@ -239,20 +239,26 @@ class _ModularCustomizableDropdownState
         singleTileHeight * widget.allDropdownValues.length,
         widget.dropdownStyle.maxHeight);
     final yCenter = expectedDropdownHeight / 2 + targetHeight / 2;
-    //TODO => right now, this only works for 1, -1, 0
-    final dropdownTopPos = targetPos.dy + yAlignment * expectedDropdownHeight;
-    final dropdownBottomPos = dropdownTopPos + expectedDropdownHeight;
+    //For y values, 1 unit of alignment equals half of th dropdown height + target's half of target's height.
+    final yOffset = yCenter * yAlignment;
+    final dropdownRelativeYOffset = targetHeight -
+        yCenter +
+        yOffset; //<< everything after this is just to calculate the wrap around
+
+    final dropdownAbsoluteYOffset = targetPos.dy + dropdownRelativeYOffset;
+    final dropdownBottomPos = dropdownAbsoluteYOffset + expectedDropdownHeight;
 
     //Once threshold exceeded,
     //invert the y alignment if invertYAxisAlignmentWhenOverflow == true
     const screenTop = 0;
     final isYOverflow =
         dropdownBottomPos > MediaQuery.of(context).size.height ||
-            dropdownTopPos < screenTop;
+            dropdownAbsoluteYOffset < screenTop;
 
-    final dropdownYPos = isYOverflow && widget.invertYAxisAlignmentWhenOverflow
-        ? targetHeight - yCenter + (yCenter * -yAlignment)
-        : targetHeight - yCenter + (yCenter * yAlignment);
+    final wrapAroundCalculatedDropdownYPos =
+        isYOverflow && widget.invertYAxisAlignmentWhenOverflow
+            ? targetHeight - yCenter + (yCenter * -yAlignment)
+            : targetHeight - yCenter + (yCenter * yAlignment);
 
     Widget dismissibleWrapper({required Widget child}) =>
         widget.barrierDismissible
@@ -270,7 +276,8 @@ class _ModularCustomizableDropdownState
               child: Positioned(
                 width: dropdownWidth,
                 child: CompositedTransformFollower(
-                  offset: Offset(dropdownXPos, dropdownYPos),
+                  offset: Offset(dropdownRelativeXOffset,
+                      wrapAroundCalculatedDropdownYPos),
                   link: _layerLink,
                   showWhenUnlinked: false,
                   child: StatefulBuilder(builder: (context, setState) {
