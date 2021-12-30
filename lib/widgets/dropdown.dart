@@ -3,6 +3,7 @@ import 'dart:math';
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
 import 'package:modular_customizable_dropdown/utils/calculate_dropdown_pos.dart';
+import 'package:modular_customizable_dropdown/widgets/conditional_tap_event_listener.dart';
 import 'package:modular_customizable_dropdown/widgets/filter_capable_listview.dart';
 
 import '../classes_and_enums/dropdown_style.dart';
@@ -66,6 +67,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
             (focusReactParams != null && reactMode == ReactMode.focusReact)),
         super(key: key);
 
+  ///Automatically displays the dropdown when the target is clicked
   factory ModularCustomizableDropdown.displayOnTap({
     required Function(String selectedValue) onValueSelect,
     required List<String> allDropdownValues,
@@ -89,6 +91,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     );
   }
 
+  ///Same as displayOnTap, but also triggers dropdown when the target is in focus
   factory ModularCustomizableDropdown.displayOnFocus({
     required Function(String selectedValue) onValueSelect,
     required List<String> allDropdownValues,
@@ -121,9 +124,27 @@ class ModularCustomizableDropdown extends StatefulWidget {
     );
   }
 
-  //TODO expose a function for displaying the dropdown manually
-  ///Expose the control for when to trigger the dropdown build and dispose
-  // factory ModularCustomizableDropdown.customControl({
+  ///Expose a toggle control in the target builder method.
+  factory ModularCustomizableDropdown.customControl({
+    required Function(String selectedValue) onValueSelect,
+    required List<String> allDropdownValues,
+    required Widget target,
+    bool invertYAxisAlignmentWhenOverflow = false,
+    bool barrierDismissible = true,
+    DropdownStyle style = const DropdownStyle(),
+    Key? key,
+  }) {
+    return ModularCustomizableDropdown(
+      reactMode: ReactMode.callbackReact,
+      onValueSelect: onValueSelect,
+      allDropdownValues: allDropdownValues,
+      tapReactParams: TapReactParams(target: target),
+      dropdownStyle: style,
+      barrierDismissible: barrierDismissible,
+      exposeDropdownHandler: false,
+      invertYAxisAlignmentWhenOverflow: invertYAxisAlignmentWhenOverflow,
+    );
+  }
 
   @override
   _ModularCustomizableDropdownState createState() =>
@@ -167,24 +188,16 @@ class _ModularCustomizableDropdownState
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
         link: _layerLink,
-        child: Listener(
-          onPointerDown: (_) {
-            setState(() => pointerDown = true);
-          },
-          onPointerCancel: (_) => setState(() {
-            pointerDown = false;
-          }),
-          onPointerUp: (_) {
-            if (buildOverlayEntry &&
-                pointerDown &&
-                widget.reactMode == ReactMode.tapReact) {
+        child: ConditionalTapEventListener(
+          reactMode: widget.reactMode,
+          onTap: () {
+            if (buildOverlayEntry) {
               _buildAndAddOverlay();
             } else {
               _dismissOverlay();
             }
-            setState(() => pointerDown = false);
           },
-          child: Column(
+          listenerChild: Column(
             children: [
               //Offstage widget size to see whether we need to move the dropdown to the
               //top of the current widget when height exceeds screen height.

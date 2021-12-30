@@ -74,14 +74,16 @@ class MyAppState extends State<MyApp> {
                   dropdownAlignment: DropdownAlignment(0, 1.1),
                 ),
                 invertYAxisAlignmentWhenOverflow: true,
-                targetBuilder: (focusNode, textController) => SizedBox(
-                  width: 200,
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    controller: textController,
-                    focusNode: focusNode,
-                  ),
-                ),
+                targetBuilder: (focusNode, textController) {
+                  return SizedBox(
+                    width: 200,
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      controller: textController,
+                      focusNode: focusNode,
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 100),
               const Text("Display on Tap",

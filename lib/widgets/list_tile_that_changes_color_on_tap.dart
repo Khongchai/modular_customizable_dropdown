@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 
 ///To use a solid color, pass LinearGradient(colors: [yourSingleColor, yourSingleColor]);
 class ListTileThatChangesColorOnTap extends StatefulWidget {
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final LinearGradient onTapBackgroundColor;
   final LinearGradient defaultBackgroundColor;
   final TextStyle onTapTextStyle;
@@ -45,9 +45,7 @@ class _ListTileThatChangesColorOnTapState
     );
 
     final tile = TextButton(
-        onPressed: () {
-          widget.onTap();
-        },
+        onPressed: widget.onTap,
         child: text,
         style: ButtonStyle(
             alignment: Alignment.centerLeft,
