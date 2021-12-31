@@ -1,6 +1,7 @@
 import 'package:example/widgets/display_on_callback_section.dart';
 import 'package:example/widgets/display_on_focus_section.dart';
 import 'package:example/widgets/display_on_tap_section.dart';
+import 'package:example/widgets/extra_scroll_space.dart';
 import 'package:example/widgets/section_divider.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +31,7 @@ class MyAppState extends State<MyApp> {
     "Conductor",
   ];
 
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,7 @@ class MyAppState extends State<MyApp> {
           child: SingleChildScrollView(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const SizedBox(height: 100),
+              const ExtraScrollSpace(),
               DisplayOnFocusSection(
                 textEditingController: _textController,
                 dropdownValues: dropdownValues,
@@ -66,6 +67,11 @@ class MyAppState extends State<MyApp> {
                 onValueSelect: _onDropdownValueSelect,
                 dropdownValues: dropdownValues,
               ),
+              const SectionDivider(),
+              Text("Selected Value: " + selectedValue,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+              const ExtraScrollSpace(),
             ]),
           ),
         ),
@@ -76,7 +82,7 @@ class MyAppState extends State<MyApp> {
   void _onDropdownValueSelect(String newValue) {
     setState(() {
       selectedValue = newValue;
-      _textController = TextEditingController()..text = newValue;
+      _textController.text = newValue;
     });
   }
 }

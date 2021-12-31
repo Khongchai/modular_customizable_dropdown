@@ -47,8 +47,8 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
         ),
         const SizedBox(height: 20),
         ElevatedButton(
-          child:
-              const SizedBox(child: Text("Click to Show Dropdown at Target")),
+          child: const SizedBox(
+              child: Text("Click to Show Dropdown at the target")),
           style: ElevatedButton.styleFrom(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               side: const BorderSide(
