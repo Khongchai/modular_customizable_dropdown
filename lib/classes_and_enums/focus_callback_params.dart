@@ -1,9 +1,10 @@
 import "package:flutter/material.dart";
 
-class FocusCallbackParams {
-  final Widget Function(VoidCallback toggleDropdown) targetBuilder;
+class CallbackReactParams {
+  final Widget Function(void Function(bool toggleState) toggleDropdown)
+      targetBuilder;
 
-  const FocusCallbackParams({
+  const CallbackReactParams({
     required this.targetBuilder,
   });
 }

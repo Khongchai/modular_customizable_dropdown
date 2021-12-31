@@ -18,9 +18,6 @@ class DropdownStyle {
   ///If not given, the dropdown will grow to be as large as the child needs.
   final double maxHeight;
 
-  ///Whether or not to collapse the dropdown when a value is selected.
-  final bool collapseOnSelect;
-
   ///The color of a dropdown when tapped
   final LinearGradient onTapItemColor;
 
@@ -77,7 +74,6 @@ class DropdownStyle {
     this.borderColor = const Color(0x00000000),
     this.borderThickness = 0,
     this.maxHeight = 220,
-    this.collapseOnSelect = true,
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
     this.widthScale = 1,

@@ -2,13 +2,13 @@ import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/mode.dart';
 
 class ConditionalTapEventListener extends StatefulWidget {
-  final Widget listenerChild;
+  final Widget child;
   final ReactMode reactMode;
   final VoidCallback onTap;
   const ConditionalTapEventListener(
       {required this.onTap,
       required this.reactMode,
-      required this.listenerChild,
+      required this.child,
       Key? key})
       : super(key: key);
 
@@ -23,7 +23,7 @@ class _ConditionalTapEventListenerState
   @override
   Widget build(BuildContext context) {
     if (widget.reactMode != ReactMode.tapReact) {
-      return widget.listenerChild;
+      return widget.child;
     } else {
       return Listener(
           onPointerDown: (_) {
@@ -36,7 +36,7 @@ class _ConditionalTapEventListenerState
             setState(() => pointerDown = false);
             widget.onTap();
           },
-          child: widget.listenerChild);
+          child: widget.child);
     }
   }
 }
