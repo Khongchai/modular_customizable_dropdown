@@ -1,5 +1,7 @@
+import 'package:example/widgets/display_on_callback_section.dart';
 import 'package:example/widgets/display_on_focus_section.dart';
 import 'package:example/widgets/display_on_tap_section.dart';
+import 'package:example/widgets/section_divider.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -17,10 +19,6 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  GlobalKey<State> key = GlobalKey();
-
-  double fabOpacity = 1.0;
-
   String selectedValue = "Violin";
   List<String> dropdownValues = [
     "Violin",
@@ -31,10 +29,6 @@ class MyAppState extends State<MyApp> {
     "Piano",
     "Conductor",
   ];
-
-  bool showDropdown = false;
-
-  ReactMode currentMode = ReactMode.focusReact;
 
   final TextEditingController _textController = TextEditingController();
 
@@ -56,23 +50,31 @@ class MyAppState extends State<MyApp> {
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const SizedBox(height: 100),
               DisplayOnFocusSection(
-                  textEditingController: _textController,
-                  dropdownValues: dropdownValues,
-                  onValueSelect: (_selectedValue) =>
-                      setState(() => selectedValue = _selectedValue)),
-              const SizedBox(height: 50),
+                textEditingController: _textController,
+                dropdownValues: dropdownValues,
+                onValueSelect: _onDropdownValueSelect,
+              ),
+              const SectionDivider(),
               DisplayOnTapSection(
-                onValueSelect: (_selectedValue) =>
-                    setState(() => selectedValue = _selectedValue),
+                onValueSelect: _onDropdownValueSelect,
                 selectedValue: selectedValue,
                 dropdownValues: dropdownValues,
               ),
-              const SizedBox(height: 200),
-              Text("Selected Value: " + selectedValue),
+              const SectionDivider(),
+              DisplayOnCallbackSection(
+                selectedValue: selectedValue,
+                onValueSelect: _onDropdownValueSelect,
+                dropdownValues: dropdownValues,
+              ),
             ]),
           ),
         ),
       ),
     );
+  }
+
+  void _onDropdownValueSelect(String newValue) {
+    setState(() => selectedValue = newValue);
+    _textController.text = newValue;
   }
 }

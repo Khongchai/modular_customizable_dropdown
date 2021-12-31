@@ -132,10 +132,9 @@ class ModularCustomizableDropdown extends StatefulWidget {
   }
 
   ///Expose a toggle callback in the target builder method.
-  factory ModularCustomizableDropdown.customControl({
+  factory ModularCustomizableDropdown.displayOnCallback({
     required Function(String selectedValue) onValueSelect,
     required List<String> allDropdownValues,
-    required Widget target,
     required Widget Function(void Function(bool toggleState) toggleDropdown)
         targetBuilder,
     required bool collapseOnSelect,
