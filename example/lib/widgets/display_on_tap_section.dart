@@ -29,6 +29,7 @@ class DisplayOnTapSection extends StatelessWidget {
             dropdownAlignment: DropdownAlignment(0, 1.03),
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
+            invertYAxisAlignmentWhenOverflow: true,
           ),
           target: ElevatedButton(
             child:

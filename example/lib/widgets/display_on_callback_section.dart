@@ -37,8 +37,8 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
             dropdownAlignment: DropdownAlignment(0, 1.03),
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
+            invertYAxisAlignmentWhenOverflow: true,
           ),
-          invertYAxisAlignmentWhenOverflow: true,
           targetBuilder: (_toggleDropdown) {
             toggleDropdown = _toggleDropdown;
             return const Text("This is the dropdown's target");

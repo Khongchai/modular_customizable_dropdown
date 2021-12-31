@@ -30,7 +30,6 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
       const SizedBox(height: 20),
       ModularCustomizableDropdown.displayOnFocus(
         focusNode: _focusNode,
-        setTextToControllerOnSelect: true,
         textController: _textController,
         onValueSelect: widget.onValueSelect,
         allDropdownValues: widget.dropdownValues,
@@ -38,8 +37,8 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
           borderColor: Colors.black,
           borderThickness: 1,
           dropdownAlignment: DropdownAlignment(0, 1.1),
+          invertYAxisAlignmentWhenOverflow: true,
         ),
-        invertYAxisAlignmentWhenOverflow: true,
         targetBuilder: (focusNode, textController) {
           return SizedBox(
             width: 200,

@@ -50,7 +50,12 @@ class DropdownStyle {
 
   final DropdownAlignment dropdownAlignment;
 
+  ///Whether or not to swap the alignment, for example, from bottomCenter to topCenter when
+  ///the bottom of the dropdown exceeds the screen height.
+  final bool invertYAxisAlignmentWhenOverflow;
+
   const DropdownStyle({
+    required this.invertYAxisAlignmentWhenOverflow,
     this.boxShadow = const [
       BoxShadow(
         color: Color.fromRGBO(0, 0, 0, 0.5),

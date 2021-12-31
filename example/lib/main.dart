@@ -30,7 +30,7 @@ class MyAppState extends State<MyApp> {
     "Conductor",
   ];
 
-  final TextEditingController _textController = TextEditingController();
+  TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,9 @@ class MyAppState extends State<MyApp> {
   }
 
   void _onDropdownValueSelect(String newValue) {
-    setState(() => selectedValue = newValue);
-    _textController.text = newValue;
+    setState(() {
+      selectedValue = newValue;
+      _textController = TextEditingController()..text = newValue;
+    });
   }
 }

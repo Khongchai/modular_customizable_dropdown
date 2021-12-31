@@ -49,17 +49,12 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
   final void Function(bool visible)? onDropdownVisibilityChange;
 
-  ///Whether or not to swap the alignment, for example, from bottomCenter to topCenter when
-  ///the bottom of the dropdown exceeds the screen height.
-  final bool invertYAxisAlignmentWhenOverflow;
-
   const ModularCustomizableDropdown({
     required this.reactMode,
     required this.onValueSelect,
     required this.allDropdownValues,
     required this.barrierDismissible,
     required this.dropdownStyle,
-    required this.invertYAxisAlignmentWhenOverflow,
     required this.collapseOnSelect,
     this.onDropdownVisibilityChange,
     this.callbackReactParams,
@@ -78,9 +73,9 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required List<String> allDropdownValues,
     required Widget target,
     Function(bool)? onDropdownVisible,
-    bool invertYAxisAlignmentWhenOverflow = false,
     bool barrierDismissible = true,
-    DropdownStyle style = const DropdownStyle(),
+    DropdownStyle style =
+        const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
     bool collapseOnSelect = true,
     Key? key,
   }) {
@@ -93,7 +88,6 @@ class ModularCustomizableDropdown extends StatefulWidget {
       dropdownStyle: style,
       onDropdownVisibilityChange: onDropdownVisible,
       barrierDismissible: barrierDismissible,
-      invertYAxisAlignmentWhenOverflow: invertYAxisAlignmentWhenOverflow,
     );
   }
 
@@ -106,12 +100,12 @@ class ModularCustomizableDropdown extends StatefulWidget {
         targetBuilder,
     required TextEditingController textController,
     required FocusNode focusNode,
-    required bool setTextToControllerOnSelect,
+    bool setTextToControllerOnSelect = true,
     bool collapseOnSelect = true,
-    bool invertYAxisAlignmentWhenOverflow = false,
     bool barrierDismissible = true,
     Function(bool)? onDropdownVisible,
-    DropdownStyle style = const DropdownStyle(),
+    DropdownStyle style =
+        const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
     Key? key,
   }) {
     return ModularCustomizableDropdown(
@@ -127,7 +121,6 @@ class ModularCustomizableDropdown extends StatefulWidget {
       dropdownStyle: style,
       onDropdownVisibilityChange: onDropdownVisible,
       barrierDismissible: barrierDismissible,
-      invertYAxisAlignmentWhenOverflow: invertYAxisAlignmentWhenOverflow,
     );
   }
 
@@ -138,9 +131,9 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required Widget Function(void Function(bool toggleState) toggleDropdown)
         targetBuilder,
     required bool collapseOnSelect,
-    bool invertYAxisAlignmentWhenOverflow = false,
     bool barrierDismissible = true,
-    DropdownStyle style = const DropdownStyle(),
+    DropdownStyle style =
+        const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
     Key? key,
   }) {
     return ModularCustomizableDropdown(
@@ -151,7 +144,6 @@ class ModularCustomizableDropdown extends StatefulWidget {
       callbackReactParams: CallbackReactParams(targetBuilder: targetBuilder),
       dropdownStyle: style,
       barrierDismissible: barrierDismissible,
-      invertYAxisAlignmentWhenOverflow: invertYAxisAlignmentWhenOverflow,
     );
   }
 
@@ -269,7 +261,7 @@ class _ModularCustomizableDropdownState
         targetWidth: targetWidth,
         screenHeight: MediaQuery.of(context).size.height,
         invertYAxisAlignmentWhenOverflow:
-            widget.invertYAxisAlignmentWhenOverflow);
+            widget.dropdownStyle.invertYAxisAlignmentWhenOverflow);
 
     final explicitDropdownTargetMargin =
         widget.dropdownStyle.explicitMarginBetweenDropdownAndTarget *

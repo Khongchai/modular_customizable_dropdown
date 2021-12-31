@@ -5,7 +5,6 @@ class SectionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("called");
     return Column(children: const [
       SizedBox(height: 50),
       Divider(
