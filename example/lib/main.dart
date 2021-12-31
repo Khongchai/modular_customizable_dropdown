@@ -1,5 +1,6 @@
+import 'package:example/widgets/display_on_focus_section.dart';
+import 'package:example/widgets/display_on_tap_section.dart';
 import 'package:flutter/material.dart';
-import "package:modular_customizable_dropdown/modular_customizable_dropdown.dart";
 
 void main() => runApp(const MyApp());
 
@@ -37,10 +38,6 @@ class MyAppState extends State<MyApp> {
 
   final TextEditingController _textController = TextEditingController();
 
-  final FocusNode _focusNode = FocusNode();
-
-  final itemToAppend = "happy";
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -58,65 +55,17 @@ class MyAppState extends State<MyApp> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const SizedBox(height: 100),
-              const Text("Display on Focus",
-                  style: TextStyle(color: Colors.blue)),
-              const SizedBox(height: 20),
-              ModularCustomizableDropdown.displayOnFocus(
-                focusNode: _focusNode,
-                setTextToControllerOnSelect: true,
-                textController: _textController,
-                onValueSelect: (String newVal) =>
-                    setState(() => selectedValue = newVal),
-                allDropdownValues: dropdownValues,
-                style: const DropdownStyle(
-                  borderColor: Colors.black,
-                  borderThickness: 1,
-                  dropdownAlignment: DropdownAlignment(0, 1.1),
-                ),
-                invertYAxisAlignmentWhenOverflow: true,
-                targetBuilder: (focusNode, textController) {
-                  return SizedBox(
-                    width: 200,
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      controller: textController,
-                      focusNode: focusNode,
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 100),
-              const Text("Display on Tap",
-                  style: TextStyle(color: Colors.blue)),
-              const SizedBox(height: 20),
-              ModularCustomizableDropdown.displayOnTap(
-                onValueSelect: (String newVal) {
-                  setState(() {
-                    selectedValue = newVal;
-                  });
-                  _textController.text = newVal;
-                },
-                allDropdownValues: dropdownValues,
-                style: const DropdownStyle(
-                  widthScale: 1.2,
-                  borderColor: Colors.black,
-                  borderThickness: 1,
-                  //Bottom center with a bit of extra relative margin
-                  dropdownAlignment: DropdownAlignment(0, 1.03),
-                  //Can also do explicit margin, of course, though a bit verbose...
-                  // explicitMarginBetweenDropdownAndTarget: 5,
-                ),
-                target: ElevatedButton(
-                  child: SizedBox(
-                      width: 150, child: Align(child: Text(selectedValue))),
-                  style: ElevatedButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      side: const BorderSide(
-                        width: 1.0,
-                        color: Colors.black,
-                      )),
-                  onPressed: () {},
-                ),
+              DisplayOnFocusSection(
+                  textEditingController: _textController,
+                  dropdownValues: dropdownValues,
+                  onValueSelect: (_selectedValue) =>
+                      setState(() => selectedValue = _selectedValue)),
+              const SizedBox(height: 50),
+              DisplayOnTapSection(
+                onValueSelect: (_selectedValue) =>
+                    setState(() => selectedValue = _selectedValue),
+                selectedValue: selectedValue,
+                dropdownValues: dropdownValues,
               ),
               const SizedBox(height: 200),
               Text("Selected Value: " + selectedValue),

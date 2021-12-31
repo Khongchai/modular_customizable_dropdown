@@ -354,6 +354,7 @@ class _ModularCustomizableDropdownState
     );
   }
 
+  ///For building and disposing dropdown
   void _toggleOverlay(bool predicate) {
     if (predicate) {
       _buildAndAddOverlay();
@@ -362,6 +363,7 @@ class _ModularCustomizableDropdownState
     }
   }
 
+  ///Should not be called by any function other than _toggleOverlay()
   void _buildAndAddOverlay() {
     _overlayEntry = _buildOverlayEntry();
     Overlay.of(context)!.insert(_overlayEntry!);
@@ -371,6 +373,7 @@ class _ModularCustomizableDropdownState
     _onDropdownVisible(true);
   }
 
+  ///Should not be called by any function other than _toggleOverlay()
   void _dismissOverlay() {
     if (inBuildingPhase != true) {
       _overlayEntry!.remove();
@@ -384,6 +387,7 @@ class _ModularCustomizableDropdownState
     }
   }
 
+  ///Should not be called by any function other than _dismissOverlay()
   void _onDropdownVisible(bool dropdownVisible) {
     if (widget.onDropdownVisibilityChange != null) {
       widget.onDropdownVisibilityChange!(dropdownVisible);
