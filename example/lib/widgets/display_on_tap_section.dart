@@ -26,7 +26,8 @@ class DisplayOnTapSection extends StatelessWidget {
             borderColor: Colors.black,
             borderThickness: 1,
             //Bottom center with a bit of extra relative margin
-            dropdownAlignment: DropdownAlignment(0, 1.03),
+            // dropdownAlignment: DropdownAlignment(0, 1.03),
+            dropdownAlignment: DropdownAlignment.center,
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
             invertYAxisAlignmentWhenOverflow: true,

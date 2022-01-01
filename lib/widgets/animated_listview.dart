@@ -21,6 +21,7 @@ class AnimatedListView extends StatefulWidget {
 
   ///Height to animate to
   final double expectedDropdownHeight;
+
   final double targetWidth;
 
   final List<BoxShadow> boxShadows;
@@ -50,7 +51,7 @@ class _AnimatedListViewState extends State<AnimatedListView> {
   double _expectedHeight = 0;
 
   ///TODO refactor this out as one of the params
-  static const _animationDuration = Duration(milliseconds: 300);
+  static const _animationDuration = Duration(milliseconds: 100);
   late final double _animationStartPosition;
 
   @override
@@ -66,42 +67,46 @@ class _AnimatedListViewState extends State<AnimatedListView> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: _animationDuration,
+    return SizedBox(
       height: _expectedHeight,
-      width: widget.targetWidth,
-      decoration: BoxDecoration(
-        borderRadius: widget.borderRadius,
-        boxShadow: widget.boxShadows,
-      ),
-      child: Material(
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-            borderRadius: widget.borderRadius,
-            side: BorderSide(
-              width: widget.borderThickness,
-              style: BorderStyle.solid,
-              color: widget.borderColor,
-            )),
-        color: Colors.transparent,
-        elevation: 0,
-        child: Stack(
-          alignment: AlignmentDirectional(0, _animationStartPosition),
-          children: [
-            ListView.builder(
-                itemCount: widget.allDropdownValues.length,
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  if (filterOutValueThatDoNotMatchQueryString(
-                      queryString: widget.queryString,
-                      valueToFilter: widget.allDropdownValues[index])) {
-                    return widget.listBuilder(widget.allDropdownValues[index]);
-                  }
-                  return const SizedBox();
-                }),
-          ],
-        ),
+      child: Stack(
+        alignment: AlignmentDirectional(0, _animationStartPosition),
+        children: [
+          AnimatedContainer(
+            duration: _animationDuration,
+            height: _expectedHeight,
+            width: widget.targetWidth,
+            decoration: BoxDecoration(
+              borderRadius: widget.borderRadius,
+              boxShadow: widget.boxShadows,
+            ),
+            child: Material(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                  borderRadius: widget.borderRadius,
+                  side: BorderSide(
+                    width: widget.borderThickness,
+                    style: BorderStyle.solid,
+                    color: widget.borderColor,
+                  )),
+              color: Colors.transparent,
+              elevation: 0,
+              child: ListView.builder(
+                  itemCount: widget.allDropdownValues.length,
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    if (filterOutValueThatDoNotMatchQueryString(
+                        queryString: widget.queryString,
+                        valueToFilter: widget.allDropdownValues[index])) {
+                      return widget
+                          .listBuilder(widget.allDropdownValues[index]);
+                    }
+                    return const SizedBox();
+                  }),
+            ),
+          ),
+        ],
       ),
     );
   }

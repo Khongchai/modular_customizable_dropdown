@@ -2,10 +2,11 @@ import 'dart:math';
 
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
+import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/focus_callback_params.dart';
 import 'package:modular_customizable_dropdown/utils/calculate_dropdown_pos.dart';
+import 'package:modular_customizable_dropdown/widgets/animated_listview.dart';
 import 'package:modular_customizable_dropdown/widgets/conditional_tap_event_listener.dart';
-import 'package:modular_customizable_dropdown/widgets/filter_capable_listview.dart';
 
 import '../classes_and_enums/dropdown_style.dart';
 import '../classes_and_enums/focus_react_params.dart';
@@ -278,6 +279,10 @@ class _ModularCustomizableDropdownState
                 ]))
             : Stack(children: [child]);
 
+    final DropdownAlignment newAlignment = DropdownAlignment(
+        dropdownAlignment.x,
+        dropdownAlignment.y * (dropdownOffset.isYInverted ? -1 : 1));
+
     return OverlayEntry(
       builder: (context) => dismissibleWrapper(
         child: Positioned(
@@ -294,7 +299,7 @@ class _ModularCustomizableDropdownState
                 boxShadows: widget.dropdownStyle.boxShadows,
                 targetWidth: targetWidth,
                 allDropdownValues: widget.allDropdownValues,
-                dropdownAlignment: dropdownAlignment,
+                dropdownAlignment: newAlignment,
                 listBuilder: (dropdownValue) {
                   return _buildDropdownRow(dropdownValue);
                 },

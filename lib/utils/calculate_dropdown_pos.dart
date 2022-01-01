@@ -39,5 +39,6 @@ Vector2 calculateDropdownPos({
           ? targetHeight - yCenter + (yCenter * -yAlignment)
           : targetHeight - yCenter + (yCenter * yAlignment);
 
-  return Vector2(dropdownRelativeXOffset, wrapAroundCalculatedDropdownYPos);
+  return Vector2(dropdownRelativeXOffset, wrapAroundCalculatedDropdownYPos,
+      isYOverflow && invertYAxisAlignmentWhenOverflow);
 }
