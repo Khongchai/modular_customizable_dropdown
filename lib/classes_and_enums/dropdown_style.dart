@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 
 import 'dropdown_alignment.dart';
+import 'dropdown_max_height.dart';
 
 ///To allow for both gradient and solid color, in many places, the LinearGradient class is used instead of the Color class.
 ///
@@ -12,11 +13,7 @@ class DropdownStyle {
   final BorderRadius borderRadius;
   final List<BoxShadow> boxShadows;
 
-  ///Your standard material elevation.
-  final double elevation;
-
-  ///If not given, the dropdown will grow to be as large as the child needs.
-  final double maxHeight;
+  final DropdownMaxHeight dropdownMaxHeight;
 
   ///The color of a dropdown when tapped
   final LinearGradient onTapItemColor;
@@ -75,10 +72,9 @@ class DropdownStyle {
     this.defaultTextStyle = const TextStyle(color: Colors.white),
     this.dropdownAlignment = DropdownAlignment.bottomCenter,
     this.onTapTextStyle = const TextStyle(color: Colors.black),
-    this.elevation = 3,
     this.borderColor = const Color(0x00000000),
     this.borderThickness = 0,
-    this.maxHeight = 220,
+    this.dropdownMaxHeight = const DropdownMaxHeight(),
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
     this.widthScale = 1,

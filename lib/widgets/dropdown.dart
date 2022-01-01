@@ -247,9 +247,10 @@ class _ModularCustomizableDropdownState
         ((offstageListTileKey.currentContext!.findRenderObject()) as RenderBox)
             .size
             .height;
+    final maxDropdownHeight = widget.dropdownStyle.dropdownMaxHeight.byPixels ??
+        widget.dropdownStyle.dropdownMaxHeight.byRows * singleTileHeight;
     final expectedDropdownHeight = min(
-        singleTileHeight * widget.allDropdownValues.length,
-        widget.dropdownStyle.maxHeight);
+        singleTileHeight * widget.allDropdownValues.length, maxDropdownHeight);
     final dropdownWidth = targetWidth * widget.dropdownStyle.widthScale;
     final dropdownAlignment = widget.dropdownStyle.dropdownAlignment;
 

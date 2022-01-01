@@ -36,6 +36,7 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
         style: const DropdownStyle(
           borderColor: Colors.black,
           borderThickness: 1,
+          dropdownMaxHeight: DropdownMaxHeight(byRows: 5),
           dropdownAlignment: DropdownAlignment(0, -1.2),
           invertYAxisAlignmentWhenOverflow: true,
         ),
