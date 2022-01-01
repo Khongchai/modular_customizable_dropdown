@@ -2,4 +2,8 @@
 
 # Motivation
 
-Many dropdown packages that exist in the market currently requires you to somersault around their provided dropdown and some custom widgets...
+## A modular dropdown package that is compatible with any widget.
+
+Create the dropdown widget and pass it whatever widget you want the dropdown to attach to as its target. By default, the dropdown will appear
+directly below the target widget's position. This can be customized further with the DropdownStyle class.
+

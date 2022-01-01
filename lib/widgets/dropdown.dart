@@ -16,7 +16,7 @@ import 'list_tile_that_changes_color_on_tap.dart';
 
 /// A dropdown extension for any widget.
 ///
-/// I have provided two simple factory constructors to help you get started,
+/// I have provided three factory constructors to help you get started,
 /// but you are welcome to assemble your own using the component's constructor.
 ///
 /// Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
@@ -307,12 +307,15 @@ class _ModularCustomizableDropdownState
                   color: Colors.transparent,
                   elevation: 0,
                   child: FilterCapableListView(
+                    targetWidth: targetWidth,
                     allDropdownValues: widget.allDropdownValues,
+                    dropdownAlignment: dropdownAlignment,
                     listBuilder: (dropdownValue) {
                       return _buildDropdownRow(dropdownValue);
                     },
                     queryString:
                         widget.focusReactParams?.textController.text ?? "",
+                    expectedDropdownHeight: expectedDropdownHeight,
                   ),
                 ),
               )),
