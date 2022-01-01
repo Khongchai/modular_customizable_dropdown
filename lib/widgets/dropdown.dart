@@ -294,6 +294,8 @@ class _ModularCustomizableDropdownState
               link: _layerLink,
               showWhenUnlinked: false,
               child: AnimatedListView(
+                singleTileHeight: singleTileHeight,
+                animationDuration: widget.dropdownStyle.transitionInDuration,
                 borderThickness: widget.dropdownStyle.borderThickness,
                 borderColor: widget.dropdownStyle.borderColor,
                 borderRadius: widget.dropdownStyle.borderRadius,

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
+import 'package:modular_customizable_dropdown/utils/delayed_action.dart';
 import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
 class AnimatedListView extends StatefulWidget {
@@ -22,15 +23,18 @@ class AnimatedListView extends StatefulWidget {
   ///Height to animate to
   final double expectedDropdownHeight;
 
+  final double singleTileHeight;
   final double targetWidth;
-
   final List<BoxShadow> boxShadows;
   final Color borderColor;
   final double borderThickness;
   final BorderRadius borderRadius;
 
+  final Duration animationDuration;
+
   const AnimatedListView(
       {required this.allDropdownValues,
+      required this.animationDuration,
       required this.queryString,
       required this.listBuilder,
       required this.expectedDropdownHeight,
@@ -40,6 +44,7 @@ class AnimatedListView extends StatefulWidget {
       required this.borderRadius,
       required this.borderThickness,
       required this.boxShadows,
+      required this.singleTileHeight,
       Key? key})
       : super(key: key);
 
@@ -48,34 +53,46 @@ class AnimatedListView extends StatefulWidget {
 }
 
 class _AnimatedListViewState extends State<AnimatedListView> {
-  double _expectedHeight = 0;
-
-  ///TODO refactor this out as one of the params
-  static const _animationDuration = Duration(milliseconds: 100);
+  double _maxHeight = 0;
+  late Duration _animationDuration;
   late final double _animationStartPosition;
 
   @override
   void initState() {
     _animationStartPosition = min(max(widget.dropdownAlignment.y, -1), 1) * -1;
-    Future.delayed(const Duration(milliseconds: 0), () {
+    _animationDuration = widget.animationDuration;
+    delayedAction(0, () {
       setState(() {
-        _expectedHeight = widget.expectedDropdownHeight;
+        _maxHeight = widget.expectedDropdownHeight;
+
+        ///Set the animation duration to 0 after the transition in is finished.
+        delayedAction(widget.animationDuration.inMilliseconds, () {
+          setState(() {
+            _animationDuration = const Duration(milliseconds: 0);
+          });
+        });
       });
     });
     super.initState();
   }
 
-//TODO type something in the search box and you'll know what to do
   @override
   Widget build(BuildContext context) {
+    final filteredValues = filterOutValuesThatDoNotMatchQueryString(
+        queryString: widget.queryString,
+        valuesToFilter: widget.allDropdownValues);
+    final wrapperStaticHeight = _maxHeight;
+    final animatedListHeight = min(
+        widget.singleTileHeight * filteredValues.length, wrapperStaticHeight);
+
     return SizedBox(
-      height: _expectedHeight,
+      height: wrapperStaticHeight,
       child: Stack(
         alignment: AlignmentDirectional(0, _animationStartPosition),
         children: [
           AnimatedContainer(
             duration: _animationDuration,
-            height: _expectedHeight,
+            height: animatedListHeight,
             width: widget.targetWidth,
             decoration: BoxDecoration(
               borderRadius: widget.borderRadius,
@@ -93,18 +110,10 @@ class _AnimatedListViewState extends State<AnimatedListView> {
               color: Colors.transparent,
               elevation: 0,
               child: ListView.builder(
-                  itemCount: widget.allDropdownValues.length,
+                  itemCount: filteredValues.length,
                   padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    if (filterOutValueThatDoNotMatchQueryString(
-                        queryString: widget.queryString,
-                        valueToFilter: widget.allDropdownValues[index])) {
-                      return widget
-                          .listBuilder(widget.allDropdownValues[index]);
-                    }
-                    return const SizedBox();
-                  }),
+                  itemBuilder: (context, index) =>
+                      widget.listBuilder(filteredValues[index])),
             ),
           ),
         ],

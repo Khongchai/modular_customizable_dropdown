@@ -47,6 +47,8 @@ class DropdownStyle {
 
   final DropdownAlignment dropdownAlignment;
 
+  final Duration transitionInDuration;
+
   ///Whether or not to swap the alignment, for example, from bottomCenter to topCenter when
   ///the bottom of the dropdown exceeds the screen height.
   final bool invertYAxisAlignmentWhenOverflow;
@@ -67,6 +69,7 @@ class DropdownStyle {
     this.explicitMarginBetweenDropdownAndTarget = 0,
     this.onTapItemColor =
         const LinearGradient(colors: [Color(0xff63e9f2), Color(0xff65dbc2)]),
+    this.transitionInDuration = const Duration(milliseconds: 100),
     this.defaultItemColor =
         const LinearGradient(colors: [Color(0xff5fbce8), Color(0xff5ffce8)]),
     this.defaultTextStyle = const TextStyle(color: Colors.white),
