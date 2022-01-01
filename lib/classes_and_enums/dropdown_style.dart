@@ -10,7 +10,7 @@ class DropdownStyle {
   final Color borderColor;
   final double borderThickness;
   final BorderRadius borderRadius;
-  final List<BoxShadow> boxShadow;
+  final List<BoxShadow> boxShadows;
 
   ///Your standard material elevation.
   final double elevation;
@@ -56,7 +56,7 @@ class DropdownStyle {
 
   const DropdownStyle({
     required this.invertYAxisAlignmentWhenOverflow,
-    this.boxShadow = const [
+    this.boxShadows = const [
       BoxShadow(
         color: Color.fromRGBO(0, 0, 0, 0.5),
         blurRadius: 10,

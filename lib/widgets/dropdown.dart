@@ -287,37 +287,19 @@ class _ModularCustomizableDropdownState
                   dropdownOffset.y + explicitDropdownTargetMargin),
               link: _layerLink,
               showWhenUnlinked: false,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: widget.dropdownStyle.borderRadius,
-                  boxShadow: widget.dropdownStyle.boxShadow,
-                ),
-                constraints: BoxConstraints(
-                  maxHeight: widget.dropdownStyle.maxHeight,
-                ),
-                child: Material(
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: widget.dropdownStyle.borderRadius,
-                      side: BorderSide(
-                        width: widget.dropdownStyle.borderThickness,
-                        style: BorderStyle.solid,
-                        color: widget.dropdownStyle.borderColor,
-                      )),
-                  color: Colors.transparent,
-                  elevation: 0,
-                  child: FilterCapableListView(
-                    targetWidth: targetWidth,
-                    allDropdownValues: widget.allDropdownValues,
-                    dropdownAlignment: dropdownAlignment,
-                    listBuilder: (dropdownValue) {
-                      return _buildDropdownRow(dropdownValue);
-                    },
-                    queryString:
-                        widget.focusReactParams?.textController.text ?? "",
-                    expectedDropdownHeight: expectedDropdownHeight,
-                  ),
-                ),
+              child: AnimatedListView(
+                borderThickness: widget.dropdownStyle.borderThickness,
+                borderColor: widget.dropdownStyle.borderColor,
+                borderRadius: widget.dropdownStyle.borderRadius,
+                boxShadows: widget.dropdownStyle.boxShadows,
+                targetWidth: targetWidth,
+                allDropdownValues: widget.allDropdownValues,
+                dropdownAlignment: dropdownAlignment,
+                listBuilder: (dropdownValue) {
+                  return _buildDropdownRow(dropdownValue);
+                },
+                queryString: widget.focusReactParams?.textController.text ?? "",
+                expectedDropdownHeight: expectedDropdownHeight,
               )),
         ),
       ),

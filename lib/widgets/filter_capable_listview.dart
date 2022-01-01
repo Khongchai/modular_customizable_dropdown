@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
 import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
-class FilterCapableListView extends StatefulWidget {
+class AnimatedListView extends StatefulWidget {
   final List<String> allDropdownValues;
   final String queryString;
   final Widget Function(String dropdownValue) listBuilder;
@@ -22,25 +22,35 @@ class FilterCapableListView extends StatefulWidget {
   ///Height to animate to
   final double expectedDropdownHeight;
   final double targetWidth;
-  const FilterCapableListView(
+
+  final List<BoxShadow> boxShadows;
+  final Color borderColor;
+  final double borderThickness;
+  final BorderRadius borderRadius;
+
+  const AnimatedListView(
       {required this.allDropdownValues,
       required this.queryString,
       required this.listBuilder,
       required this.expectedDropdownHeight,
       required this.targetWidth,
       required this.dropdownAlignment,
+      required this.borderColor,
+      required this.borderRadius,
+      required this.borderThickness,
+      required this.boxShadows,
       Key? key})
       : super(key: key);
 
   @override
-  State<FilterCapableListView> createState() => _FilterCapableListViewState();
+  State<AnimatedListView> createState() => _AnimatedListViewState();
 }
 
-class _FilterCapableListViewState extends State<FilterCapableListView> {
+class _AnimatedListViewState extends State<AnimatedListView> {
   double _expectedHeight = 0;
 
   ///TODO refactor this out as one of the params
-  static const _animationDuration = Duration(milliseconds: 100);
+  static const _animationDuration = Duration(milliseconds: 300);
   late final double _animationStartPosition;
 
   @override
@@ -54,20 +64,31 @@ class _FilterCapableListViewState extends State<FilterCapableListView> {
     super.initState();
   }
 
-  ///TODO, once the animation works, refactor the widget with boxshadow to this file
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return AnimatedContainer(
+      duration: _animationDuration,
       height: _expectedHeight,
       width: widget.targetWidth,
-      child: Stack(
-        alignment: AlignmentDirectional(0, _animationStartPosition),
-        children: [
-          AnimatedContainer(
-            height: _expectedHeight,
-            curve: Curves.easeIn,
-            duration: _animationDuration,
-            child: ListView.builder(
+      decoration: BoxDecoration(
+        borderRadius: widget.borderRadius,
+        boxShadow: widget.boxShadows,
+      ),
+      child: Material(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+            borderRadius: widget.borderRadius,
+            side: BorderSide(
+              width: widget.borderThickness,
+              style: BorderStyle.solid,
+              color: widget.borderColor,
+            )),
+        color: Colors.transparent,
+        elevation: 0,
+        child: Stack(
+          alignment: AlignmentDirectional(0, _animationStartPosition),
+          children: [
+            ListView.builder(
                 itemCount: widget.allDropdownValues.length,
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
@@ -79,8 +100,8 @@ class _FilterCapableListViewState extends State<FilterCapableListView> {
                   }
                   return const SizedBox();
                 }),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
