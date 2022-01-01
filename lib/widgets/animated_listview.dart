@@ -65,6 +65,7 @@ class _AnimatedListViewState extends State<AnimatedListView> {
     super.initState();
   }
 
+//TODO type something in the search box and you'll know what to do
   @override
   Widget build(BuildContext context) {
     return SizedBox(

@@ -36,7 +36,7 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
         style: const DropdownStyle(
           borderColor: Colors.black,
           borderThickness: 1,
-          dropdownAlignment: DropdownAlignment(0, 1.1),
+          dropdownAlignment: DropdownAlignment(0, -1.2),
           invertYAxisAlignmentWhenOverflow: true,
         ),
         targetBuilder: (focusNode, textController) {
