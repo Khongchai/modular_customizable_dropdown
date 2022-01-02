@@ -6,7 +6,7 @@ A modular dropdown package that is compatible with any widget.
 
 This dropdown is not tied to any widget in particular and can be attached to whatever widgets you can think of (as far as I know).
 
-## Instructions
+## TL;DR
 
 Wrap whatever widget you want the dropdown to attach to with the dropdown.
 
@@ -24,7 +24,7 @@ That's it! These lines are all you need to get the dropdown working. Once the ta
 
 Read further for further details on customizing the dropdown.
 
-_For a thorough example, see the main.dart file in the example folder or clone this repo and run the file._
+_For a thorough example, see the main.dart file in the example folder or clone this package's repo and run the file._
 
 ## Customizing the dropdown
 
@@ -76,7 +76,7 @@ _todo => gif of all the expansions_
 
 5. Max Height can be described using pixels or the number of rows to be visible before scrolling.
 
-## Default Behavior
+## Behaviors
 
 1. By default, the dropdown sizes itself to its parent. If the parent is very small, the dropdown will also be very small. This can be overridden with the DropdownWidth class.
 
@@ -86,3 +86,5 @@ _todo => image of squeezed dropdown and normal dropdown_
    the screen when expanded.
 
 _todo => short gif of dropdown when wrapping around_
+
+3. The target widget is basically the child of the dropdown whose build method gets called everytime a value is tapped, so all optimization best practices apply. See [this link](https://docs.flutter.dev/perf/rendering/best-practices) for more details.
