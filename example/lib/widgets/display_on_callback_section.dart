@@ -41,7 +41,7 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
           ),
           targetBuilder: (_toggleDropdown) {
             toggleDropdown = _toggleDropdown;
-            return const Text("This is the dropdown's target");
+            return const Text("Small Target");
           },
           collapseOnSelect: true,
         ),
