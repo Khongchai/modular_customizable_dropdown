@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
 
 import 'dropdown_alignment.dart';
 import 'dropdown_max_height.dart';
@@ -12,7 +13,7 @@ class DropdownStyle {
   final double borderThickness;
   final BorderRadius borderRadius;
   final List<BoxShadow> boxShadows;
-
+  final DropdownScrollbarStyle dropdownScrollbarStyle;
   final DropdownMaxHeight dropdownMaxHeight;
 
   ///The color of a dropdown when tapped
@@ -67,6 +68,7 @@ class DropdownStyle {
       ),
     ],
     this.explicitMarginBetweenDropdownAndTarget = 0,
+    this.dropdownScrollbarStyle = const DropdownScrollbarStyle(),
     this.onTapItemColor =
         const LinearGradient(colors: [Color(0xff63e9f2), Color(0xff65dbc2)]),
     this.transitionInDuration = const Duration(milliseconds: 100),
@@ -80,6 +82,8 @@ class DropdownStyle {
     this.dropdownMaxHeight = const DropdownMaxHeight(),
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
+
+    ///TODO new class for width
     this.widthScale = 1,
     this.width,
   });

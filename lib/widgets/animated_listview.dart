@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
+import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
 import 'package:modular_customizable_dropdown/utils/delayed_action.dart';
 import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
@@ -29,8 +31,8 @@ class AnimatedListView extends StatefulWidget {
   final Color borderColor;
   final double borderThickness;
   final BorderRadius borderRadius;
-
   final Duration animationDuration;
+  final DropdownScrollbarStyle dropdownScrollbarStyle;
 
   const AnimatedListView(
       {required this.allDropdownValues,
@@ -45,6 +47,7 @@ class AnimatedListView extends StatefulWidget {
       required this.borderThickness,
       required this.boxShadows,
       required this.singleTileHeight,
+      required this.dropdownScrollbarStyle,
       Key? key})
       : super(key: key);
 
@@ -109,11 +112,23 @@ class _AnimatedListViewState extends State<AnimatedListView> {
                   )),
               color: Colors.transparent,
               elevation: 0,
-              child: ListView.builder(
-                  itemCount: filteredValues.length,
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) =>
-                      widget.listBuilder(filteredValues[index])),
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: RawScrollbar(
+                  thickness: widget.dropdownScrollbarStyle.thickness,
+                  radius: widget.dropdownScrollbarStyle.radius,
+                  isAlwaysShown: widget.dropdownScrollbarStyle.isAlwaysShown,
+                  interactive: widget.dropdownScrollbarStyle.interactive,
+                  minThumbLength: widget.dropdownScrollbarStyle.minThumbLength,
+                  thumbColor: widget.dropdownScrollbarStyle.thumbColor,
+                  child: ListView.builder(
+                      itemCount: filteredValues.length,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (context, index) =>
+                          widget.listBuilder(filteredValues[index])),
+                ),
+              ),
             ),
           ),
         ],
