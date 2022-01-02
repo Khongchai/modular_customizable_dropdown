@@ -22,12 +22,12 @@ class DisplayOnTapSection extends StatelessWidget {
           onValueSelect: onValueSelect,
           allDropdownValues: dropdownValues,
           style: const DropdownStyle(
-            dropdownWidth: DropdownWidth(scale: 1.2),
+            dropdownWidth: DropdownWidth(scale: 0.8),
             borderColor: Colors.black,
             borderThickness: 1,
             //Bottom center with a bit of extra relative margin
             // dropdownAlignment: DropdownAlignment(0, 1.03),
-            dropdownAlignment: DropdownAlignment.center,
+            dropdownAlignment: DropdownAlignment(-1, 1.02),
             dropdownScrollbarStyle: DropdownScrollbarStyle(),
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,

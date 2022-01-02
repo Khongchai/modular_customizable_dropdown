@@ -282,9 +282,9 @@ class _ModularCustomizableDropdownState
                 ]))
             : Stack(children: [child]);
 
-    final DropdownAlignment newAlignment = DropdownAlignment(
-        dropdownAlignment.x,
-        dropdownAlignment.y * (dropdownOffset.isYInverted ? -1 : 1));
+    final invertDir = dropdownOffset.isYInverted ? -1 : 1;
+    final DropdownAlignment newAlignment =
+        DropdownAlignment(dropdownAlignment.x, dropdownAlignment.y * invertDir);
 
     return OverlayEntry(
       builder: (context) => dismissibleWrapper(
@@ -292,7 +292,7 @@ class _ModularCustomizableDropdownState
           width: dropdownWidth,
           child: CompositedTransformFollower(
               offset: Offset(dropdownOffset.x,
-                  dropdownOffset.y + explicitDropdownTargetMargin),
+                  dropdownOffset.y + explicitDropdownTargetMargin * invertDir),
               link: _layerLink,
               showWhenUnlinked: false,
               child: AnimatedListView(

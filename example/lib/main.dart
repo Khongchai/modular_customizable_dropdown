@@ -20,16 +20,16 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  String selectedValue = "Violin";
   List<String> dropdownValues = [
-    "Violin",
-    "Viola",
-    "Cello",
-    "Double Bass",
+    "Violinist",
+    "Violist",
+    "Cellist",
     "Flautist",
-    "Piano",
+    "Pianist",
+    "Guitarist",
     "Conductor",
   ];
+  String selectedValue = "Violinist";
 
   final TextEditingController _textController = TextEditingController();
 
