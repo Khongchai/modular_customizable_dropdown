@@ -5,7 +5,6 @@ import 'dropdown_alignment.dart';
 import 'dropdown_max_height.dart';
 import 'dropdown_width.dart';
 
-//TODO, transition time for item color on tap
 ///To allow for both gradient and solid color, in many places, the LinearGradient class is used instead of the Color class.
 ///
 ///If a solid, single color is what you want, simply provide LinearGradient(colors: [yourSingleColor, yourSingleColor]) --

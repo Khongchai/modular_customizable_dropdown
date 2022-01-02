@@ -36,8 +36,10 @@ For a more complete explanation, please see [here](https://github.com/Khongchai/
 ModularCustomizableDropdown.displayOnTap(
     //...other params
     style: const DropdownStyle(
-        //This will scale the width of the dropdown to be 1.2 of the target's width
+        //This will scale the width of the dropdown to be 1.2 of the target's width.
         dropdownWidth: DropdownWidth(scale: 1.2),
+        //The height of the dropdown will fit exactly 4 rows of items.
+        dropdownMaxHeight: DropdownMaxHeight(byRows: 4),
         //The dropdown will be positioned above the target with its left side aligned with the target's.
         dropdownAlignment: DropdownAlignment.topLeft,
         //Pretty self-explanatory
