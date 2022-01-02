@@ -3,6 +3,7 @@ import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollb
 
 import 'dropdown_alignment.dart';
 import 'dropdown_max_height.dart';
+import 'dropdown_width.dart';
 
 ///To allow for both gradient and solid color, in many places, the LinearGradient class is used instead of the Color class.
 ///
@@ -22,11 +23,7 @@ class DropdownStyle {
   ///The dropdown itself does not have a padding, so setting this would be equivalent to setting the dropdown's background color.
   final LinearGradient defaultItemColor;
 
-  ///Scale the width of the dropdown relative to either the parent's width, or the provided dropdownWidth.
-  final double widthScale;
-
-  ///If provided, the dropdown will no longer scale itself according to the width of its parent.
-  final double? width;
+  final DropdownWidth dropdownWidth;
 
   ///### Why
   ///While DropdownAlignment is also capable of providing margin between the target and the dropdown,
@@ -82,9 +79,6 @@ class DropdownStyle {
     this.dropdownMaxHeight = const DropdownMaxHeight(),
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
-
-    ///TODO new class for width
-    this.widthScale = 1,
-    this.width,
+    this.dropdownWidth = const DropdownWidth(),
   });
 }

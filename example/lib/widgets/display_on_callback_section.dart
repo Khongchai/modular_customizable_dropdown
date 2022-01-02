@@ -30,7 +30,7 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
           onValueSelect: widget.onValueSelect,
           allDropdownValues: widget.dropdownValues,
           style: const DropdownStyle(
-            widthScale: 1.2,
+            dropdownWidth: DropdownWidth(scale: 1.2),
             borderColor: Colors.black,
             borderThickness: 1,
             //Bottom center with a bit of extra relative margin

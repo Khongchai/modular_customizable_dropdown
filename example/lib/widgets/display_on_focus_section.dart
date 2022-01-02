@@ -39,7 +39,7 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
           dropdownMaxHeight: DropdownMaxHeight(byRows: 5),
           dropdownAlignment: DropdownAlignment(0, -1.1),
           invertYAxisAlignmentWhenOverflow: true,
-          widthScale: 0.7,
+          dropdownWidth: DropdownWidth(scale: 0.7),
         ),
         targetBuilder: (focusNode, textController) {
           return SizedBox(

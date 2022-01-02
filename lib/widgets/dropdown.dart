@@ -240,7 +240,8 @@ class _ModularCustomizableDropdownState
     final Size targetSize = renderBox.size;
 
     final targetPos = renderBox.localToGlobal(Offset.zero);
-    final targetWidth = widget.dropdownStyle.width ?? targetSize.width;
+    final targetWidth =
+        widget.dropdownStyle.dropdownWidth.byPixels ?? targetSize.width;
     final targetHeight = targetSize.height;
 
     final singleTileHeight =
@@ -251,7 +252,8 @@ class _ModularCustomizableDropdownState
         widget.dropdownStyle.dropdownMaxHeight.byRows * singleTileHeight;
     final expectedDropdownHeight = min(
         singleTileHeight * widget.allDropdownValues.length, maxDropdownHeight);
-    final dropdownWidth = targetWidth * widget.dropdownStyle.widthScale;
+    final dropdownWidth =
+        targetWidth * widget.dropdownStyle.dropdownWidth.scale;
     final dropdownAlignment = widget.dropdownStyle.dropdownAlignment;
 
     final dropdownOffset = calculateDropdownPos(
