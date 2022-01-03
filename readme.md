@@ -1,5 +1,3 @@
-# Read me under construction...
-
 # Modular and Customizable Dropdown
 
 A modular dropdown package that is compatible with any widget.
