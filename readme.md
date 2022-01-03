@@ -2,10 +2,9 @@
 
 # Modular and Customizable Dropdown
 
-
 A modular dropdown package that is compatible with any widget.
 
-This dropdown is not tied to any widget in particular and can be attached to whatever widgets you can think of (as far as I know).
+This dropdown is not tied to any widget in particular and can be attached to whatever widgets you can think of.
 
 _todo => the 4 gifs go here_
 
@@ -85,7 +84,7 @@ _todo => gif of all the expansions => expand_bottom_slow, expand_top_slow, expan
 
 ## Behaviors
 
-1. By default, the dropdown sizes itself to its parent. If the parent is very small, the dropdown will also be very small. 
+1. By default, the dropdown sizes itself to its parent. If the parent is very small, the dropdown will also be very small.
 
 _todo => image of squeezed dropdown and normal dropdown_
 
