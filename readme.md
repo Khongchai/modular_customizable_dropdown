@@ -6,7 +6,8 @@ A modular dropdown package that is compatible with any widget.
 
 This dropdown is not tied to any widget in particular and can be attached to whatever widgets you can think of.
 
-_todo => the 4 gifs go here_
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/on_focus.gif"  width=200>
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/on_tap_mid.gif" width=200>
 
 (_Please excuse the ugly color palette, I just wanna show you that it's possible to do gradients..._)
 
@@ -69,7 +70,8 @@ ModularCustomizableDropdown.displayOnTap(
 
 _Note: Your width needs to be different from the target for the horizontal alignment to take effect (duh)._
 
-_todo => example of horizontal alignment working center_left_not_working.png && center_left_working.png_
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/center_left_not_working.png" height=400>
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/center_left_working.png" height=400>
 
 2. The most visually prominent dropdown features support LinearGradient.
 
@@ -78,7 +80,9 @@ _todo => example of horizontal alignment working center_left_not_working.png && 
 4. The expand animation adjusts automatically to the provided DropdownAlignment. For example if the target is above the dropdown, the dropdown
    will expand from top, and vice versa. If DropdownAlignment == DropdownAlignment.center, the dropdown will expands in both vertical direction.
 
-_todo => gif of all the expansions => expand_bottom_slow, expand_top_slow, expand_mid_slow.gif_
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_bottom_slow.gif" height=400>
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_mid_slow.gif" height=400>
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_top_slow.gif" height=400>
 
 5. Max Height can be described using pixels or the number of rows to be visible before scrolling.
 
@@ -86,7 +90,8 @@ _todo => gif of all the expansions => expand_bottom_slow, expand_top_slow, expan
 
 1. By default, the dropdown sizes itself to its parent. If the parent is very small, the dropdown will also be very small.
 
-_todo => image of squeezed dropdown and normal dropdown_
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/bigger%20target.png" height="200">
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/small_target.png" height="200">
 
 So naturally, if you wrap your small widget with a larger SizedBox, the dropdown would size itself to the size box.
 However, there is even an easier way, you can, as we have gone over already in the example above, use the DropdownWidth class.
@@ -113,6 +118,6 @@ class DropdownWidth {
 2. By default, the dropdown is set to wrap to the opposite side of the target widget when it finds that it will overflow
    the screen when expanded.
 
-_todo => short gif of dropdown when wrapping around => wrap_around.gif_
+<img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/wrap_around.gif" height=400>
 
 3. The target widget is basically the child of the dropdown whose build method gets called everytime a value is tapped, so all optimization best practices apply. See [this link](https://docs.flutter.dev/perf/rendering/best-practices) for more details.
