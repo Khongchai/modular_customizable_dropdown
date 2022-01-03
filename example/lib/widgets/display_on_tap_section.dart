@@ -23,9 +23,8 @@ class DisplayOnTapSection extends StatelessWidget {
           allDropdownValues: dropdownValues,
           style: const DropdownStyle(
             dropdownWidth: DropdownWidth(scale: 1),
+            onTapInkColor: Colors.red,
             explicitMarginBetweenDropdownAndTarget: 5,
-            borderColor: Colors.black,
-            borderThickness: 1,
             //Same as DropdownAlignment(0, 0)
             dropdownAlignment: DropdownAlignment.center,
             dropdownScrollbarStyle: DropdownScrollbarStyle(),

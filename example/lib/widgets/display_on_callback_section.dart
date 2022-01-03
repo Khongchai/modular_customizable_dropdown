@@ -30,9 +30,8 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
           onValueSelect: widget.onValueSelect,
           allDropdownValues: widget.dropdownValues,
           style: const DropdownStyle(
+            onTapInkColor: Colors.amber,
             dropdownWidth: DropdownWidth(scale: 1.2),
-            borderColor: Colors.black,
-            borderThickness: 1,
             //Bottom center with a bit of extra relative margin
             dropdownAlignment: DropdownAlignment(0, 1.03),
             //Can also do explicit margin, of course, though a bit verbose...

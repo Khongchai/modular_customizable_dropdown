@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter/src/material/colors.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
 
 import 'dropdown_alignment.dart';
@@ -41,6 +42,11 @@ class DropdownStyle {
 
   final Duration onTapColorTransitionDuration;
 
+  ///Material's inkwell color.
+  ///
+  ///Note: this won't be very noticeable if the tile's background color is not white.
+  final MaterialColor onTapInkColor;
+
   final TextStyle defaultTextStyle;
 
   final DropdownAlignment dropdownAlignment;
@@ -53,32 +59,50 @@ class DropdownStyle {
 
   const DropdownStyle({
     required this.invertYAxisAlignmentWhenOverflow,
+    this.transitionInDuration = const Duration(milliseconds: 100),
     this.boxShadows = const [
       BoxShadow(
-        color: Color.fromRGBO(0, 0, 0, 0.5),
+        color: Color.fromRGBO(0, 0, 0, 0.1),
         blurRadius: 10,
         offset: Offset(0, 1),
       ),
       BoxShadow(
-        color: Color.fromRGBO(35, 64, 98, 0.5),
+        color: Color.fromRGBO(35, 64, 98, 0.1),
         blurRadius: 25,
       ),
     ],
-    this.explicitMarginBetweenDropdownAndTarget = 0,
     this.dropdownScrollbarStyle = const DropdownScrollbarStyle(),
     this.onTapItemColor =
-        const LinearGradient(colors: [Color(0xff63e9f2), Color(0xff65dbc2)]),
-    this.transitionInDuration = const Duration(milliseconds: 100),
+        const LinearGradient(colors: [Color(0xffffffff), Color(0xefffffff)]),
     this.defaultItemColor =
-        const LinearGradient(colors: [Color(0xff5fbce8), Color(0xff5ffce8)]),
-    this.defaultTextStyle = const TextStyle(color: Colors.white),
-    this.dropdownAlignment = DropdownAlignment.bottomCenter,
+        const LinearGradient(colors: [Color(0xefffffff), Color(0xefffffff)]),
+    this.defaultTextStyle = const TextStyle(color: Colors.black),
     this.onTapTextStyle = const TextStyle(color: Colors.black),
+    this.onTapInkColor = _blueMat,
+    this.explicitMarginBetweenDropdownAndTarget = 0,
+    this.dropdownAlignment = DropdownAlignment.bottomCenter,
     this.borderColor = const Color(0x00000000),
     this.borderThickness = 0,
     this.dropdownMaxHeight = const DropdownMaxHeight(),
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
-    this.onTapColorTransitionDuration = const Duration(milliseconds: 0),
+    this.onTapColorTransitionDuration = const Duration(milliseconds: 50),
     this.dropdownWidth = const DropdownWidth(),
   });
+
+  static const MaterialColor _blueMat = MaterialColor(
+    _bluePrimaryValue,
+    <int, Color>{
+      50: Color(0xFFE3F2FD),
+      100: Color(0xFFBBDEFB),
+      200: Color(0xFF90CAF9),
+      300: Color(0xFF64B5F6),
+      400: Color(0xFF42A5F5),
+      500: Color(_bluePrimaryValue),
+      600: Color(0xFF1E88E5),
+      700: Color(0xFF1976D2),
+      800: Color(0xFF1565C0),
+      900: Color(0xFF0D47A1),
+    },
+  );
+  static const int _bluePrimaryValue = 0xFF2196F3;
 }

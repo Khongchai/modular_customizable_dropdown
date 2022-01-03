@@ -34,8 +34,6 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
         onValueSelect: widget.onValueSelect,
         allDropdownValues: widget.dropdownValues,
         style: const DropdownStyle(
-          borderColor: Colors.black,
-          borderThickness: 1,
           dropdownMaxHeight: DropdownMaxHeight(byRows: 5),
           explicitMarginBetweenDropdownAndTarget: 10,
           dropdownAlignment: DropdownAlignment.topRight,

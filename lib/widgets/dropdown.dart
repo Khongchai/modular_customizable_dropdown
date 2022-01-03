@@ -200,6 +200,7 @@ class _ModularCustomizableDropdownState
                   child: ListTileThatChangesColorOnTap(
                     onTap: null,
                     key: offstageListTileKey,
+                    onTapInkColor: widget.dropdownStyle.onTapInkColor,
                     onTapColorTransitionDuration: const Duration(seconds: 0),
                     defaultBackgroundColor: const LinearGradient(
                         colors: [Colors.black, Colors.black]),
@@ -332,6 +333,7 @@ class _ModularCustomizableDropdownState
           _toggleOverlay(false);
         }
       },
+      onTapInkColor: widget.dropdownStyle.onTapInkColor,
       onTapColorTransitionDuration:
           widget.dropdownStyle.onTapColorTransitionDuration,
       defaultBackgroundColor: widget.dropdownStyle.defaultItemColor,
