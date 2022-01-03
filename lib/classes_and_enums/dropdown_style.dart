@@ -77,7 +77,7 @@ class DropdownStyle {
     this.defaultItemColor =
         const LinearGradient(colors: [Color(0xefffffff), Color(0xefffffff)]),
     this.defaultTextStyle = const TextStyle(color: Colors.black),
-    this.onTapTextStyle = const TextStyle(color: Colors.black),
+    this.onTapTextStyle = const TextStyle(color: Color(0xbb000000)),
     this.onTapInkColor = _blueMat,
     this.explicitMarginBetweenDropdownAndTarget = 0,
     this.dropdownAlignment = DropdownAlignment.bottomCenter,

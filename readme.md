@@ -65,7 +65,9 @@ ModularCustomizableDropdown.displayOnTap(
 
 ## Features Summary
 
-1. _Use DropdownAlignment to align it however you wish._ This should cover many common use cases already.
+1. Comes with three factory constructors, with which you will be able to trigger the dropdown when: a tap happens, the target widget is focused, or a callback is called.
+   
+2. _Use DropdownAlignment to align it however you wish._ This should cover many common use cases already.
    It's very similar to Flutter's alignment, take a look [here](https://github.com/Khongchai/modular_customizable_dropdown/blob/main/lib/classes_and_enums/dropdown_alignment.dart).
 
 _Note: Your width needs to be different from the target for the horizontal alignment to take effect (duh)._
@@ -73,18 +75,17 @@ _Note: Your width needs to be different from the target for the horizontal align
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/center_left_not_working.png" height=400>
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/center_left_working.png" height=400>
 
-2. The most visually prominent dropdown features support LinearGradient.
-
-3. Comes with three factory constructors, with which you will be able to trigger the dropdown when: a tap happens, the target widget is focused, or a callback is called.
-
-4. The expand animation adjusts automatically to the provided DropdownAlignment. For example if the target is above the dropdown, the dropdown
+3. The expand animation adjusts automatically to the provided DropdownAlignment. For example if the target is above the dropdown, the dropdown
    will expand from top, and vice versa. If DropdownAlignment == DropdownAlignment.center, the dropdown will expands in both vertical direction.
 
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_bottom_slow.gif" height=400>
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_mid_slow.gif" height=400>
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_top_slow.gif" height=400>
 
-5. Max Height can be described using pixels or the number of rows to be visible before scrolling.
+On the y axis value in the DropdownAlignment class affects the origin of the transition. You can play around by providing the
+dropdown values without using const properties like _DropdownValue(-1, 0.7)_.
+
+4. Max Height can be described using pixels or the number of rows to be visible before scrolling.
 
 ## Behaviors
 
@@ -93,7 +94,7 @@ _Note: Your width needs to be different from the target for the horizontal align
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/bigger%20target.png" height="200">
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/small_target.png" height="200">
 
-So naturally, if you wrap your small widget with a larger SizedBox, the dropdown would size itself to the size box.
+So naturally, if you wrap your small widget with a larger SizedBox, the dropdown would size itself to the SizedBox.
 However, there is even an easier way, you can, as we have gone over already in the example above, use the DropdownWidth class.
 
 ```dart
@@ -121,3 +122,5 @@ class DropdownWidth {
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/wrap_around.gif" height=400>
 
 3. The target widget is basically the child of the dropdown whose build method gets called everytime a value is tapped, so all optimization best practices apply. See [this link](https://docs.flutter.dev/perf/rendering/best-practices) for more details.
+
+4. DropdownAlignment's x and y properties can be more than 1 and less than -1. This would be like relative top/bottom margin. 
