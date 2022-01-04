@@ -42,10 +42,25 @@ class ModularCustomizableDropdown extends StatefulWidget {
   ///Dispose dropdown on value select?
   final bool collapseOnSelect;
 
-  ///Declare mode separately for explicitness.
+  ///The modes the dropdown should react to
   final ReactMode reactMode;
+
+  ///React to only tap events.
+  ///
+  ///This will still work with widgets that absorb tap events like buttons and text fields;
+  ///however, FocusReactParams is still preferred over this for text fields.
   final TapReactParams? tapReactParams;
+
+  /// React to focus.
+  ///
+  /// Really, this is meant primarily for text fields. The dropdown will show when
+  /// focusNode.hasFocus is true. Works both when the widget is tapped or when the focus
+  /// is triggered programmatically.
   final FocusReactParams? focusReactParams;
+
+  /// React to callback events.
+  ///
+  /// When you would like to trigger the dropdown by clicking on something else other than the target widget.
   final CallbackReactParams? callbackReactParams;
 
   final void Function(bool visible)? onDropdownVisibilityChange;
