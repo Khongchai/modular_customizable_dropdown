@@ -47,6 +47,10 @@ class MyAppState extends State<MyApp> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const ExtraScrollSpace(),
+              /*
+                  For readability, the code for each section has been divided into their own file.
+                  Please see the widgets folder in the same directory.
+               */
               DisplayOnFocusSection(
                 textEditingController: _textController,
                 dropdownValues: dropdownValues,
