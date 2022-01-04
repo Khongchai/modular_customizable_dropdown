@@ -297,6 +297,7 @@ class _ModularCustomizableDropdownState
               link: _layerLink,
               showWhenUnlinked: false,
               child: AnimatedListView(
+                animationCurve: widget.dropdownStyle.animationCurve,
                 singleTileHeight: singleTileHeight,
                 dropdownScrollbarStyle:
                     widget.dropdownStyle.dropdownScrollbarStyle,

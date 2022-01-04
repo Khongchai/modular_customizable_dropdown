@@ -51,7 +51,11 @@ class DropdownStyle {
 
   final DropdownAlignment dropdownAlignment;
 
+  /// Animation duration before the dropdown becomes fully expanded.
   final Duration transitionInDuration;
+
+  /// Animation curve for transitionInDuration
+  final Curve transitionInCurve;
 
   ///Whether or not to swap the alignment, for example, from bottomCenter to topCenter when
   ///the bottom of the dropdown exceeds the screen height.
@@ -59,6 +63,7 @@ class DropdownStyle {
 
   const DropdownStyle({
     required this.invertYAxisAlignmentWhenOverflow,
+    this.transitionInCurve = Curves.linear,
     this.transitionInDuration = const Duration(milliseconds: 100),
     this.boxShadows = const [
       BoxShadow(

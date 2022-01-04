@@ -32,11 +32,13 @@ class AnimatedListView extends StatefulWidget {
   final double borderThickness;
   final BorderRadius borderRadius;
   final Duration animationDuration;
+  final Curve animationCurve;
   final DropdownScrollbarStyle dropdownScrollbarStyle;
 
   const AnimatedListView(
       {required this.allDropdownValues,
       required this.animationDuration,
+      required this.animationCurve,
       required this.queryString,
       required this.listBuilder,
       required this.expectedDropdownHeight,
@@ -94,6 +96,7 @@ class _AnimatedListViewState extends State<AnimatedListView> {
         alignment: AlignmentDirectional(0, _animationStartPosition),
         children: [
           AnimatedContainer(
+            curve: widget.animationCurve,
             duration: _animationDuration,
             height: animatedListHeight,
             width: widget.targetWidth,
