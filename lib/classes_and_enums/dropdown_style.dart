@@ -47,7 +47,13 @@ class DropdownStyle {
   ///Note: this won't be very noticeable if the tile's background color is not white.
   final MaterialColor onTapInkColor;
 
+  /// The style for the values.
   final TextStyle defaultTextStyle;
+
+  /// The style for the descriptions, if not provided, the defaultTextStyle
+  ///
+  /// will be used.
+  final TextStyle? descriptionStyle;
 
   final DropdownAlignment dropdownAlignment;
 
@@ -82,6 +88,7 @@ class DropdownStyle {
     this.defaultItemColor =
         const LinearGradient(colors: [Color(0xefffffff), Color(0xefffffff)]),
     this.defaultTextStyle = const TextStyle(color: Colors.black),
+    this.descriptionStyle,
     this.onTapTextStyle = const TextStyle(color: Color(0xbb000000)),
     this.onTapInkColor = _blueMat,
     this.explicitMarginBetweenDropdownAndTarget = 0,

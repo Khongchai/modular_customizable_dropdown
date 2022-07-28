@@ -3,6 +3,7 @@ import 'dart:math';
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
+import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value_and_description.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/focus_callback_params.dart';
 import 'package:modular_customizable_dropdown/utils/calculate_dropdown_pos.dart';
 import 'package:modular_customizable_dropdown/widgets/animated_listview.dart';
@@ -27,7 +28,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
   /// When the asTextFieldDropdown factory constructor is called, dropdown will allow
   /// an additional ability to filter the list based on the textController's value.
-  final List<String> allDropdownValues;
+  final List<DropdownValue> allDropdownValues;
 
   /// Action to perform when the value is tapped.
   final Function(String selectedValue) onValueSelect;
@@ -86,7 +87,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
   ///Automatically displays the dropdown when the target is clicked
   factory ModularCustomizableDropdown.displayOnTap({
     required Function(String selectedValue) onValueSelect,
-    required List<String> allDropdownValues,
+    required List<DropdownValue> allDropdownValues,
     required Widget target,
     Function(bool)? onDropdownVisible,
     bool barrierDismissible = true,
@@ -110,7 +111,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
   ///Same as displayOnTap, but also triggers dropdown when the target is in focus
   factory ModularCustomizableDropdown.displayOnFocus({
     required Function(String selectedValue) onValueSelect,
-    required List<String> allDropdownValues,
+    required List<DropdownValue> allDropdownValues,
     required Widget Function(
             FocusNode focusNode, TextEditingController textController)
         targetBuilder,
@@ -143,7 +144,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
   ///Expose a toggle callback in the target builder method.
   factory ModularCustomizableDropdown.displayOnCallback({
     required Function(String selectedValue) onValueSelect,
-    required List<String> allDropdownValues,
+    required List<DropdownValue> allDropdownValues,
     required Widget Function(void Function(bool toggleState) toggleDropdown)
         targetBuilder,
     required bool collapseOnSelect,

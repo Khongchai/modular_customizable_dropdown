@@ -28,7 +28,8 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
         const SizedBox(height: 20),
         ModularCustomizableDropdown.displayOnCallback(
           onValueSelect: widget.onValueSelect,
-          allDropdownValues: widget.dropdownValues,
+          allDropdownValues:
+              DropdownValue.fromListOfStrings(widget.dropdownValues),
           style: const DropdownStyle(
             onTapInkColor: Colors.amber,
             dropdownWidth: DropdownWidth(scale: 1.2),

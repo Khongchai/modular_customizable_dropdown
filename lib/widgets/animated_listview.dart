@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
+import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value_and_description.dart';
 import 'package:modular_customizable_dropdown/utils/delayed_action.dart';
 import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
 class AnimatedListView extends StatefulWidget {
-  final List<String> allDropdownValues;
+  final List<DropdownValue> allDropdownValues;
   final String queryString;
   final Widget Function(String dropdownValue) listBuilder;
 
@@ -84,8 +84,9 @@ class _AnimatedListViewState extends State<AnimatedListView> {
   @override
   Widget build(BuildContext context) {
     final filteredValues = filterOutValuesThatDoNotMatchQueryString(
-        queryString: widget.queryString,
-        valuesToFilter: widget.allDropdownValues);
+      queryString: widget.queryString,
+      valuesToFilter: widget.allDropdownValues,
+    );
     final wrapperStaticHeight = _maxHeight;
     final animatedListHeight = min(
         widget.singleTileHeight * filteredValues.length, wrapperStaticHeight);
@@ -129,7 +130,7 @@ class _AnimatedListViewState extends State<AnimatedListView> {
                       itemCount: filteredValues.length,
                       padding: EdgeInsets.zero,
                       itemBuilder: (context, index) =>
-                          widget.listBuilder(filteredValues[index])),
+                          widget.listBuilder(filteredValues[index].value)),
                 ),
               ),
             ),

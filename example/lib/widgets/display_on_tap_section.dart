@@ -20,7 +20,7 @@ class DisplayOnTapSection extends StatelessWidget {
         const SizedBox(height: 20),
         ModularCustomizableDropdown.displayOnTap(
           onValueSelect: onValueSelect,
-          allDropdownValues: dropdownValues,
+          allDropdownValues: DropdownValue.fromListOfStrings(dropdownValues),
           style: const DropdownStyle(
             dropdownWidth: DropdownWidth(scale: 1),
             onTapInkColor: Colors.red,

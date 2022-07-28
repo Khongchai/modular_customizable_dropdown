@@ -32,7 +32,8 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
         focusNode: _focusNode,
         textController: _textController,
         onValueSelect: widget.onValueSelect,
-        allDropdownValues: widget.dropdownValues,
+        allDropdownValues:
+            DropdownValue.fromListOfStrings(widget.dropdownValues),
         style: const DropdownStyle(
           dropdownMaxHeight: DropdownMaxHeight(byRows: 5),
           explicitMarginBetweenDropdownAndTarget: 10,

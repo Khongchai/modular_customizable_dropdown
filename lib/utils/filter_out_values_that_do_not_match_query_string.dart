@@ -1,5 +1,8 @@
-List<String> filterOutValuesThatDoNotMatchQueryString(
-    {required String queryString, required List<String> valuesToFilter}) {
+import '../classes_and_enums/dropdown_value_and_description.dart';
+
+List<DropdownValue> filterOutValuesThatDoNotMatchQueryString(
+    {required String queryString,
+    required List<DropdownValue> valuesToFilter}) {
   if (queryString == "" || queryString == " ") {
     return valuesToFilter;
   }
@@ -9,7 +12,7 @@ List<String> filterOutValuesThatDoNotMatchQueryString(
     caseSensitive: false,
     multiLine: false,
   );
-  return valuesToFilter.where((value) => reg.hasMatch(value)).toList();
+  return valuesToFilter.where((e) => reg.hasMatch(e.value)).toList();
 }
 
 bool filterOutValueThatDoNotMatchQueryString(
