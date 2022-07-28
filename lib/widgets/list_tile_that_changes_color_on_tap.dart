@@ -8,11 +8,15 @@ class ListTileThatChangesColorOnTap extends StatefulWidget {
   final TextStyle onTapTextStyle;
   final TextStyle defaultTextStyle;
   final String title;
+  final String? description;
+  final TextStyle? descriptionTextStyle;
   final Duration onTapColorTransitionDuration;
   final MaterialColor onTapInkColor;
 
   const ListTileThatChangesColorOnTap(
       {required this.title,
+      this.description,
+      this.descriptionTextStyle,
       required this.defaultTextStyle,
       required this.onTapBackgroundColor,
       required this.defaultBackgroundColor,
@@ -40,11 +44,18 @@ class _ListTileThatChangesColorOnTapState
     final backgroundGradient =
         isTapped ? widget.onTapBackgroundColor : widget.defaultBackgroundColor;
 
+    // TODO, can be inside of the didUpdateWidget lifeCycle.
     final text = Text(
       widget.title,
       textAlign: TextAlign.start,
       style: textStyle,
     );
+
+    final description = widget.description != null
+        ? Text(widget.description!,
+            textAlign: TextAlign.start,
+            style: widget.descriptionTextStyle ?? textStyle)
+        : null;
 
     final tile = Theme(
         data: ThemeData(
@@ -53,7 +64,18 @@ class _ListTileThatChangesColorOnTapState
         )),
         child: TextButton(
             onPressed: widget.onTap,
-            child: text,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                text,
+                // TODO this should be configurable.
+                if (description != null) ...[
+                  const SizedBox(height: 12),
+                  description,
+                ]
+              ],
+            ),
             style: ButtonStyle(
                 alignment: Alignment.centerLeft,
                 padding: MaterialStateProperty.all<EdgeInsets>(

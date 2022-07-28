@@ -3,14 +3,15 @@ import 'dart:math';
 import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
-import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value_and_description.dart';
+import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value.dart';
 import 'package:modular_customizable_dropdown/utils/delayed_action.dart';
 import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_not_match_query_string.dart';
 
 class AnimatedListView extends StatefulWidget {
   final List<DropdownValue> allDropdownValues;
   final String queryString;
-  final Widget Function(String dropdownValue) listBuilder;
+  final Widget Function(String dropdownValue, String? dropdownDescription)
+      listBuilder;
 
   ///The alignment is used to calculate the center point for the animated
   ///height transition.
@@ -25,7 +26,11 @@ class AnimatedListView extends StatefulWidget {
   ///Height to animate to
   final double expectedDropdownHeight;
 
-  final double singleTileHeight;
+  /// List of height for each of the tiles.
+  ///
+  /// Each tile's height may vary due to the length of the value and description,
+  /// so wee ned all of them to determine the final size of our dropdown.
+  final List<double> listOfTileHeights;
   final double targetWidth;
   final List<BoxShadow> boxShadows;
   final Color borderColor;
@@ -48,7 +53,7 @@ class AnimatedListView extends StatefulWidget {
       required this.borderRadius,
       required this.borderThickness,
       required this.boxShadows,
-      required this.singleTileHeight,
+      required this.listOfTileHeights,
       required this.dropdownScrollbarStyle,
       Key? key})
       : super(key: key);
@@ -64,6 +69,9 @@ class _AnimatedListViewState extends State<AnimatedListView> {
 
   @override
   void initState() {
+    assert(widget.listOfTileHeights.isNotEmpty);
+    assert(widget.listOfTileHeights.length == widget.allDropdownValues.length);
+
     _animationStartPosition = min(max(widget.dropdownAlignment.y, -1), 1) * -1;
     _animationDuration = widget.animationDuration;
     delayedAction(0, () {
@@ -89,7 +97,10 @@ class _AnimatedListViewState extends State<AnimatedListView> {
     );
     final wrapperStaticHeight = _maxHeight;
     final animatedListHeight = min(
-        widget.singleTileHeight * filteredValues.length, wrapperStaticHeight);
+        widget.listOfTileHeights
+            .sublist(0, filteredValues.length)
+            .reduce((value, element) => value + element),
+        wrapperStaticHeight);
 
     return SizedBox(
       height: wrapperStaticHeight,
@@ -129,8 +140,9 @@ class _AnimatedListViewState extends State<AnimatedListView> {
                   child: ListView.builder(
                       itemCount: filteredValues.length,
                       padding: EdgeInsets.zero,
-                      itemBuilder: (context, index) =>
-                          widget.listBuilder(filteredValues[index].value)),
+                      itemBuilder: (context, index) => widget.listBuilder(
+                          filteredValues[index].value,
+                          filteredValues[index].description)),
                 ),
               ),
             ),

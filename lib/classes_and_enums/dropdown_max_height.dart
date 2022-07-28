@@ -4,7 +4,7 @@ class DropdownMaxHeight {
   ///of three rows. The user will have to scroll if the list grows larger.
   ///
   /// This will be ignored if byPixels is provided
-  final double byRows;
+  final int byRows;
 
   ///Define the max height of the dropdown using explicit pixels, for example, byPixels = 300,
   ///and the dropdown won't grow taller than 300 pixels

@@ -1,4 +1,4 @@
-import '../classes_and_enums/dropdown_value_and_description.dart';
+import '../classes_and_enums/dropdown_value.dart';
 
 List<DropdownValue> filterOutValuesThatDoNotMatchQueryString(
     {required String queryString,

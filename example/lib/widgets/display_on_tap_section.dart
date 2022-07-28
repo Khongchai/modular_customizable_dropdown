@@ -3,7 +3,7 @@ import "package:modular_customizable_dropdown/modular_customizable_dropdown.dart
 
 class DisplayOnTapSection extends StatelessWidget {
   final Function(String selectedValue) onValueSelect;
-  final List<String> dropdownValues;
+  final List<DropdownValue> dropdownValues;
   final String selectedValue;
   const DisplayOnTapSection(
       {required this.dropdownValues,
@@ -20,14 +20,21 @@ class DisplayOnTapSection extends StatelessWidget {
         const SizedBox(height: 20),
         ModularCustomizableDropdown.displayOnTap(
           onValueSelect: onValueSelect,
-          allDropdownValues: DropdownValue.fromListOfStrings(dropdownValues),
+          allDropdownValues: dropdownValues,
           style: const DropdownStyle(
+            dropdownMaxHeight: DropdownMaxHeight(
+              byRows: 2,
+            ),
             dropdownWidth: DropdownWidth(scale: 1),
             onTapInkColor: Colors.red,
             explicitMarginBetweenDropdownAndTarget: 5,
             //Same as DropdownAlignment(0, 0)
             dropdownAlignment: DropdownAlignment.center,
             dropdownScrollbarStyle: DropdownScrollbarStyle(),
+            descriptionStyle: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
             invertYAxisAlignmentWhenOverflow: true,
