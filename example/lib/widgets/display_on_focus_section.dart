@@ -7,7 +7,7 @@ class DisplayOnFocusSection extends StatefulWidget {
   ///This is passed in from the parent because we want to also set its value when other
   ///examples set the state of the selected value.
   final TextEditingController textEditingController;
-  final List<String> dropdownValues;
+  final List<DropdownValue> dropdownValues;
   const DisplayOnFocusSection(
       {required this.dropdownValues,
       required this.textEditingController,
@@ -32,8 +32,7 @@ class _DisplayOnFocusSectionState extends State<DisplayOnFocusSection> {
         focusNode: _focusNode,
         textController: _textController,
         onValueSelect: widget.onValueSelect,
-        allDropdownValues:
-            DropdownValue.fromListOfStrings(widget.dropdownValues),
+        allDropdownValues: widget.dropdownValues,
         style: const DropdownStyle(
           dropdownMaxHeight: DropdownMaxHeight(byRows: 5),
           explicitMarginBetweenDropdownAndTarget: 10,

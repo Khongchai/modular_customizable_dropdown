@@ -1,3 +1,5 @@
+import 'package:example/widgets/display_on_callback_section.dart';
+import 'package:example/widgets/display_on_focus_section.dart';
 import 'package:example/widgets/display_on_tap_section.dart';
 import 'package:example/widgets/extra_scroll_space.dart';
 import 'package:example/widgets/section_divider.dart';
@@ -19,16 +21,37 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  List<String> dropdownValues = [
-    "Violinist",
-    "Violist",
-    "Cellist",
-    "Flautist",
-    "Pianist",
-    "Guitarist",
-    "Conductor",
+  // Don't make final.
+  List<DropdownValue> _dropdownValues = [
+    DropdownValue(
+      value: "Violinist",
+      description:
+          "A very long description that describes this value. Hopefully, this will wrap around.",
+    ),
+    DropdownValue(
+      value: "Violist",
+    ),
+    DropdownValue(
+      value: "Cellist",
+      description: "A medium-sized description for this value.",
+    ),
+    DropdownValue(
+      value: "Flautist",
+    ),
+    DropdownValue(
+      value: "Pianist",
+      description:
+          "A very long description that describes this value. Hopefully, this will wrap around.",
+    ),
+    DropdownValue(
+      value: "Guitarist",
+    ),
+    DropdownValue(
+      value: "Conductor",
+      description: "A medium-sized description for this value.",
+    ),
   ];
-  String selectedValue = "Violinist";
+  String _selectedValue = "Violinist";
 
   final TextEditingController _textController = TextEditingController();
 
@@ -47,56 +70,43 @@ class MyAppState extends State<MyApp> {
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const ExtraScrollSpace(),
               /*
-                  For readability, the code for each section has been divided into their own file.
+                  For readability, the code for each section has been divided into its own file.
                   Please see the widgets folder in the same directory.
                */
-              // DisplayOnFocusSection(
-              //   textEditingController: _textController,
-              //   dropdownValues: dropdownValues,
-              //   onValueSelect: _onDropdownValueSelect,
-              // ),
+              ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Colors.deepPurpleAccent),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _dropdownValues.remove(_dropdownValues[0]);
+                      debugPrint(_dropdownValues.toString());
+                    });
+                  },
+                  child: const Text("Remove First Item From Dropdown List")),
+              const Divider(
+                thickness: 2,
+              ),
+              DisplayOnFocusSection(
+                textEditingController: _textController,
+                dropdownValues: _dropdownValues,
+                onValueSelect: _onDropdownValueSelect,
+              ),
               const SectionDivider(),
               DisplayOnTapSection(
                 onValueSelect: _onDropdownValueSelect,
-                selectedValue: selectedValue,
-                dropdownValues: const [
-                  DropdownValue(
-                    value: "Violinist",
-                    description:
-                        "A very long description that describes this value. Hopefully, this will wrap around.",
-                  ),
-                  DropdownValue(
-                    value: "Violist",
-                  ),
-                  DropdownValue(
-                    value: "Cellist",
-                    description: "A medium-sized description for this value.",
-                  ),
-                  DropdownValue(
-                    value: "Flautist",
-                  ),
-                  DropdownValue(
-                    value: "Pianist",
-                    description:
-                        "A very long description that describes this value. Hopefully, this will wrap around.",
-                  ),
-                  DropdownValue(
-                    value: "Guitarist",
-                  ),
-                  DropdownValue(
-                    value: "Conductor",
-                    description: "A medium-sized description for this value.",
-                  ),
-                ],
+                selectedValue: _selectedValue,
+                dropdownValues: _dropdownValues,
               ),
               const SectionDivider(),
-              // DisplayOnCallbackSection(
-              //   selectedValue: selectedValue,
-              //   onValueSelect: _onDropdownValueSelect,
-              //   dropdownValues: dropdownValues,
-              // ),
+              DisplayOnCallbackSection(
+                selectedValue: _selectedValue,
+                onValueSelect: _onDropdownValueSelect,
+                dropdownValues: _dropdownValues,
+              ),
               const SectionDivider(),
-              Text("Selected Value: " + selectedValue,
+              Text("Selected Value: " + _selectedValue,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
               const ExtraScrollSpace(),
@@ -109,7 +119,7 @@ class MyAppState extends State<MyApp> {
 
   void _onDropdownValueSelect(String newValue) {
     setState(() {
-      selectedValue = newValue;
+      _selectedValue = newValue;
       _textController.text = newValue;
     });
   }

@@ -3,7 +3,7 @@ import "package:modular_customizable_dropdown/modular_customizable_dropdown.dart
 
 class DisplayOnCallbackSection extends StatefulWidget {
   final Function(String selectedValue) onValueSelect;
-  final List<String> dropdownValues;
+  final List<DropdownValue> dropdownValues;
   final String selectedValue;
   const DisplayOnCallbackSection(
       {required this.dropdownValues,
@@ -28,8 +28,7 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
         const SizedBox(height: 20),
         ModularCustomizableDropdown.displayOnCallback(
           onValueSelect: widget.onValueSelect,
-          allDropdownValues:
-              DropdownValue.fromListOfStrings(widget.dropdownValues),
+          allDropdownValues: widget.dropdownValues,
           style: const DropdownStyle(
             onTapInkColor: Colors.amber,
             dropdownWidth: DropdownWidth(scale: 1.2),

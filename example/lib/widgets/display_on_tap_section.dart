@@ -23,7 +23,7 @@ class DisplayOnTapSection extends StatelessWidget {
           allDropdownValues: dropdownValues,
           style: const DropdownStyle(
             dropdownMaxHeight: DropdownMaxHeight(
-              byRows: 2,
+              byRows: 4,
             ),
             dropdownWidth: DropdownWidth(scale: 1),
             onTapInkColor: Colors.red,

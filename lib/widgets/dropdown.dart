@@ -15,6 +15,18 @@ import '../classes_and_enums/tap_react_params.dart';
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
+// TODO test cases
+// Might have to keep in mind that if you check if an element exist, might have to check
+// for 2 instances because we have 1 offstage target.
+
+// If the widget.allDropdownValues change, does the height of the expanded dropdown
+// update to accommodate the new content?
+
+// When expanded, is the height equals to exactly the passed in DropdownMaxHeight,
+// both by pixels and by rows?
+
+//
+
 /// A dropdown extension for any widget.
 ///
 /// I have provided three factory constructors to help you get started,
@@ -178,9 +190,14 @@ class _ModularCustomizableDropdownState
   /// false = dismissed.
   bool _isInBuildingPhase = true;
 
-  ///For obtaining size before paint
-  late final List<GlobalKey> _offStageListTileKeys =
-      widget.allDropdownValues.map((e) => GlobalKey()).toList();
+  /// For obtaining size before paint
+  late List<GlobalKey> _offStageListTileKeys;
+
+  /// For obtaining the width of the offstage list tile.
+  ///
+  /// Basically an offstage for the those off-staged.
+  final GlobalKey _offStageTargetKey = GlobalKey();
+  double? _offStageTargetWidth;
 
   late double _preCalculateDropdownHeight;
   late List<double> _tileHeights;
@@ -193,12 +210,7 @@ class _ModularCustomizableDropdownState
       });
     }
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _precalculateDropdownHeight();
-    });
-
-    assert(widget.dropdownStyle.dropdownMaxHeight.byRows <=
-        widget.allDropdownValues.length);
+    _beginPostStateUpdateStage();
 
     super.initState();
   }
@@ -208,9 +220,7 @@ class _ModularCustomizableDropdownState
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget != widget) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        _precalculateDropdownHeight();
-      });
+      _beginPostStateUpdateStage();
     }
   }
 
@@ -221,7 +231,9 @@ class _ModularCustomizableDropdownState
         child: ConditionalTapEventListener(
           reactMode: widget.reactMode,
           onTap: () {
-            _toggleOverlay(_isInBuildingPhase);
+            if (widget.allDropdownValues.isNotEmpty) {
+              _toggleOverlay(_isInBuildingPhase);
+            }
           },
           child: Column(
             // height 182
@@ -234,54 +246,101 @@ class _ModularCustomizableDropdownState
               if (_isInBuildingPhase)
                 Offstage(
                     offstage: true,
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      // Need to offstage the target as well to get the proper width.
-                      //TODO problem, we need everything in the for loop below to size themselves
-                      //TODO according to the size of this offstaged build target.
-                      // TODO take a look at this.
-                      //TODO https://stackoverflow.com/questions/59483051/how-to-use-custommultichildlayout-customsinglechildlayout-in-flutter/59483482#59483482
-                      for (int i = 0; i < widget.allDropdownValues.length; i++)
-                        // _buildDropdownRow(widget.allDropdownValues[i].value,
-                        //     widget.allDropdownValues[i].description,
-                        //     key: _offStageListTileKeys[i]),
-                        ListTileThatChangesColorOnTap(
-                          key: _offStageListTileKeys[i],
-                          onTap: null,
-                          onTapInkColor: widget.dropdownStyle.onTapInkColor,
-                          onTapColorTransitionDuration:
-                              const Duration(seconds: 0),
-                          defaultBackgroundColor: const LinearGradient(
-                              colors: [Colors.black, Colors.black]),
-                          onTapBackgroundColor: const LinearGradient(
-                              colors: [Colors.black, Colors.black]),
-                          defaultTextStyle:
-                              widget.dropdownStyle.defaultTextStyle,
-                          onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
-                          descriptionTextStyle:
-                              widget.dropdownStyle.descriptionStyle,
-                          title: widget.allDropdownValues[i].value,
-                          description: widget.allDropdownValues[i].description,
+                    child: SizedBox(
+                      width: _offStageTargetWidth,
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        // Need to offstage the target as well to get the proper width.
+                        SizedBox(
+                          key: _offStageTargetKey,
+                          child: _buildTarget(),
                         ),
-                    ])),
+                        for (int i = 0;
+                            i < widget.allDropdownValues.length;
+                            i++)
+                          ListTileThatChangesColorOnTap(
+                            key: _offStageListTileKeys[i],
+                            onTap: null,
+                            onTapInkColor: widget.dropdownStyle.onTapInkColor,
+                            onTapColorTransitionDuration:
+                                const Duration(seconds: 0),
+                            defaultBackgroundColor: const LinearGradient(
+                                colors: [Colors.black, Colors.black]),
+                            onTapBackgroundColor: const LinearGradient(
+                                colors: [Colors.black, Colors.black]),
+                            defaultTextStyle:
+                                widget.dropdownStyle.defaultTextStyle,
+                            onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
+                            descriptionTextStyle:
+                                widget.dropdownStyle.descriptionStyle,
+                            title: widget.allDropdownValues[i].value,
+                            description:
+                                widget.allDropdownValues[i].description,
+                          ),
+                      ]),
+                    )),
 
-              ///Clean this up later
               _buildTarget(),
             ],
           ),
         ));
   }
 
+  /// Should be called both in initState() and didUpdateWidget()
+  ///
+  /// This sets in motion all the calculation necessary to make sure that the dropdown
+  /// sizes and positions itself correctly.
+  void _beginPostStateUpdateStage() {
+    _updateListTileKeys();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      try {
+        _precalculateDropdownHeight();
+      } on StateError catch (e) {
+        debugPrint("Range error caught.");
+        if (widget.allDropdownValues.isEmpty) {
+          debugPrint("The passed in dropdown values list has length === 0");
+          debugPrint(
+              "With length zero, when the target is tapped. Nothing will happen.");
+        } else {
+          debugPrint(e.toString());
+        }
+      }
+    });
+  }
+
+  // Abstraction - 1 stuff below.
+
+  void _updateListTileKeys() {
+    _offStageListTileKeys =
+        widget.allDropdownValues.map((e) => GlobalKey()).toList();
+  }
+
   void _precalculateDropdownHeight() {
+    // If the width of the offStageTarget has not yet been obtained, call this method
+    // again the next frame with the newly obtained width.
+    if (_offStageTargetWidth == null) {
+      setState(() {
+        final width = _offStageTargetKey.currentContext?.size?.width;
+        _offStageTargetWidth = width;
+      });
+
+      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        _precalculateDropdownHeight();
+      });
+      return;
+    }
+
     final List<double> heights = [];
     for (final key in _offStageListTileKeys) {
       heights.add(key.currentContext!.size!.height);
     }
 
-    // These can be moved outside to a pre-calculate section.
     final double maxDropdownHeight =
         widget.dropdownStyle.dropdownMaxHeight.byPixels ??
             heights
-                .sublist(0, widget.dropdownStyle.dropdownMaxHeight.byRows)
+                .sublist(
+                    0,
+                    min(widget.dropdownStyle.dropdownMaxHeight.byRows,
+                        widget.allDropdownValues.length))
                 .reduce((value, element) => value + element);
     final incomingDropdownHeight =
         heights.reduce((value, element) => value + element);

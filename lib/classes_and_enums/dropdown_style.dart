@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:flutter/src/material/colors.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
 
 import 'dropdown_alignment.dart';
