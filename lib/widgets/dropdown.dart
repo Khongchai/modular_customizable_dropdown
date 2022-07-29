@@ -25,7 +25,7 @@ import 'list_tile_that_changes_color_on_tap.dart';
 // When expanded, is the height equals to exactly the passed in DropdownMaxHeight,
 // both by pixels and by rows?
 
-//
+// TODO write list of things you fixed for the release note (alongside the new feature with description).
 
 /// A dropdown extension for any widget.
 ///

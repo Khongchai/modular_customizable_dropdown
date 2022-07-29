@@ -95,6 +95,9 @@ class _AnimatedListViewState extends State<AnimatedListView> {
       queryString: widget.queryString,
       valuesToFilter: widget.allDropdownValues,
     );
+
+    if (filteredValues.isEmpty) return const SizedBox();
+
     final wrapperStaticHeight = _maxHeight;
     final animatedListHeight = min(
         widget.listOfTileHeights
