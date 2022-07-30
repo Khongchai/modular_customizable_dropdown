@@ -32,8 +32,8 @@ import 'list_tile_that_changes_color_on_tap.dart';
 /// I have provided three factory constructors to help you get started,
 /// but you are welcome to assemble your own using the component's constructor.
 ///
-/// Pass any widget as the _target_ of this dropdown, and the dropdown will automagically appear below
-/// the widget when you click on it!
+/// Pass any widget as the _target_ of this dropdown, and the dropdown will
+/// automagically appear below the widget when you click on it!
 class ModularCustomizableDropdown extends StatefulWidget {
   final DropdownStyle dropdownStyle;
 
@@ -46,21 +46,23 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
   /// Allows user to click outside dropdown to dismiss
   ///
-  /// Setting this to false may cause the dropdown to flow over other elements while scrolling(including the appbar).
+  /// Setting this to false may cause the dropdown to flow over other elements
+  /// while scrolling(including the appbar).
   ///
   /// So, most of the time, pass true. Pass false when you wanna test something.
   final bool barrierDismissible;
 
-  ///Dispose dropdown on value select?
+  /// Dispose dropdown on value select?
   final bool collapseOnSelect;
 
-  ///The modes the dropdown should react to
+  /// The modes the dropdown should react to
   final ReactMode reactMode;
 
-  ///React to only tap events.
+  /// React to only tap events.
   ///
-  ///This will still work with widgets that absorb tap events like buttons and text fields;
-  ///however, FocusReactParams is still preferred over this for text fields.
+  /// This will still work with widgets that absorb tap events like buttons and
+  /// text fields;
+  /// however, FocusReactParams is still preferred over this for text fields.
   final TapReactParams? tapReactParams;
 
   /// React to focus.
@@ -72,8 +74,23 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
   /// React to callback events.
   ///
-  /// When you would like to trigger the dropdown by clicking on something else other than the target widget.
+  /// When you would like to trigger the dropdown by clicking on something else
+  /// other than the target widget.
   final CallbackReactParams? callbackReactParams;
+
+  /// A key that targets the overlayEntry widget (the dropdown).
+  ///
+  /// The normal "key", is actually the parent of the target and the offStage dropdown.
+  /// The overlayEntryKey lives in another tree.
+  /// If you want to target the dropdown only, use this instead.
+  @visibleForTesting
+  final Key? overlayEntryKey;
+
+  /// A key that targets the offStage widget.
+  ///
+  /// The normal "key", is actually the key of the parent of the offStage widget.
+  @visibleForTesting
+  final Key? offStageWidgetKey;
 
   final void Function(bool visible)? onDropdownVisibilityChange;
 
@@ -84,6 +101,8 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required this.barrierDismissible,
     required this.dropdownStyle,
     required this.collapseOnSelect,
+    this.offStageWidgetKey,
+    this.overlayEntryKey,
     this.onDropdownVisibilityChange,
     this.callbackReactParams,
     this.tapReactParams,
@@ -106,8 +125,13 @@ class ModularCustomizableDropdown extends StatefulWidget {
         const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
     bool collapseOnSelect = true,
     Key? key,
+    Key? overlayEntryKey,
+    Key? offStageWidgetKey,
   }) {
     return ModularCustomizableDropdown(
+      overlayEntryKey: overlayEntryKey,
+      offStageWidgetKey: offStageWidgetKey,
+      key: key,
       reactMode: ReactMode.tapReact,
       onValueSelect: onValueSelect,
       collapseOnSelect: collapseOnSelect,
@@ -138,9 +162,13 @@ class ModularCustomizableDropdown extends StatefulWidget {
     Function(bool)? onDropdownVisible,
     DropdownStyle style =
         const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
+    Key? overlayEntryKey,
+    Key? offStageWidgetKey,
     Key? key,
   }) {
     return ModularCustomizableDropdown(
+      offStageWidgetKey: offStageWidgetKey,
+      overlayEntryKey: overlayEntryKey,
       reactMode: ReactMode.focusReact,
       onValueSelect: onValueSelect,
       allDropdownValues: allDropdownValues,
@@ -167,8 +195,13 @@ class ModularCustomizableDropdown extends StatefulWidget {
     DropdownStyle style =
         const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
     Key? key,
+    Key? overlayEntryKey,
+    Key? offStageWidgetKey,
   }) {
     return ModularCustomizableDropdown(
+      offStageWidgetKey: offStageWidgetKey,
+      overlayEntryKey: overlayEntryKey,
+      key: key,
       reactMode: ReactMode.callbackReact,
       onValueSelect: onValueSelect,
       allDropdownValues: allDropdownValues,
@@ -249,6 +282,7 @@ class _ModularCustomizableDropdownState
               // No need to calculate anything if we're removing the dropdown.
               if (_isInBuildingPhase)
                 Offstage(
+                    key: widget.offStageWidgetKey,
                     offstage: true,
                     child: SizedBox(
                       width: _offStageTargetWidth,
@@ -416,6 +450,7 @@ class _ModularCustomizableDropdownState
     return OverlayEntry(
       builder: (context) => dismissibleWrapper(
         child: Positioned(
+          key: widget.overlayEntryKey,
           width: dropdownWidth,
           child: CompositedTransformFollower(
               offset: Offset(dropdownOffset.x,

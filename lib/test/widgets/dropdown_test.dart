@@ -10,9 +10,11 @@ const _fifthValue = DropdownValue(value: "5th value");
 
 class _TestWidget extends StatefulWidget {
   final Key? buttonKey;
+  final Key? dropdownKey;
   final DropdownStyle dropdownStyle;
 
-  const _TestWidget({required this.dropdownStyle, this.buttonKey, Key? key})
+  const _TestWidget(
+      {required this.dropdownStyle, this.dropdownKey, this.buttonKey, Key? key})
       : super(key: key);
 
   @override
@@ -31,7 +33,9 @@ class _TestWidgetState extends State<_TestWidget> {
   String _selectedValue = "";
 
   void _onValueSelected(String selectedValue) {
-    _selectedValue = selectedValue;
+    setState(() {
+      _selectedValue = selectedValue;
+    });
   }
 
   @override
@@ -40,6 +44,7 @@ class _TestWidgetState extends State<_TestWidget> {
       home: SizedBox(
           child: Align(
               child: ModularCustomizableDropdown.displayOnTap(
+                  overlayEntryKey: widget.dropdownKey,
                   onValueSelect: _onValueSelected,
                   style: widget.dropdownStyle,
                   allDropdownValues: _valuesList,
@@ -60,68 +65,153 @@ class _TestWidgetState extends State<_TestWidget> {
 }
 
 void main() {
-  group("Main dropdown layout test", () {
-    group("Test max rows visible on expanded", () {
-      group("DropdownValues whose index > maxRows - 1 should not be rendered.",
-          () {
-        testWidgets(
-          "maxRows == 3",
-          (tester) async {
-            const buttonKey = Key("Button key");
+  group("Test max rows visible on expanded", () {
+    group("DropdownValues whose index > maxRows - 1 should not be rendered.",
+        () {
+      testWidgets(
+        "maxRows == 3",
+        (tester) async {
+          const buttonKey = Key("Button key");
 
-            await tester.pumpWidget(const _TestWidget(
-              buttonKey: buttonKey,
-              dropdownStyle: DropdownStyle(
-                dropdownMaxHeight: DropdownMaxHeight(
-                  byRows: 3,
-                ),
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 3,
               ),
-            ));
-            await tester.pumpAndSettle();
+            ),
+          ));
+          await tester.pumpAndSettle();
 
-            await tester.tap(find.byKey(buttonKey));
-            await tester.pumpAndSettle();
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
 
-            expect(find.text(_firstValue.value), findsOneWidget);
-            expect(find.text(_secondValue.value), findsOneWidget);
-            expect(find.text(_thirdValue.value), findsOneWidget);
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
 
-            // Should not be visible
-            expect(find.text(_fourthValue.value), findsNothing);
-            expect(find.text(_fifthValue.value), findsNothing);
-          },
-        );
+          // Should not be visible
+          expect(find.text(_fourthValue.value), findsNothing);
+          expect(find.text(_fifthValue.value), findsNothing);
+        },
+      );
 
-        testWidgets(
-          "maxRows == 4",
-          (tester) async {
-            const buttonKey = Key("Button key");
+      testWidgets(
+        "maxRows == 4",
+        (tester) async {
+          const buttonKey = Key("Button key");
 
-            await tester.pumpWidget(const _TestWidget(
-              buttonKey: buttonKey,
-              dropdownStyle: DropdownStyle(
-                dropdownMaxHeight: DropdownMaxHeight(
-                  byRows: 4,
-                ),
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 4,
               ),
-            ));
-            await tester.pumpAndSettle();
+            ),
+          ));
+          await tester.pumpAndSettle();
 
-            await tester.tap(find.byKey(buttonKey));
-            await tester.pumpAndSettle();
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
 
-            expect(find.text(_firstValue.value), findsOneWidget);
-            expect(find.text(_secondValue.value), findsOneWidget);
-            expect(find.text(_thirdValue.value), findsOneWidget);
-            expect(find.text(_fourthValue.value), findsOneWidget);
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+          expect(find.text(_fourthValue.value), findsOneWidget);
 
-            // Should not be visible
-            expect(find.text(_fifthValue.value), findsNothing);
-          },
-        );
+          // Should not be visible
+          expect(find.text(_fifthValue.value), findsNothing);
+        },
+      );
 
-        //
-      });
+      testWidgets(
+        "maxRows == 5, all should be visible",
+        (tester) async {
+          const buttonKey = Key("Button key");
+
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 5,
+              ),
+            ),
+          ));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+          expect(find.text(_fourthValue.value), findsOneWidget);
+          expect(find.text(_fifthValue.value), findsOneWidget);
+        },
+      );
+
+      //
+    });
+  });
+
+  group("When one of the values is tapped", () {
+    testWidgets("The entire thing should be dismissed", (tester) async {
+      const buttonKey = Key("Button key");
+      const dropdownKey = Key("Dropdown key");
+
+      expect(find.byKey(dropdownKey), findsNothing);
+
+      await tester.pumpWidget(const _TestWidget(
+        dropdownKey: dropdownKey,
+        buttonKey: buttonKey,
+        dropdownStyle: DropdownStyle(
+          dropdownMaxHeight: DropdownMaxHeight(
+            byRows: 5,
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(buttonKey));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(dropdownKey), findsOneWidget);
+
+      final firstValueButton = find.text(_firstValue.value);
+
+      expect(firstValueButton, findsOneWidget);
+
+      await tester.tap(firstValueButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(dropdownKey), findsNothing);
+    });
+
+    testWidgets("The selected value text on the screen should change.",
+        (tester) async {
+      final valueToSelect = _secondValue.value;
+      expect(find.text(valueToSelect), findsNothing);
+
+      const buttonKey = Key("Button key");
+
+      await tester.pumpWidget(const _TestWidget(
+        buttonKey: buttonKey,
+        dropdownStyle: DropdownStyle(
+          dropdownMaxHeight: DropdownMaxHeight(
+            byRows: 5,
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(buttonKey));
+
+      await tester.pumpAndSettle();
+      final secondValueButton = find.text(valueToSelect);
+
+      await tester.tap(secondValueButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(valueToSelect), findsOneWidget);
     });
   });
 }
