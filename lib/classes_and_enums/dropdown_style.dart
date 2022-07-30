@@ -43,7 +43,7 @@ class DropdownStyle {
 
   ///Material's inkwell color.
   ///
-  ///Note: this won't be very noticeable if the tile's background color is not white.
+  /// Note: this won't be very noticeable if the tile's background color is not white.
   final MaterialColor onTapInkColor;
 
   /// The style for the values.
@@ -60,12 +60,12 @@ class DropdownStyle {
   /// Animation curve for transitionInDuration
   final Curve transitionInCurve;
 
-  ///Whether or not to swap the alignment, for example, from bottomCenter to topCenter when
-  ///the bottom of the dropdown exceeds the screen height.
+  /// Whether or not to swap the alignment, for example, from bottomCenter to topCenter when
+  /// the bottom of the dropdown exceeds the screen height.
   final bool invertYAxisAlignmentWhenOverflow;
 
   const DropdownStyle({
-    required this.invertYAxisAlignmentWhenOverflow,
+    this.invertYAxisAlignmentWhenOverflow = true,
     this.transitionInCurve = Curves.linear,
     this.transitionInDuration = const Duration(milliseconds: 100),
     this.boxShadows = const [
