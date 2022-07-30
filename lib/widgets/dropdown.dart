@@ -119,7 +119,11 @@ class ModularCustomizableDropdown extends StatefulWidget {
     );
   }
 
-  ///Same as displayOnTap, but also triggers dropdown when the target is in focus
+  /// Same as displayOnTap, but also triggers dropdown when the target is in focus
+  ///
+  /// This is still a bit stable, there's more work to be done...
+  ///
+  /// Don't use in prod...yet
   factory ModularCustomizableDropdown.displayOnFocus({
     required Function(String selectedValue) onValueSelect,
     required List<DropdownValue> allDropdownValues,
@@ -290,6 +294,9 @@ class _ModularCustomizableDropdownState
   /// This sets in motion all the calculation necessary to make sure that the dropdown
   /// sizes and positions itself correctly.
   void _beginPostStateUpdateStage() {
+    // Reset in case barrierDismissible = false and the width of the target changes.
+    _offStageTargetWidth = null;
+
     _updateListTileKeys();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       try {

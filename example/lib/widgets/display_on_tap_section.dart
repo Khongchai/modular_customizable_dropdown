@@ -35,7 +35,7 @@ class DisplayOnTapSection extends StatelessWidget {
               fontSize: 12,
               color: Colors.grey,
             ),
-            //Can also do explicit margin, of course, though a bit verbose...
+            // Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
             invertYAxisAlignmentWhenOverflow: true,
           ),
