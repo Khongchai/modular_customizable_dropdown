@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import "package:flutter_test/flutter_test.dart";
 import 'package:modular_customizable_dropdown/modular_customizable_dropdown.dart';
 
-const _firstValue = DropdownValue(value: "1st value");
-const _secondValue = DropdownValue(value: "2nd value");
+const _firstValue =
+    DropdownValue(value: "1st value", description: "1st description");
+const _secondValue =
+    DropdownValue(value: "2nd value", description: "2nd description");
+
+// Intentionally empty.
 const _thirdValue = DropdownValue(value: "3rd value");
-const _fourthValue = DropdownValue(value: "4th value");
-const _fifthValue = DropdownValue(value: "5th value");
+const _fourthValue =
+    DropdownValue(value: "4th value", description: "4th description");
+const _fifthValue =
+    DropdownValue(value: "5th value", description: "5th description");
 
 class _TestWidget extends StatefulWidget {
   final Key? buttonKey;

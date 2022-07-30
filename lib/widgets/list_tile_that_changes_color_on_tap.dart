@@ -51,7 +51,7 @@ class _ListTileThatChangesColorOnTapState
       style: textStyle,
     );
 
-    final description = widget.description != null
+    final description = widget.description?.isNotEmpty == true
         ? Text(widget.description!,
             textAlign: TextAlign.start,
             style: widget.descriptionTextStyle ?? textStyle)
