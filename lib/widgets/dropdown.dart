@@ -15,6 +15,7 @@ import '../classes_and_enums/tap_react_params.dart';
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
+// TODO also add a form wrapper.
 // TODO test cases
 // Might have to keep in mind that if you check if an element exist, might have to check
 // for 2 instances because we have 1 offstage target.
@@ -143,6 +144,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     );
   }
 
+  //TODO selecting a value does not disable the dropdown nor dismisses the keyboard...why?
   /// Same as displayOnTap, but also triggers dropdown when the target is in focus
   ///
   /// This is still a bit stable, there's more work to be done...
@@ -392,6 +394,11 @@ class _ModularCustomizableDropdownState
   }
 
   Widget _buildTarget() {
+    // TODO wrap with form wrapper here.
+    // We need that because in the event that an error occur,
+    // ideally, we want the drodown to move to below the error message under a
+    // formfield, or above, should there be one.
+    // For this to happen, the error field MUST be a part of the target.
     switch (widget.reactMode) {
       case ReactMode.tapReact:
         return widget.tapReactParams!.target;
