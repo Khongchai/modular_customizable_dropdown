@@ -14,18 +14,3 @@ List<DropdownValue> filterOutValuesThatDoNotMatchQueryString(
   );
   return valuesToFilter.where((e) => reg.hasMatch(e.value)).toList();
 }
-
-bool filterOutValueThatDoNotMatchQueryString(
-    {required String queryString, required String valueToFilter}) {
-  if (queryString == "" || queryString == " ") {
-    return true;
-  }
-
-  RegExp reg = RegExp(
-    "(${RegExp.escape(queryString)})\\S*",
-    caseSensitive: false,
-    multiLine: false,
-  );
-
-  return reg.hasMatch(valueToFilter);
-}
