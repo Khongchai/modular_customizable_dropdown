@@ -67,6 +67,13 @@ class _AnimatedListViewState extends State<AnimatedListView> {
   late Duration _animationDuration;
   late final double _animationStartPosition;
 
+  /// This is to ensure that we always get the correct height of the element, say
+  /// the original array is [how, are, you]
+  /// if the input is "yo", the output array will be [you]
+  ///
+  /// we then should get the height for the "you" element.
+  final Map<String, double> _valuesAndHeightMap = {};
+
   @override
   void initState() {
     assert(widget.listOfTileHeights.isNotEmpty);
@@ -86,6 +93,12 @@ class _AnimatedListViewState extends State<AnimatedListView> {
         });
       });
     });
+
+    for (int i = 0; i < widget.allDropdownValues.length; i++) {
+      _valuesAndHeightMap[widget.allDropdownValues[i].value] =
+          widget.listOfTileHeights[i];
+    }
+
     super.initState();
   }
 
@@ -100,7 +113,9 @@ class _AnimatedListViewState extends State<AnimatedListView> {
 
     final wrapperStaticHeight = _maxHeight;
     final animatedListHeight = min(
-        widget.listOfTileHeights
+        filteredValues
+            .map((e) => _valuesAndHeightMap[e.value]!)
+            .toList()
             .sublist(0, filteredValues.length)
             .reduce((value, element) => value + element),
         wrapperStaticHeight);
