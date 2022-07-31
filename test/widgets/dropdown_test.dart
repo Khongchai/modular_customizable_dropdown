@@ -202,11 +202,7 @@ void main() {
 
       await tester.pumpWidget(const _TestWidget(
         buttonKey: buttonKey,
-        dropdownStyle: DropdownStyle(
-          dropdownMaxHeight: DropdownMaxHeight(
-            byRows: 5,
-          ),
-        ),
+        dropdownStyle: DropdownStyle(),
       ));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(buttonKey));
@@ -218,6 +214,83 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(valueToSelect), findsOneWidget);
+    });
+
+    group("Layout", () {
+      group("Dropdown width", () {
+        testWidgets("Width scale 1", (tester) async {
+          const dropdownKey = Key("Dropdown Key");
+          const buttonKey = Key("Button Key");
+
+          await tester.pumpWidget(const _TestWidget(
+              dropdownKey: dropdownKey,
+              buttonKey: buttonKey,
+              dropdownStyle: DropdownStyle(
+                  dropdownWidth: DropdownWidth(
+                scale: 1,
+              ))));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          final dropdownWidth = tester.getSize(find.byKey(dropdownKey));
+          final targetWidth = tester.getSize(find.byKey(buttonKey));
+          expect(dropdownWidth.width, targetWidth.width);
+        });
+
+        testWidgets("Width scale 0.5", (tester) async {
+          const dropdownKey = Key("Dropdown Key");
+          const buttonKey = Key("Button Key");
+
+          await tester.pumpWidget(const _TestWidget(
+              dropdownKey: dropdownKey,
+              buttonKey: buttonKey,
+              dropdownStyle: DropdownStyle(
+                  dropdownWidth: DropdownWidth(
+                scale: 0.5,
+              ))));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          final dropdownWidth = tester.getSize(find.byKey(dropdownKey));
+          final targetWidth = tester.getSize(find.byKey(buttonKey));
+          expect(dropdownWidth.width, targetWidth.width * 0.5);
+        });
+
+        testWidgets("Width scale 1.3", (tester) async {
+          const dropdownKey = Key("Dropdown Key");
+          const buttonKey = Key("Button Key");
+
+          await tester.pumpWidget(const _TestWidget(
+              dropdownKey: dropdownKey,
+              buttonKey: buttonKey,
+              dropdownStyle: DropdownStyle(
+                  dropdownWidth: DropdownWidth(
+                scale: 1.3,
+              ))));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          final dropdownWidth = tester.getSize(find.byKey(dropdownKey));
+          final targetWidth = tester.getSize(find.byKey(buttonKey));
+          expect(dropdownWidth.width, targetWidth.width * 1.3);
+        });
+      });
+
+      group("Dropdown alignment", () {
+        testWidgets("", (tester) async {
+          await tester.pumpWidget(const _TestWidget(
+              dropdownStyle: DropdownStyle(
+            dropdownAlignment: Alignment.bottomLeft,
+          )));
+          await tester.pumpAndSettle();
+        });
+      });
     });
   });
 }

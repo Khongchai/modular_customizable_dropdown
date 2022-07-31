@@ -1,4 +1,4 @@
-import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/vector2.dart';
 
 Vector2 calculateDropdownPos({
@@ -6,7 +6,7 @@ Vector2 calculateDropdownPos({
   required double targetHeight,
   required double dropdownHeight,
   required double dropdownWidth,
-  required DropdownAlignment dropdownAlignment,
+  required Alignment dropdownAlignment,
   required double targetAbsoluteY,
   required double screenHeight,
   required bool invertYAxisAlignmentWhenOverflow,

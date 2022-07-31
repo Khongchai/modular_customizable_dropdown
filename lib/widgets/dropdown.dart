@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import "package:flutter/material.dart";
-import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/focus_callback_params.dart';
 import 'package:modular_customizable_dropdown/utils/calculate_dropdown_pos.dart';
@@ -451,8 +450,8 @@ class _ModularCustomizableDropdownState
             : Stack(children: [child]);
 
     final invertDir = dropdownOffset.isYInverted ? -1 : 1;
-    final DropdownAlignment newAlignment =
-        DropdownAlignment(dropdownAlignment.x, dropdownAlignment.y * invertDir);
+    final Alignment newAlignment =
+        Alignment(dropdownAlignment.x, dropdownAlignment.y * invertDir);
 
     return OverlayEntry(
       builder: (context) => dismissibleWrapper(

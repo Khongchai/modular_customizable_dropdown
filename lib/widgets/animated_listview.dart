@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import "package:flutter/material.dart";
-import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_alignment.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value.dart';
 import 'package:modular_customizable_dropdown/utils/delayed_action.dart';
@@ -21,7 +20,7 @@ class AnimatedListView extends StatefulWidget {
   ///
   /// If the alignment is DropdownAlignment.bottomCenter, bottomLeft, or bottomRight,
   /// the animation should begin from the y == 0 position of the dropdown and expand its height downward.
-  final DropdownAlignment dropdownAlignment;
+  final Alignment dropdownAlignment;
 
   ///Height to animate to
   final double expectedDropdownHeight;

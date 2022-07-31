@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_scrollbar_style.dart';
 
-import 'dropdown_alignment.dart';
 import 'dropdown_max_height.dart';
 import 'dropdown_width.dart';
 
@@ -52,7 +51,7 @@ class DropdownStyle {
   /// The style for the descriptions.
   final TextStyle? descriptionStyle;
 
-  final DropdownAlignment dropdownAlignment;
+  final Alignment dropdownAlignment;
 
   /// Animation duration before the dropdown becomes fully expanded.
   final Duration transitionInDuration;
@@ -89,7 +88,7 @@ class DropdownStyle {
     this.onTapTextStyle = const TextStyle(color: Color(0xbb000000)),
     this.onTapInkColor = _blueMat,
     this.explicitMarginBetweenDropdownAndTarget = 0,
-    this.dropdownAlignment = DropdownAlignment.bottomCenter,
+    this.dropdownAlignment = Alignment.bottomCenter,
     this.borderColor = const Color(0x00000000),
     this.borderThickness = 0,
     this.dropdownMaxHeight = const DropdownMaxHeight(),
