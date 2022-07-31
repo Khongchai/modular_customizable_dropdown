@@ -14,17 +14,6 @@ import '../classes_and_enums/tap_react_params.dart';
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
-// TODO also add a form wrapper.
-// TODO test cases
-// Might have to keep in mind that if you check if an element exist, might have to check
-// for 2 instances because we have 1 offstage target.
-
-// If the widget.allDropdownValues change, does the height of the expanded dropdown
-// update to accommodate the new content?
-
-// When expanded, is the height equals to exactly the passed in DropdownMaxHeight,
-// both by pixels and by rows?
-
 // TODO write list of things you fixed for the release note (alongside the new feature with description).
 
 /// A dropdown extension for any widget.
@@ -92,6 +81,9 @@ class ModularCustomizableDropdown extends StatefulWidget {
   @visibleForTesting
   final Key? offStageWidgetKey;
 
+  /// For testing the final height of the dropdown
+  final Key? listviewKey;
+
   final void Function(bool visible)? onDropdownVisibilityChange;
 
   const ModularCustomizableDropdown({
@@ -101,6 +93,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required this.barrierDismissible,
     required this.dropdownStyle,
     required this.collapseOnSelect,
+    this.listviewKey,
     this.offStageWidgetKey,
     this.overlayEntryKey,
     this.onDropdownVisibilityChange,
@@ -125,10 +118,12 @@ class ModularCustomizableDropdown extends StatefulWidget {
         const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
     bool collapseOnSelect = true,
     Key? key,
-    Key? overlayEntryKey,
-    Key? offStageWidgetKey,
+    @visibleForTesting Key? overlayEntryKey,
+    @visibleForTesting Key? offStageWidgetKey,
+    @visibleForTesting Key? listviewKey,
   }) {
     return ModularCustomizableDropdown(
+      listviewKey: listviewKey,
       overlayEntryKey: overlayEntryKey,
       offStageWidgetKey: offStageWidgetKey,
       key: key,
@@ -163,11 +158,13 @@ class ModularCustomizableDropdown extends StatefulWidget {
     Function(bool)? onDropdownVisible,
     DropdownStyle style =
         const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
-    Key? overlayEntryKey,
-    Key? offStageWidgetKey,
     Key? key,
+    @visibleForTesting Key? listviewKey,
+    @visibleForTesting Key? overlayEntryKey,
+    @visibleForTesting Key? offStageWidgetKey,
   }) {
     return ModularCustomizableDropdown(
+      listviewKey: listviewKey,
       offStageWidgetKey: offStageWidgetKey,
       overlayEntryKey: overlayEntryKey,
       reactMode: ReactMode.focusReact,
@@ -196,10 +193,12 @@ class ModularCustomizableDropdown extends StatefulWidget {
     DropdownStyle style =
         const DropdownStyle(invertYAxisAlignmentWhenOverflow: true),
     Key? key,
-    Key? overlayEntryKey,
-    Key? offStageWidgetKey,
+    @visibleForTesting Key? listviewKey,
+    @visibleForTesting Key? overlayEntryKey,
+    @visibleForTesting Key? offStageWidgetKey,
   }) {
     return ModularCustomizableDropdown(
+      listviewKey: listviewKey,
       offStageWidgetKey: offStageWidgetKey,
       overlayEntryKey: overlayEntryKey,
       key: key,
@@ -421,7 +420,7 @@ class _ModularCustomizableDropdownState
 
     final dropdownWidth =
         targetWidth * widget.dropdownStyle.dropdownWidth.scale;
-    final dropdownAlignment = widget.dropdownStyle.dropdownAlignment;
+    final dropdownAlignment = widget.dropdownStyle.alignment;
 
     final dropdownOffset = calculateDropdownPos(
         dropdownAlignment: dropdownAlignment,
@@ -464,6 +463,7 @@ class _ModularCustomizableDropdownState
               link: _layerLink,
               showWhenUnlinked: false,
               child: AnimatedListView(
+                listviewKey: widget.listviewKey,
                 animationCurve: widget.dropdownStyle.transitionInCurve,
                 listOfTileHeights: _tileHeights,
                 dropdownScrollbarStyle:

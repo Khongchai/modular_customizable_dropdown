@@ -22,7 +22,7 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   // Don't make final.
-  List<DropdownValue> _dropdownValues = [
+  final List<DropdownValue> _dropdownValues = [
     DropdownValue(
       value: "Violinist",
       description:

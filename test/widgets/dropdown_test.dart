@@ -17,10 +17,15 @@ const _fifthValue =
 class _TestWidget extends StatefulWidget {
   final Key? buttonKey;
   final Key? dropdownKey;
+  final Key? listviewKey;
   final DropdownStyle dropdownStyle;
 
   const _TestWidget(
-      {required this.dropdownStyle, this.dropdownKey, this.buttonKey, Key? key})
+      {required this.dropdownStyle,
+      this.listviewKey,
+      this.dropdownKey,
+      this.buttonKey,
+      Key? key})
       : super(key: key);
 
   @override
@@ -50,6 +55,7 @@ class _TestWidgetState extends State<_TestWidget> {
       home: SizedBox(
           child: Align(
               child: ModularCustomizableDropdown.displayOnTap(
+                  listviewKey: widget.listviewKey,
                   overlayEntryKey: widget.dropdownKey,
                   onValueSelect: _onValueSelected,
                   style: widget.dropdownStyle,
@@ -72,10 +78,64 @@ class _TestWidgetState extends State<_TestWidget> {
 
 void main() {
   group("Test max rows visible on expanded", () {
-    group("DropdownValues whose index > maxRows - 1 should not be rendered.",
-        () {
+    group(
+        "given some arbitrary height, the rendered dropdown's visible "
+        "height should be exactly the same. If the height does not exceed the height of "
+        "al rows combined.", () {
+      testWidgets("height 100", (tester) async {
+        const listviewKey = Key("listview key");
+        const buttonKey = Key("button key");
+        const expectedHeight = 100.0;
+
+        await tester.pumpWidget(const _TestWidget(
+          listviewKey: listviewKey,
+          buttonKey: buttonKey,
+          dropdownStyle: DropdownStyle(
+            dropdownMaxHeight: DropdownMaxHeight(
+              byPixels: expectedHeight,
+            ),
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(buttonKey));
+        await tester.pumpAndSettle();
+
+        final listview = find.byKey(listviewKey);
+        final listviewSize = tester.getSize(listview);
+
+        expect(listviewSize.height, expectedHeight);
+      });
+
+      testWidgets("height 200", (tester) async {
+        const listviewKey = Key("listview key");
+        const buttonKey = Key("button key");
+        const expectedHeight = 200.0;
+
+        await tester.pumpWidget(const _TestWidget(
+          listviewKey: listviewKey,
+          buttonKey: buttonKey,
+          dropdownStyle: DropdownStyle(
+            dropdownMaxHeight: DropdownMaxHeight(
+              byPixels: expectedHeight,
+            ),
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(buttonKey));
+        await tester.pumpAndSettle();
+
+        final listview = find.byKey(listviewKey);
+        final listviewSize = tester.getSize(listview);
+
+        expect(listviewSize.height, expectedHeight);
+      });
+    });
+
+    group("DropdownValues whose index >= byRows should not be rendered.", () {
       testWidgets(
-        "maxRows == 3",
+        "byRows == 3",
         (tester) async {
           const buttonKey = Key("Button key");
 
@@ -103,7 +163,7 @@ void main() {
       );
 
       testWidgets(
-        "maxRows == 4",
+        "byRows == 4",
         (tester) async {
           const buttonKey = Key("Button key");
 
@@ -131,7 +191,7 @@ void main() {
       );
 
       testWidgets(
-        "maxRows == 5, all should be visible",
+        "byRows == 5, all should be visible",
         (tester) async {
           const buttonKey = Key("Button key");
 
@@ -278,17 +338,8 @@ void main() {
 
           final dropdownWidth = tester.getSize(find.byKey(dropdownKey));
           final targetWidth = tester.getSize(find.byKey(buttonKey));
-          expect(dropdownWidth.width, targetWidth.width * 1.3);
-        });
-      });
 
-      group("Dropdown alignment", () {
-        testWidgets("", (tester) async {
-          await tester.pumpWidget(const _TestWidget(
-              dropdownStyle: DropdownStyle(
-            dropdownAlignment: Alignment.bottomLeft,
-          )));
-          await tester.pumpAndSettle();
+          expect(dropdownWidth.width, targetWidth.width * 1.3);
         });
       });
     });

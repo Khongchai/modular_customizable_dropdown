@@ -33,7 +33,7 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
             onTapInkColor: Colors.amber,
             dropdownWidth: DropdownWidth(scale: 1.2),
             //Bottom center with a bit of extra relative margin
-            dropdownAlignment: DropdownAlignment(0, 1.03),
+            alignment: Alignment(0, 1.03),
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
             invertYAxisAlignmentWhenOverflow: true,

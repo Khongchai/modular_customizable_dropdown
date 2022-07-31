@@ -28,8 +28,7 @@ class DisplayOnTapSection extends StatelessWidget {
             dropdownWidth: DropdownWidth(scale: 1),
             onTapInkColor: Colors.red,
             explicitMarginBetweenDropdownAndTarget: 5,
-            //Same as DropdownAlignment(0, 0)
-            dropdownAlignment: Alignment.topCenter,
+            alignment: Alignment.topCenter,
             dropdownScrollbarStyle: DropdownScrollbarStyle(),
             descriptionStyle: TextStyle(
               fontSize: 12,

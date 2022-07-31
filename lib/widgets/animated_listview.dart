@@ -39,6 +39,10 @@ class AnimatedListView extends StatefulWidget {
   final Curve animationCurve;
   final DropdownScrollbarStyle dropdownScrollbarStyle;
 
+  /// For testing the final visible height of the dropdown.
+  @visibleForTesting
+  final Key? listviewKey;
+
   const AnimatedListView(
       {required this.allDropdownValues,
       required this.animationDuration,
@@ -54,6 +58,7 @@ class AnimatedListView extends StatefulWidget {
       required this.boxShadows,
       required this.listOfTileHeights,
       required this.dropdownScrollbarStyle,
+      this.listviewKey,
       Key? key})
       : super(key: key);
 
@@ -120,6 +125,7 @@ class _AnimatedListViewState extends State<AnimatedListView> {
         wrapperStaticHeight);
 
     return SizedBox(
+      key: widget.listviewKey,
       height: wrapperStaticHeight,
       child: Stack(
         alignment: AlignmentDirectional(0, _animationStartPosition),

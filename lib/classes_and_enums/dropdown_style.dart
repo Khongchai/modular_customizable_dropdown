@@ -51,7 +51,7 @@ class DropdownStyle {
   /// The style for the descriptions.
   final TextStyle? descriptionStyle;
 
-  final Alignment dropdownAlignment;
+  final Alignment alignment;
 
   /// Animation duration before the dropdown becomes fully expanded.
   final Duration transitionInDuration;
@@ -88,7 +88,7 @@ class DropdownStyle {
     this.onTapTextStyle = const TextStyle(color: Color(0xbb000000)),
     this.onTapInkColor = _blueMat,
     this.explicitMarginBetweenDropdownAndTarget = 0,
-    this.dropdownAlignment = Alignment.bottomCenter,
+    this.alignment = Alignment.bottomCenter,
     this.borderColor = const Color(0x00000000),
     this.borderThickness = 0,
     this.dropdownMaxHeight = const DropdownMaxHeight(),
