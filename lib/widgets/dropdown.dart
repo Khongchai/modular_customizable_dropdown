@@ -17,7 +17,7 @@ import 'list_tile_that_changes_color_on_tap.dart';
 
 // TODO list
 //
-// TODO all rows shouldn't extend beyond the screen Area.
+// TODO instead of saying invert y axis, say, invert to axis with the most space and also allow additional space between the top and bottom of the screen and the dropdown.
 // TODO if barrierDismissible is false, tapping the target will open another dropdown.
 // TODO edit readme
 
@@ -611,6 +611,7 @@ class _ModularCustomizableDropdownState
   }
 }
 
+// TODO move this into another file and don't return a map...
 Map<String, double> clampDropdownHeightToPreventScreenOverflow({
   /// Make sure that the passed in offset has already gone through the y inversion
   /// check.
