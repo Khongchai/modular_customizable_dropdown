@@ -19,10 +19,12 @@ class _TestWidget extends StatefulWidget {
   final Key? dropdownKey;
   final Key? listviewKey;
   final List<Key>? rowKeys;
+  final Alignment? alignment;
   final DropdownStyle dropdownStyle;
 
   const _TestWidget(
       {required this.dropdownStyle,
+      this.alignment,
       this.listviewKey,
       this.rowKeys,
       this.dropdownKey,
@@ -309,6 +311,23 @@ void main() {
           (tester) async {
         fractionalRowTestFor(tester: tester, byRows: 5);
       });
+    });
+
+    // Note: Screen width doesn't really matter
+    group("Dropdown's position", () {
+      group(
+          "Dropdown should wrap around when it finds that its bottom will overflow the screen",
+          () {
+        const listviewKey = Key("listviewKey");
+        const buttonKey = Key("buttonKey");
+      });
+
+      // TODO this is the new case.
+      // If after wrapping around, the dropdown finds that it will still overflow the screen,
+      // it should try to limit its visible height and have the user scroll the rest.
+      group(
+          "The visible part (the listview part) of the dropdown should never overflow the screen.",
+          () {});
     });
   });
 

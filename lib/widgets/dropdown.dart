@@ -15,8 +15,10 @@ import '../classes_and_enums/tap_react_params.dart';
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
-// TODO return the entire DropdownValue object instead of just the value.
+// TODO list
+//
 // TODO all rows shouldn't extend beyond the screen Area.
+// TODO if barrierDismissible is false, tapping the target will open another dropdown.
 // TODO edit readme
 
 /// A dropdown extension for any widget.
@@ -251,7 +253,7 @@ class _ModularCustomizableDropdownState
   final GlobalKey _offStageTargetKey = GlobalKey();
   double? _offStageTargetWidth;
 
-  late double _preCalculateDropdownHeight;
+  late double _preCalculatedDropdownHeight;
   late List<double> _tileHeights;
 
   @override
@@ -428,7 +430,7 @@ class _ModularCustomizableDropdownState
         heights.reduce((value, element) => value + element);
 
     _tileHeights = heights;
-    _preCalculateDropdownHeight = min(totalDropdownHeight, dropdownMaxHeight);
+    _preCalculatedDropdownHeight = min(totalDropdownHeight, dropdownMaxHeight);
   }
 
   Widget _buildTarget() {
@@ -458,8 +460,8 @@ class _ModularCustomizableDropdownState
     final dropdownAlignment = widget.dropdownStyle.alignment;
 
     final dropdownOffset = calculateDropdownPos(
-        dropdownAlignment: dropdownAlignment,
-        dropdownHeight: _preCalculateDropdownHeight,
+        alignment: dropdownAlignment,
+        dropdownHeight: _preCalculatedDropdownHeight,
         dropdownWidth: dropdownWidth,
         targetAbsoluteY: targetPos.dy,
         targetHeight: targetHeight,
@@ -484,8 +486,24 @@ class _ModularCustomizableDropdownState
             : Stack(children: [child]);
 
     final invertDir = dropdownOffset.isYInverted ? -1 : 1;
+    final finalYAlignment = dropdownAlignment.y * invertDir;
     final Alignment newAlignment =
-        Alignment(dropdownAlignment.x, dropdownAlignment.y * invertDir);
+        Alignment(dropdownAlignment.x, finalYAlignment);
+
+    final relativeOffsetBeforeClamping = Offset(dropdownOffset.x,
+        dropdownOffset.y + explicitDropdownTargetMargin * invertDir);
+
+    final clampResult = clampDropdownHeightToPreventScreenOverflow(
+      inversionCheckedAbsoluteDropdownTopPos:
+          targetPos.dy + relativeOffsetBeforeClamping.dy,
+      dropdownHeight: _preCalculatedDropdownHeight,
+      screenHeight: MediaQuery.of(context).size.height,
+    );
+
+    // final yDiffBeforeAndAfterClamp =
+    //     _preCalculatedDropdownHeight - finalDropdownHeight;
+    final relativeOffsetAfterClamping = Offset(relativeOffsetBeforeClamping.dx,
+        relativeOffsetBeforeClamping.dy + clampResult["topSubtract"]!);
 
     return OverlayEntry(
       builder: (context) => dismissibleWrapper(
@@ -493,8 +511,7 @@ class _ModularCustomizableDropdownState
           key: widget.overlayEntryKey,
           width: dropdownWidth,
           child: CompositedTransformFollower(
-              offset: Offset(dropdownOffset.x,
-                  dropdownOffset.y + explicitDropdownTargetMargin * invertDir),
+              offset: relativeOffsetAfterClamping,
               link: _layerLink,
               showWhenUnlinked: false,
               child: AnimatedListView(
@@ -515,7 +532,8 @@ class _ModularCustomizableDropdownState
                   return _buildDropdownRow(dropdownValue, index);
                 },
                 queryString: widget.focusReactParams?.textController.text ?? "",
-                expectedDropdownHeight: _preCalculateDropdownHeight,
+                expectedDropdownHeight: clampResult["overflowCheckedHeight"]!,
+                // expectedDropdownHeight: _preCalculatedDropdownHeight,
               )),
         ),
       ),
@@ -575,7 +593,7 @@ class _ModularCustomizableDropdownState
 
   ///Should not be called by any function other than _toggleOverlay()
   void _dismissOverlay() {
-    if (_isInBuildingPhase != true) {
+    if (!_isInBuildingPhase) {
       _overlayEntry!.remove();
 
       ///Mark dropdown as build-able.
@@ -591,4 +609,30 @@ class _ModularCustomizableDropdownState
   void _onDropdownVisible(bool dropdownVisible) {
     widget.onDropdownVisibilityChange?.call(dropdownVisible);
   }
+}
+
+Map<String, double> clampDropdownHeightToPreventScreenOverflow({
+  /// Make sure that the passed in offset has already gone through the y inversion
+  /// check.
+  required double inversionCheckedAbsoluteDropdownTopPos,
+  required double dropdownHeight,
+  required double screenHeight,
+}) {
+  final topSubtract = max(0, inversionCheckedAbsoluteDropdownTopPos) -
+      inversionCheckedAbsoluteDropdownTopPos;
+
+  final inversionCheckedAbsoluteDropdownBottomPos =
+      inversionCheckedAbsoluteDropdownTopPos + dropdownHeight;
+  final bottomSubtract =
+      min(screenHeight, inversionCheckedAbsoluteDropdownBottomPos) -
+          inversionCheckedAbsoluteDropdownBottomPos;
+
+  final ySubtract = topSubtract + bottomSubtract;
+
+  final overflowCheckedHeight = dropdownHeight - ySubtract.abs();
+
+  return {
+    "overflowCheckedHeight": overflowCheckedHeight,
+    "topSubtract": topSubtract
+  };
 }

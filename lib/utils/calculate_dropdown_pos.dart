@@ -6,20 +6,20 @@ Vector2 calculateDropdownPos({
   required double targetHeight,
   required double dropdownHeight,
   required double dropdownWidth,
-  required Alignment dropdownAlignment,
+  required Alignment alignment,
   required double targetAbsoluteY,
   required double screenHeight,
   required bool invertYAxisAlignmentWhenOverflow,
 }) {
   //Calculate x alignment
-  final xAlignment = dropdownAlignment.x;
+  final xAlignment = alignment.x;
   final xCenter = ((dropdownWidth - targetWidth) / 2);
   final dropdownRelativeXOffset = (xCenter * -xAlignment) - xCenter;
 
   //Calculate y alignment
-  final yAlignment = dropdownAlignment.y;
+  final yAlignment = alignment.y;
   final yCenter = dropdownHeight / 2 + targetHeight / 2;
-  //For y values, 1 unit of alignment equals half of th dropdown height + target's half of target's height.
+  //For y values, 1 unit of alignment equals half of the dropdown height + half of target's height.
   final yOffset = yCenter * yAlignment;
   final dropdownRelativeYOffset = targetHeight -
       yCenter +

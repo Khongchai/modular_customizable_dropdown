@@ -29,14 +29,19 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
         ModularCustomizableDropdown.displayOnCallback(
           onValueSelect: widget.onValueSelect,
           allDropdownValues: widget.dropdownValues,
+          barrierDismissible: false,
           style: const DropdownStyle(
             onTapInkColor: Colors.amber,
             dropdownWidth: DropdownWidth(scale: 1.2),
+            dropdownMaxHeight: DropdownMaxHeight(
+              byRows: 7,
+            ),
             //Bottom center with a bit of extra relative margin
-            alignment: Alignment(0, 1.03),
+            // alignment: Alignment(0, -1.03),
+            alignment: Alignment.topCenter,
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
-            invertYAxisAlignmentWhenOverflow: true,
+            invertYAxisAlignmentWhenOverflow: false,
           ),
           targetBuilder: (_toggleDropdown) {
             toggleDropdown = _toggleDropdown;
