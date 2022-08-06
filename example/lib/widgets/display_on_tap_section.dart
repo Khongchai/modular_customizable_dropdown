@@ -23,7 +23,9 @@ class DisplayOnTapSection extends StatelessWidget {
           allDropdownValues: dropdownValues,
           style: const DropdownStyle(
             dropdownMaxHeight: DropdownMaxHeight(
-              byRows: 4,
+              // Means show 4 rows with the 4th rows having only half its full
+              // height.
+              byRows: 3.5,
             ),
             dropdownWidth: DropdownWidth(scale: 1),
             onTapInkColor: Colors.red,
@@ -34,7 +36,7 @@ class DisplayOnTapSection extends StatelessWidget {
               fontSize: 12,
               color: Colors.grey,
             ),
-            // Can also do explicit margin, of course, though a bit verbose...
+            // Can also do explicit margin.
             // explicitMarginBetweenDropdownAndTarget: 5,
             invertYAxisAlignmentWhenOverflow: true,
           ),
