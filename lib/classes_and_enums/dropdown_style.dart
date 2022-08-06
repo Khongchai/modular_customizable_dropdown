@@ -24,6 +24,8 @@ class DropdownStyle {
 
   final DropdownWidth dropdownWidth;
 
+  final double spaceBetweenValueAndDescription;
+
   ///### Why
   ///While DropdownAlignment is also capable of providing margin between the target and the dropdown,
   ///situation sometimes calls for explicit margins in pixels. This is the param for that.
@@ -95,6 +97,7 @@ class DropdownStyle {
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.onTapColorTransitionDuration = const Duration(milliseconds: 50),
     this.dropdownWidth = const DropdownWidth(),
+    this.spaceBetweenValueAndDescription = 12,
   });
 
   static const MaterialColor _blueMat = MaterialColor(

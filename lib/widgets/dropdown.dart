@@ -14,8 +14,6 @@ import '../classes_and_enums/tap_react_params.dart';
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
-// TODO write list of things you fixed for the release note (alongside the new feature with description).
-
 /// A dropdown extension for any widget.
 ///
 /// I have provided three factory constructors to help you get started,
@@ -138,12 +136,12 @@ class ModularCustomizableDropdown extends StatefulWidget {
     );
   }
 
-  //TODO selecting a value does not disable the dropdown nor dismisses the keyboard...why?
   /// Same as displayOnTap, but also triggers dropdown when the target is in focus
   ///
   /// This is still a bit stable, there's more work to be done...
   ///
   /// Don't use in prod...yet
+  @Deprecated("This factory constructor is no longer maintained.")
   factory ModularCustomizableDropdown.displayOnFocus({
     required Function(String selectedValue) onValueSelect,
     required List<DropdownValue> allDropdownValues,
@@ -299,6 +297,8 @@ class _ModularCustomizableDropdownState
                             key: _offStageListTileKeys[i],
                             onTap: null,
                             onTapInkColor: widget.dropdownStyle.onTapInkColor,
+                            spaceBetweenTitleAndDescription: widget
+                                .dropdownStyle.spaceBetweenValueAndDescription,
                             onTapColorTransitionDuration:
                                 const Duration(seconds: 0),
                             defaultBackgroundColor: const LinearGradient(
@@ -392,11 +392,6 @@ class _ModularCustomizableDropdownState
   }
 
   Widget _buildTarget() {
-    // TODO wrap with form wrapper here.
-    // We need that because in the event that an error occur,
-    // ideally, we want the drodown to move to below the error message under a
-    // formfield, or above, should there be one.
-    // For this to happen, the error field MUST be a part of the target.
     switch (widget.reactMode) {
       case ReactMode.tapReact:
         return widget.tapReactParams!.target;
@@ -502,6 +497,8 @@ class _ModularCustomizableDropdownState
         }
       },
       onTapInkColor: widget.dropdownStyle.onTapInkColor,
+      spaceBetweenTitleAndDescription:
+          widget.dropdownStyle.spaceBetweenValueAndDescription,
       onTapColorTransitionDuration:
           widget.dropdownStyle.onTapColorTransitionDuration,
       defaultBackgroundColor: widget.dropdownStyle.defaultItemColor,
@@ -549,8 +546,6 @@ class _ModularCustomizableDropdownState
 
   ///Should not be called by any function other than _dismissOverlay()
   void _onDropdownVisible(bool dropdownVisible) {
-    if (widget.onDropdownVisibilityChange != null) {
-      widget.onDropdownVisibilityChange!(dropdownVisible);
-    }
+    widget.onDropdownVisibilityChange?.call(dropdownVisible);
   }
 }

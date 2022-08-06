@@ -10,6 +10,7 @@ class ListTileThatChangesColorOnTap extends StatefulWidget {
   final String title;
   final String? description;
   final TextStyle? descriptionTextStyle;
+  final double spaceBetweenTitleAndDescription;
   final Duration onTapColorTransitionDuration;
   final MaterialColor onTapInkColor;
 
@@ -17,6 +18,7 @@ class ListTileThatChangesColorOnTap extends StatefulWidget {
       {required this.title,
       this.description,
       this.descriptionTextStyle,
+      required this.spaceBetweenTitleAndDescription,
       required this.defaultTextStyle,
       required this.onTapBackgroundColor,
       required this.defaultBackgroundColor,
@@ -44,7 +46,6 @@ class _ListTileThatChangesColorOnTapState
     final backgroundGradient =
         isTapped ? widget.onTapBackgroundColor : widget.defaultBackgroundColor;
 
-    // TODO, can be inside of the didUpdateWidget lifeCycle.
     final text = Text(
       widget.title,
       textAlign: TextAlign.start,
@@ -69,9 +70,8 @@ class _ListTileThatChangesColorOnTapState
               mainAxisSize: MainAxisSize.min,
               children: [
                 text,
-                // TODO this should be configurable.
                 if (description != null) ...[
-                  const SizedBox(height: 12),
+                  SizedBox(height: widget.spaceBetweenTitleAndDescription),
                   description,
                 ]
               ],

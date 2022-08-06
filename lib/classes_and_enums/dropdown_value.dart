@@ -7,9 +7,23 @@ class DropdownValue {
   /// This goes under the dropdown value when the dropdown is expanded.
   final String? description;
 
+  /// Any additional data:
+  ///
+  /// ```dart
+  ///
+  /// onValueSelect: (selectedValue) {
+  ///   _pageTitle = selectedValue.value;
+  ///   _pageDescription = selectedValue.description;
+  ///   _pageBody = selectedValue.metadata as String;
+  /// }
+  ///
+  /// ```
+  final dynamic metadata;
+
   const DropdownValue({
     required this.value,
     this.description,
+    this.metadata,
   });
 
   /// A simple static helper to help with when you don't need the descriptions.
