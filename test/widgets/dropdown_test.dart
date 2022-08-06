@@ -222,14 +222,14 @@ void main() {
       //
     });
 
-    /// We can't just use expect(find.text(...)) here because different fractions
-    /// can give out different ray-casting result(when it's partially hidden).
-    ///
-    /// Finding out which fraction counts as being visible to the ray-caster
-    /// would take too much effort. We'll instead check if the height of the
-    /// visible dropdown is equals to the height of all rows plus the last fractional
-    /// height.
-    ///
+    // We can't just use expect(find.text(...)) here because different fractions
+    // can give out different ray-casting result(when it's partially hidden).
+    //
+    // Finding out which fraction counts as being visible to the ray-caster
+    // would take too much effort. We'll instead check if the height of the
+    // visible dropdown is equals to the height of all rows plus the last fractional
+    // height.
+    //
     group("Fractional byRows test", () {
       void fractionalRowTestFor({
         required WidgetTester tester,
