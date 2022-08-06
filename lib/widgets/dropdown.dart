@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/focus_callback_params.dart';
@@ -79,8 +80,13 @@ class ModularCustomizableDropdown extends StatefulWidget {
   @visibleForTesting
   final Key? offStageWidgetKey;
 
-  /// For testing the final height of the dropdown
+  /// For testing the final "visible" height of the dropdown
+  @visibleForTesting
   final Key? listviewKey;
+
+  /// For obtaining the individual height of each of the dropdown rows.
+  @visibleForTesting
+  final List<GlobalKey>? rowKeys;
 
   final void Function(bool visible)? onDropdownVisibilityChange;
 
@@ -91,13 +97,14 @@ class ModularCustomizableDropdown extends StatefulWidget {
     required this.barrierDismissible,
     required this.dropdownStyle,
     required this.collapseOnSelect,
-    this.listviewKey,
-    this.offStageWidgetKey,
-    this.overlayEntryKey,
     this.onDropdownVisibilityChange,
     this.callbackReactParams,
     this.tapReactParams,
     this.focusReactParams,
+    this.rowKeys,
+    this.listviewKey,
+    this.offStageWidgetKey,
+    this.overlayEntryKey,
     Key? key,
   })  : assert((tapReactParams != null && reactMode == ReactMode.tapReact) ||
             (focusReactParams != null && reactMode == ReactMode.focusReact) ||
@@ -119,8 +126,10 @@ class ModularCustomizableDropdown extends StatefulWidget {
     @visibleForTesting Key? overlayEntryKey,
     @visibleForTesting Key? offStageWidgetKey,
     @visibleForTesting Key? listviewKey,
+    @visibleForTesting List<GlobalKey>? rowKeys,
   }) {
     return ModularCustomizableDropdown(
+      rowKeys: rowKeys,
       listviewKey: listviewKey,
       overlayEntryKey: overlayEntryKey,
       offStageWidgetKey: offStageWidgetKey,
@@ -160,8 +169,10 @@ class ModularCustomizableDropdown extends StatefulWidget {
     @visibleForTesting Key? listviewKey,
     @visibleForTesting Key? overlayEntryKey,
     @visibleForTesting Key? offStageWidgetKey,
+    @visibleForTesting List<GlobalKey>? rowKeys,
   }) {
     return ModularCustomizableDropdown(
+      rowKeys: rowKeys,
       listviewKey: listviewKey,
       offStageWidgetKey: offStageWidgetKey,
       overlayEntryKey: overlayEntryKey,
@@ -351,8 +362,21 @@ class _ModularCustomizableDropdownState
   // Abstraction - 1 stuff below.
 
   void _updateListTileKeys() {
-    _offStageListTileKeys =
-        widget.allDropdownValues.map((e) => GlobalKey()).toList();
+    void genKey() {
+      _offStageListTileKeys =
+          widget.allDropdownValues.map((e) => GlobalKey()).toList();
+    }
+
+    if (!kDebugMode) {
+      genKey();
+      return;
+    }
+
+    if (widget.rowKeys?.isNotEmpty == true) {
+      _offStageListTileKeys = widget.rowKeys!;
+    } else {
+      genKey();
+    }
   }
 
   void _precalculateDropdownHeight() {
