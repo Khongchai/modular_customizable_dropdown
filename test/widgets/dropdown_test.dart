@@ -7,7 +7,7 @@ const _firstValue =
 const _secondValue =
     DropdownValue(value: "2nd value", description: "2nd description");
 
-// Intentionally empty.
+// Description left intentionally empty.
 const _thirdValue = DropdownValue(value: "3rd value");
 const _fourthValue =
     DropdownValue(value: "4th value", description: "4th description");
@@ -18,11 +18,13 @@ class _TestWidget extends StatefulWidget {
   final Key? buttonKey;
   final Key? dropdownKey;
   final Key? listviewKey;
+  final List<Key>? rowKeys;
   final DropdownStyle dropdownStyle;
 
   const _TestWidget(
       {required this.dropdownStyle,
       this.listviewKey,
+      this.rowKeys,
       this.dropdownKey,
       this.buttonKey,
       Key? key})
@@ -56,6 +58,7 @@ class _TestWidgetState extends State<_TestWidget> {
           child: Align(
               child: ModularCustomizableDropdown.displayOnTap(
                   listviewKey: widget.listviewKey,
+                  rowKeys: widget.rowKeys,
                   overlayEntryKey: widget.dropdownKey,
                   onValueSelect: _onValueSelected,
                   style: widget.dropdownStyle,
@@ -217,6 +220,95 @@ void main() {
       );
 
       //
+    });
+
+    /// We can't just use expect(find.text(...)) here because different fractions
+    /// can give out different ray-casting result(when it's partially hidden).
+    ///
+    /// Finding out which fraction counts as being visible to the ray-caster
+    /// would take too much effort. We'll instead check if the height of the
+    /// visible dropdown is equals to the height of all rows plus the last fractional
+    /// height.
+    ///
+    group("Fractional byRows test", () {
+      void fractionalRowTestFor({
+        required WidgetTester tester,
+        required double byRows,
+      }) async {
+        const listviewKey = Key("listviewKey");
+        const buttonKey = Key("buttonKey");
+        final rowKeys =
+            List.generate(5, (index) => Key("row at " + index.toString()));
+
+        final lastRowFraction = byRows % 1 == 0 ? 1 : byRows % 1;
+        final rowCount = byRows.ceil();
+
+        await tester.pumpWidget(_TestWidget(
+          listviewKey: listviewKey,
+          buttonKey: buttonKey,
+          rowKeys: rowKeys,
+          dropdownStyle: DropdownStyle(
+            dropdownMaxHeight: DropdownMaxHeight(
+              // Ex. 3 - 0.5 = 2.5; 3 rows with last row having half its height.
+              byRows: byRows,
+            ),
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(buttonKey));
+        await tester.pumpAndSettle();
+
+        final listview = find.byKey(listviewKey);
+
+        double rowsHeight = 0;
+        for (int i = 0; i < rowCount; i++) {
+          final bool lastRow = i == rowCount - 1;
+          final heightFraction = (lastRow ? lastRowFraction : 1);
+          final thisRowHeight =
+              tester.getSize(find.byKey(rowKeys[i])).height * heightFraction;
+          rowsHeight += thisRowHeight;
+        }
+
+        final listviewHeight = tester.getSize(listview).height;
+
+        expect(rowsHeight, listviewHeight);
+      }
+
+      testWidgets(
+          "byRows == 2.5; total dropdown height should be row1Height + row2Height + (row3Height * 0.5)",
+          (tester) async {
+        fractionalRowTestFor(tester: tester, byRows: 2.5);
+      });
+      testWidgets(
+          "byRows == 3.2; total dropdown height should be row1Height + (row2Height * 0.2)",
+          (tester) async {
+        fractionalRowTestFor(tester: tester, byRows: 1.2);
+      });
+      testWidgets(
+          "byRows == 3.2; total dropdown height should be row1Height + row2Height + row3Height + (row4Height * 0.8)",
+          (tester) async {
+        fractionalRowTestFor(tester: tester, byRows: 3.8);
+      });
+      testWidgets("byRows == 1; total dropdown height should be row1Height",
+          (tester) async {
+        fractionalRowTestFor(tester: tester, byRows: 1);
+      });
+      testWidgets(
+          "byRows == 3.1234; total dropdown height should be row1Height + row2Height + row3Height + (row4Height * 0.1234)",
+          (tester) async {
+        fractionalRowTestFor(tester: tester, byRows: 3.1234);
+      });
+      testWidgets(
+          "byRows == 4.567; total dropdown height should be row1Height + row2Height + row3Height + row4Height + (row5Height * 0.567)",
+          (tester) async {
+        fractionalRowTestFor(tester: tester, byRows: 4.567);
+      });
+      testWidgets(
+          "byRows == 5; total dropdown height should be row1Height + row2Height + row3Height + row4Height + row5Height",
+          (tester) async {
+        fractionalRowTestFor(tester: tester, byRows: 5);
+      });
     });
   });
 

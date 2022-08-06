@@ -15,6 +15,10 @@ import '../classes_and_enums/tap_react_params.dart';
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
+// TODO return the entire DropdownValue object instead of just the value.
+// TODO all rows shouldn't extend beyond the screen Area.
+// TODO edit readme
+
 /// A dropdown extension for any widget.
 ///
 /// I have provided three factory constructors to help you get started,
@@ -86,7 +90,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
   /// For obtaining the individual height of each of the dropdown rows.
   @visibleForTesting
-  final List<GlobalKey>? rowKeys;
+  final List<Key>? rowKeys;
 
   final void Function(bool visible)? onDropdownVisibilityChange;
 
@@ -126,7 +130,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     @visibleForTesting Key? overlayEntryKey,
     @visibleForTesting Key? offStageWidgetKey,
     @visibleForTesting Key? listviewKey,
-    @visibleForTesting List<GlobalKey>? rowKeys,
+    @visibleForTesting List<Key>? rowKeys,
   }) {
     return ModularCustomizableDropdown(
       rowKeys: rowKeys,
@@ -169,7 +173,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
     @visibleForTesting Key? listviewKey,
     @visibleForTesting Key? overlayEntryKey,
     @visibleForTesting Key? offStageWidgetKey,
-    @visibleForTesting List<GlobalKey>? rowKeys,
+    @visibleForTesting List<Key>? rowKeys,
   }) {
     return ModularCustomizableDropdown(
       rowKeys: rowKeys,
@@ -205,11 +209,13 @@ class ModularCustomizableDropdown extends StatefulWidget {
     @visibleForTesting Key? listviewKey,
     @visibleForTesting Key? overlayEntryKey,
     @visibleForTesting Key? offStageWidgetKey,
+    @visibleForTesting List<Key>? rowKeys,
   }) {
     return ModularCustomizableDropdown(
       listviewKey: listviewKey,
       offStageWidgetKey: offStageWidgetKey,
       overlayEntryKey: overlayEntryKey,
+      rowKeys: rowKeys,
       key: key,
       reactMode: ReactMode.callbackReact,
       onValueSelect: onValueSelect,
@@ -362,21 +368,8 @@ class _ModularCustomizableDropdownState
   // Abstraction - 1 stuff below.
 
   void _updateListTileKeys() {
-    void genKey() {
-      _offStageListTileKeys =
-          widget.allDropdownValues.map((e) => GlobalKey()).toList();
-    }
-
-    if (!kDebugMode) {
-      genKey();
-      return;
-    }
-
-    if (widget.rowKeys?.isNotEmpty == true) {
-      _offStageListTileKeys = widget.rowKeys!;
-    } else {
-      genKey();
-    }
+    _offStageListTileKeys =
+        widget.allDropdownValues.map((e) => GlobalKey()).toList();
   }
 
   void _precalculateDropdownHeight() {
@@ -415,10 +408,10 @@ class _ModularCustomizableDropdownState
 
       // If the provided row ratio is 2.5, then the third row should have only
       // half the height.
-      // And we only do this when the height of the provided byRows is smaller than
-      // the total length, otherwise we'll be truncating the height of the wrong
-      // row.
-      if (rowsAmount < widget.allDropdownValues.length) {
+      // And we only do this when the height of the provided byRows is equals to or
+      // smaller than the total length, otherwise we'll be truncating the height
+      // of the wrong row.
+      if (rowsAmount <= widget.allDropdownValues.length) {
         final double lastVisibleRowHeightRatio =
             widget.dropdownStyle.dropdownMaxHeight.byRows % 1;
         heights[rowsAmount - 1] *=
@@ -518,8 +511,9 @@ class _ModularCustomizableDropdownState
                 targetWidth: targetWidth,
                 allDropdownValues: widget.allDropdownValues,
                 dropdownAlignment: newAlignment,
-                listBuilder: (dropdownValue, dropdownDescription) {
-                  return _buildDropdownRow(dropdownValue, dropdownDescription);
+                listBuilder: (dropdownValue, dropdownDescription, index) {
+                  return _buildDropdownRow(dropdownValue, dropdownDescription,
+                      index: index);
                 },
                 queryString: widget.focusReactParams?.textController.text ?? "",
                 expectedDropdownHeight: _preCalculateDropdownHeight,
@@ -530,31 +524,35 @@ class _ModularCustomizableDropdownState
   }
 
   Widget _buildDropdownRow(String dropdownValue, String? dropdownDescription,
-      {Key? key}) {
-    return ListTileThatChangesColorOnTap(
-      key: key,
-      onTap: () {
-        if (widget.reactMode == ReactMode.focusReact &&
-            widget.focusReactParams!.setTextToControllerOnSelect) {
-          widget.focusReactParams!.textController.text = dropdownValue;
-        }
-        widget.onValueSelect(dropdownValue);
-        if (widget.collapseOnSelect) {
-          _toggleOverlay(false);
-        }
-      },
-      onTapInkColor: widget.dropdownStyle.onTapInkColor,
-      spaceBetweenTitleAndDescription:
-          widget.dropdownStyle.spaceBetweenValueAndDescription,
-      onTapColorTransitionDuration:
-          widget.dropdownStyle.onTapColorTransitionDuration,
-      defaultBackgroundColor: widget.dropdownStyle.defaultItemColor,
-      onTapBackgroundColor: widget.dropdownStyle.onTapItemColor,
-      defaultTextStyle: widget.dropdownStyle.defaultTextStyle,
-      onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
-      title: dropdownValue,
-      descriptionTextStyle: widget.dropdownStyle.descriptionStyle,
-      description: dropdownDescription,
+      {required int index, Key? key}) {
+    return SizedBox(
+      // Insert rowKeys for widgetTester
+      key: kDebugMode ? widget.rowKeys?.elementAt(index) : null,
+      child: ListTileThatChangesColorOnTap(
+        key: key,
+        onTap: () {
+          if (widget.reactMode == ReactMode.focusReact &&
+              widget.focusReactParams!.setTextToControllerOnSelect) {
+            widget.focusReactParams!.textController.text = dropdownValue;
+          }
+          widget.onValueSelect(dropdownValue);
+          if (widget.collapseOnSelect) {
+            _toggleOverlay(false);
+          }
+        },
+        onTapInkColor: widget.dropdownStyle.onTapInkColor,
+        spaceBetweenTitleAndDescription:
+            widget.dropdownStyle.spaceBetweenValueAndDescription,
+        onTapColorTransitionDuration:
+            widget.dropdownStyle.onTapColorTransitionDuration,
+        defaultBackgroundColor: widget.dropdownStyle.defaultItemColor,
+        onTapBackgroundColor: widget.dropdownStyle.onTapItemColor,
+        defaultTextStyle: widget.dropdownStyle.defaultTextStyle,
+        onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
+        title: dropdownValue,
+        descriptionTextStyle: widget.dropdownStyle.descriptionStyle,
+        description: dropdownDescription,
+      ),
     );
   }
 
