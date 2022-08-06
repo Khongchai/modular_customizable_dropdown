@@ -356,6 +356,11 @@ class _ModularCustomizableDropdownState
   }
 
   void _precalculateDropdownHeight() {
+    assert(
+        widget.dropdownStyle.dropdownMaxHeight.byPixels != 0 &&
+            widget.dropdownStyle.dropdownMaxHeight.byRows != 0,
+        "The dropdown can't have a height of 0");
+
     // If the width of the offStageTarget has not yet been obtained, call this method
     // again the next frame with the newly obtained width.
     if (_offStageTargetWidth == null) {
@@ -375,20 +380,38 @@ class _ModularCustomizableDropdownState
       heights.add(key.currentContext!.size!.height);
     }
 
-    final double maxDropdownHeight =
-        widget.dropdownStyle.dropdownMaxHeight.byPixels ??
-            heights
-                .sublist(
-                    0,
-                    min(widget.dropdownStyle.dropdownMaxHeight.byRows,
-                        widget.allDropdownValues.length))
-                .reduce((value, element) => value + element);
-    final incomingDropdownHeight =
+    late final double dropdownMaxHeight;
+
+    if (widget.dropdownStyle.dropdownMaxHeight.byPixels != null) {
+      dropdownMaxHeight = widget.dropdownStyle.dropdownMaxHeight.byPixels!;
+    } else {
+      final int rowsAmount = min(
+          widget.dropdownStyle.dropdownMaxHeight.byRows.ceil(),
+          widget.allDropdownValues.length);
+
+      // If the provided row ratio is 2.5, then the third row should have only
+      // half the height.
+      // And we only do this when the height of the provided byRows is smaller than
+      // the total length, otherwise we'll be truncating the height of the wrong
+      // row.
+      if (rowsAmount < widget.allDropdownValues.length) {
+        final double lastVisibleRowHeightRatio =
+            widget.dropdownStyle.dropdownMaxHeight.byRows % 1;
+        heights[rowsAmount - 1] *=
+            (lastVisibleRowHeightRatio != 0 ? lastVisibleRowHeightRatio : 1);
+      }
+
+      dropdownMaxHeight = heights
+          .sublist(0, rowsAmount)
+          .reduce((value, element) => value + element);
+    }
+
+    // The actual height of the dropdown when rows is rendered.
+    final totalDropdownHeight =
         heights.reduce((value, element) => value + element);
 
     _tileHeights = heights;
-    _preCalculateDropdownHeight =
-        min(incomingDropdownHeight, maxDropdownHeight);
+    _preCalculateDropdownHeight = min(totalDropdownHeight, dropdownMaxHeight);
   }
 
   Widget _buildTarget() {
