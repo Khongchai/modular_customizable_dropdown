@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:modular_customizable_dropdown/modular_customizable_dropdown.dart";
 
 class DisplayOnTapSection extends StatelessWidget {
-  final Function(String selectedValue) onValueSelect;
+  final Function(DropdownValue selectedValue) onValueSelect;
   final List<DropdownValue> dropdownValues;
   final String selectedValue;
   const DisplayOnTapSection(

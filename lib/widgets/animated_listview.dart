@@ -9,8 +9,7 @@ import 'package:modular_customizable_dropdown/utils/filter_out_values_that_do_no
 class AnimatedListView extends StatefulWidget {
   final List<DropdownValue> allDropdownValues;
   final String queryString;
-  final Widget Function(
-      String dropdownValue, String? dropdownDescription, int index) listBuilder;
+  final Widget Function(DropdownValue dropdownValue, int index) listBuilder;
 
   ///The alignment is used to calculate the center point for the animated
   ///height transition.
@@ -163,10 +162,8 @@ class _AnimatedListViewState extends State<AnimatedListView> {
                   child: ListView.builder(
                       itemCount: filteredValues.length,
                       padding: EdgeInsets.zero,
-                      itemBuilder: (context, index) => widget.listBuilder(
-                          filteredValues[index].value,
-                          filteredValues[index].description,
-                          index)),
+                      itemBuilder: (context, index) =>
+                          widget.listBuilder(filteredValues[index], index)),
                 ),
               ),
             ),

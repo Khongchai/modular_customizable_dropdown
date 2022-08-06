@@ -45,9 +45,9 @@ class _TestWidgetState extends State<_TestWidget> {
 
   String _selectedValue = "";
 
-  void _onValueSelected(String selectedValue) {
+  void _onValueSelected(DropdownValue selectedValue) {
     setState(() {
-      _selectedValue = selectedValue;
+      _selectedValue = selectedValue.value;
     });
   }
 

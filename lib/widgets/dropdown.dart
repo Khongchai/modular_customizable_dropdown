@@ -34,7 +34,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
   final List<DropdownValue> allDropdownValues;
 
   /// Action to perform when the value is tapped.
-  final Function(String selectedValue) onValueSelect;
+  final Function(DropdownValue selectedValue) onValueSelect;
 
   /// Allows user to click outside dropdown to dismiss
   ///
@@ -118,7 +118,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
   ///Automatically displays the dropdown when the target is clicked
   factory ModularCustomizableDropdown.displayOnTap({
-    required Function(String selectedValue) onValueSelect,
+    required Function(DropdownValue selectedValue) onValueSelect,
     required List<DropdownValue> allDropdownValues,
     required Widget target,
     Function(bool)? onDropdownVisible,
@@ -156,7 +156,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
   /// Don't use in prod...yet
   @Deprecated("This factory constructor is no longer maintained.")
   factory ModularCustomizableDropdown.displayOnFocus({
-    required Function(String selectedValue) onValueSelect,
+    required Function(DropdownValue selectedValue) onValueSelect,
     required List<DropdownValue> allDropdownValues,
     required Widget Function(
             FocusNode focusNode, TextEditingController textController)
@@ -197,7 +197,7 @@ class ModularCustomizableDropdown extends StatefulWidget {
 
   ///Expose a toggle callback in the target builder method.
   factory ModularCustomizableDropdown.displayOnCallback({
-    required Function(String selectedValue) onValueSelect,
+    required Function(DropdownValue selectedValue) onValueSelect,
     required List<DropdownValue> allDropdownValues,
     required Widget Function(void Function(bool toggleState) toggleDropdown)
         targetBuilder,
@@ -511,9 +511,8 @@ class _ModularCustomizableDropdownState
                 targetWidth: targetWidth,
                 allDropdownValues: widget.allDropdownValues,
                 dropdownAlignment: newAlignment,
-                listBuilder: (dropdownValue, dropdownDescription, index) {
-                  return _buildDropdownRow(dropdownValue, dropdownDescription,
-                      index: index);
+                listBuilder: (dropdownValue, index) {
+                  return _buildDropdownRow(dropdownValue, index);
                 },
                 queryString: widget.focusReactParams?.textController.text ?? "",
                 expectedDropdownHeight: _preCalculateDropdownHeight,
@@ -523,8 +522,7 @@ class _ModularCustomizableDropdownState
     );
   }
 
-  Widget _buildDropdownRow(String dropdownValue, String? dropdownDescription,
-      {required int index, Key? key}) {
+  Widget _buildDropdownRow(DropdownValue dropdownValue, int index, {Key? key}) {
     return SizedBox(
       // Insert rowKeys for widgetTester
       key: kDebugMode ? widget.rowKeys?.elementAt(index) : null,
@@ -533,7 +531,7 @@ class _ModularCustomizableDropdownState
         onTap: () {
           if (widget.reactMode == ReactMode.focusReact &&
               widget.focusReactParams!.setTextToControllerOnSelect) {
-            widget.focusReactParams!.textController.text = dropdownValue;
+            widget.focusReactParams!.textController.text = dropdownValue.value;
           }
           widget.onValueSelect(dropdownValue);
           if (widget.collapseOnSelect) {
@@ -549,9 +547,9 @@ class _ModularCustomizableDropdownState
         onTapBackgroundColor: widget.dropdownStyle.onTapItemColor,
         defaultTextStyle: widget.dropdownStyle.defaultTextStyle,
         onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
-        title: dropdownValue,
+        title: dropdownValue.value,
         descriptionTextStyle: widget.dropdownStyle.descriptionStyle,
-        description: dropdownDescription,
+        description: dropdownValue.description,
       ),
     );
   }

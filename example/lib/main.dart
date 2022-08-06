@@ -117,10 +117,10 @@ class MyAppState extends State<MyApp> {
     );
   }
 
-  void _onDropdownValueSelect(String newValue) {
+  void _onDropdownValueSelect(DropdownValue newValue) {
     setState(() {
-      _selectedValue = newValue;
-      _textController.text = newValue;
+      _selectedValue = newValue.value;
+      _textController.text = newValue.value;
     });
   }
 }

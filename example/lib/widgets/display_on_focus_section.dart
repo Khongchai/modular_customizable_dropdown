@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:modular_customizable_dropdown/modular_customizable_dropdown.dart";
 
 class DisplayOnFocusSection extends StatefulWidget {
-  final Function(String selectedVal) onValueSelect;
+  final Function(DropdownValue selectedVal) onValueSelect;
 
   ///This is passed in from the parent because we want to also set its value when other
   ///examples set the state of the selected value.
