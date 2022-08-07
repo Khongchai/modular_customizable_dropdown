@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
+import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_build_phase.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/dropdown_value.dart';
 import 'package:modular_customizable_dropdown/classes_and_enums/focus_callback_params.dart';
 import 'package:modular_customizable_dropdown/utils/calculate_dropdown_pos.dart';
@@ -18,7 +19,6 @@ import 'list_tile_that_changes_color_on_tap.dart';
 // TODO list
 //
 // TODO instead of saying invert y axis, say, invert to axis with the most space and also allow additional space between the top and bottom of the screen and the dropdown.
-// TODO if barrierDismissible is false, tapping the target will open another dropdown.
 // TODO edit readme
 
 /// A dropdown extension for any widget.
@@ -238,11 +238,13 @@ class _ModularCustomizableDropdownState
     extends State<ModularCustomizableDropdown> {
   OverlayEntry? _overlayEntry;
 
+  DropdownBuildPhase _dropdownBuildPhase = DropdownBuildPhase.dismissed;
+
   final LayerLink _layerLink = LayerLink();
 
   /// true = is about to be expanded.
   /// false = dismissed.
-  bool _isInBuildingPhase = true;
+  // bool _isInBuildingPhase = true;
 
   /// For obtaining size before paint
   late List<GlobalKey> _offStageListTileKeys;
@@ -286,7 +288,8 @@ class _ModularCustomizableDropdownState
           reactMode: widget.reactMode,
           onTap: () {
             if (widget.allDropdownValues.isNotEmpty) {
-              _toggleOverlay(_isInBuildingPhase);
+              _toggleOverlay(
+                  _dropdownBuildPhase == DropdownBuildPhase.dismissed);
             }
           },
           child: Column(
@@ -297,7 +300,7 @@ class _ModularCustomizableDropdownState
               // top of the current widget when height exceeds screen height.
 
               // No need to calculate anything if we're removing the dropdown.
-              if (_isInBuildingPhase)
+              if (_dropdownBuildPhase == DropdownBuildPhase.dismissed)
                 Offstage(
                     key: widget.offStageWidgetKey,
                     offstage: true,
@@ -572,11 +575,18 @@ class _ModularCustomizableDropdownState
     );
   }
 
-  ///For building and disposing dropdown
-  void _toggleOverlay(bool predicate) {
-    if (predicate) {
+  /// For building and disposing dropdown
+  ///
+  /// shouldBuild is a predicate that can be based off of any condition, for
+  /// example,the current build phase, to prevent opening two dropdowns when
+  /// barrierDismissible is false, or the current focusNode state to toggle the
+  /// dropdown as the focus state changes.
+  void _toggleOverlay(bool? shouldBuild) {
+    if (shouldBuild == true &&
+        _dropdownBuildPhase == DropdownBuildPhase.dismissed) {
       _buildAndAddOverlay();
-    } else {
+    } else if (shouldBuild == false &&
+        _dropdownBuildPhase == DropdownBuildPhase.built) {
       _dismissOverlay();
     }
   }
@@ -586,18 +596,18 @@ class _ModularCustomizableDropdownState
     _overlayEntry = _buildOverlayEntry();
     Overlay.of(context)!.insert(_overlayEntry!);
     setState(() {
-      _isInBuildingPhase = false;
+      _dropdownBuildPhase = DropdownBuildPhase.built;
     });
     _onDropdownVisible(true);
   }
 
   ///Should not be called by any function other than _toggleOverlay()
   void _dismissOverlay() {
-    if (!_isInBuildingPhase) {
+    if (_dropdownBuildPhase == DropdownBuildPhase.built) {
       _overlayEntry!.remove();
 
       ///Mark dropdown as build-able.
-      setState(() => _isInBuildingPhase = true);
+      setState(() => _dropdownBuildPhase = DropdownBuildPhase.dismissed);
 
       widget.focusReactParams?.focusNode.unfocus();
 

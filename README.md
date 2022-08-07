@@ -9,6 +9,12 @@ This dropdown is not tied to any widget in particular and can be attached to wha
 
 (_Please excuse the ugly color palette, I just wanna show you that it's possible to do gradients..._)
 
+# Note: for version >= 2.0.0
+
+The dropdown now supports description for each of the values.
+
+<img src="https://github.com/Khongchai/modular_customizable_dropdown/blob/main/images/dropdown_with_description.png?raw=true" width=200>
+
 ## TL;DR
 
 Wrap a widget you want the dropdown to attach to with the dropdown.
@@ -18,7 +24,7 @@ By default, the dropdown will appear directly below the _target_'s position.
 ```dart
 ModularCustomizableDropdown.displayOnTap(
     target: const SizedBox(width: 100, child: Text("I'm the target widget")),
-    onValueSelect: (String _selectedVal) => debugPrint(_selectedVal),
+    onValueSelect: (DropdownValue _selectedVal) => debugPrint(_selectedVal.toString()),
     allDropdownValues: values,
 )
 ```
@@ -33,7 +39,7 @@ _For a thorough example, see the main.dart file in the example folder or clone t
 
 The appearance of the dropdown can be configured with the DropdownStyle class. Below is a short example of what you can do with it.
 
-For a more complete explanation, please see [here](https://github.com/Khongchai/modular_customizable_dropdown/blob/main/lib/classes_and_enums/dropdown_style.dart). 
+For a more complete explanation, please see [here](https://github.com/Khongchai/modular_customizable_dropdown/blob/main/lib/classes_and_enums/dropdown_style.dart).
 Or visit the API reference tab.
 
 ```dart
@@ -64,29 +70,8 @@ ModularCustomizableDropdown.displayOnTap(
 
 ## Features Summary
 
-1. Comes with three factory constructors, with which you will be able to trigger the dropdown when: a tap happens, the target widget is focused, or a callback is called.
-   
-2. _Use DropdownAlignment to align it however you wish._ This should cover most common use cases already.
-   It's very similar to Flutter's Alignment class where (-1, -1) means top left and (1, 1) means bottom right.
-
-```dart
-class DropdownAlignment {
-   final double x;
-   final double y;
-
-   const DropdownAlignment(this.x, this.y);
-
-   static const DropdownAlignment topLeft = DropdownAlignment(-1, -1);
-   static const DropdownAlignment topCenter = DropdownAlignment(0, -1);
-   static const DropdownAlignment topRight = DropdownAlignment(1, -1);
-   static const DropdownAlignment centerLeft = DropdownAlignment(-1, 0);
-   static const DropdownAlignment center = DropdownAlignment(0, 0);
-   static const DropdownAlignment centerRight = DropdownAlignment(1, 0);
-   static const DropdownAlignment bottomLeft = DropdownAlignment(-1, 1);
-   static const DropdownAlignment bottomCenter = DropdownAlignment(0, 1);
-   static const DropdownAlignment bottomRight = DropdownAlignment(1, 1);
-}
-```
+1. Comes with two factory constructors, with which you will be able to trigger the dropdown on tap or on callback.
+2. _Use Flutter's Alignment class to align it however you wish._ This should cover most common use cases already.
 
 _Note: Your width needs to be different from the target for the horizontal alignment to take effect (duh)._
 
@@ -160,4 +145,4 @@ class DropdownWidth {
 
 3. The target widget is basically the child of the dropdown whose build method gets called everytime a value is tapped, so all optimization best practices apply. See [this link](https://docs.flutter.dev/perf/rendering/best-practices) for more details.
 
-4. DropdownAlignment's x and y properties can be more than 1 and less than -1. This would be like relative top/bottom margin. 
+4. DropdownAlignment's x and y properties can be more than 1 and less than -1. This would be like relative top/bottom margin.
