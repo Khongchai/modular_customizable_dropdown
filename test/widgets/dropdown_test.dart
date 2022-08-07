@@ -645,7 +645,54 @@ void main() {
                 valueCount: 100, alignment: Alignment.topRight);
           });
         });
-        group("Center alignments", () {});
+        group("Center alignments", () {
+          void testTopAndBottomOverflow(
+            WidgetTester tester, {
+            required int valueCount,
+            required Alignment alignment,
+          }) async {
+            const listviewKey = Key("listviewKey");
+            const buttonKey = Key("buttonKey");
+            const targetKey = Key("targetKey");
+
+            await tester.pumpWidget(_TestWidget(
+              listviewKey: listviewKey,
+              targetKey: targetKey,
+              buttonKey: buttonKey,
+              dropdownValues: DropdownValue.fromListOfStrings(
+                  List.generate(valueCount, (index) => "Dummy value")),
+              dropdownStyle: DropdownStyle(
+                  dropdownMaxHeight: DropdownMaxHeight(
+                    byRows: valueCount.toDouble(),
+                  ),
+                  invertYAxisAlignmentWhenOverflow: false,
+                  alignment: alignment),
+            ));
+            await tester.pumpAndSettle();
+
+            final target = find.byKey(targetKey);
+            await tester.tap(target);
+            await tester.pumpAndSettle();
+
+            final screenSize = tester.getSize(find.byType(Scaffold));
+            final dropdownVisibleSize = tester.getSize(find.byKey(listviewKey));
+
+            expect(dropdownVisibleSize.height, screenSize.height);
+          }
+
+          testWidgets("Left center align", (tester) async {
+            testTopAndBottomOverflow(tester,
+                valueCount: 100, alignment: Alignment.centerLeft);
+          });
+          testWidgets("Center align", (tester) async {
+            testTopAndBottomOverflow(tester,
+                valueCount: 100, alignment: Alignment.center);
+          });
+          testWidgets("Right center align", (tester) async {
+            testTopAndBottomOverflow(tester,
+                valueCount: 100, alignment: Alignment.centerRight);
+          });
+        });
         // Steps
         // Find the position of the target's absolute bottom
         // Give the dropdown the alignment of Alignment.bottom...
