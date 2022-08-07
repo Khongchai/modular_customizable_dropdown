@@ -13,12 +13,12 @@ import '../classes_and_enums/dropdown_style.dart';
 import '../classes_and_enums/focus_react_params.dart';
 import '../classes_and_enums/mode.dart';
 import '../classes_and_enums/tap_react_params.dart';
+import '../utils/clamp_dropdown_to_prevent_screen_overflow.dart';
 import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
 // TODO list
 //
-// TODO instead of saying invert y axis, say, invert to axis with the most space and also allow additional space between the top and bottom of the screen and the dropdown.
 // TODO edit readme
 
 /// A dropdown extension for any widget.
@@ -506,7 +506,7 @@ class _ModularCustomizableDropdownState
     // final yDiffBeforeAndAfterClamp =
     //     _preCalculatedDropdownHeight - finalDropdownHeight;
     final relativeOffsetAfterClamping = Offset(relativeOffsetBeforeClamping.dx,
-        relativeOffsetBeforeClamping.dy + clampResult["topSubtract"]!);
+        relativeOffsetBeforeClamping.dy + clampResult.topSubtract);
 
     return OverlayEntry(
       builder: (context) => dismissibleWrapper(
@@ -535,7 +535,7 @@ class _ModularCustomizableDropdownState
                   return _buildDropdownRow(dropdownValue, index);
                 },
                 queryString: widget.focusReactParams?.textController.text ?? "",
-                expectedDropdownHeight: clampResult["overflowCheckedHeight"]!,
+                expectedDropdownHeight: clampResult.overflowCheckedHeight,
                 // expectedDropdownHeight: _preCalculatedDropdownHeight,
               )),
         ),
@@ -619,31 +619,4 @@ class _ModularCustomizableDropdownState
   void _onDropdownVisible(bool dropdownVisible) {
     widget.onDropdownVisibilityChange?.call(dropdownVisible);
   }
-}
-
-// TODO move this into another file and don't return a map...
-Map<String, double> clampDropdownHeightToPreventScreenOverflow({
-  /// Make sure that the passed in offset has already gone through the y inversion
-  /// check.
-  required double inversionCheckedAbsoluteDropdownTopPos,
-  required double dropdownHeight,
-  required double screenHeight,
-}) {
-  final topSubtract = max(0, inversionCheckedAbsoluteDropdownTopPos) -
-      inversionCheckedAbsoluteDropdownTopPos;
-
-  final inversionCheckedAbsoluteDropdownBottomPos =
-      inversionCheckedAbsoluteDropdownTopPos + dropdownHeight;
-  final bottomSubtract =
-      min(screenHeight, inversionCheckedAbsoluteDropdownBottomPos) -
-          inversionCheckedAbsoluteDropdownBottomPos;
-
-  final ySubtract = topSubtract + bottomSubtract;
-
-  final overflowCheckedHeight = dropdownHeight - ySubtract.abs();
-
-  return {
-    "overflowCheckedHeight": overflowCheckedHeight,
-    "topSubtract": topSubtract
-  };
 }
