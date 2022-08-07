@@ -17,16 +17,18 @@ const _fifthValue =
 class _TestWidget extends StatefulWidget {
   final Key? buttonKey;
   final Key? dropdownKey;
+  final Key? targetKey;
   final Key? listviewKey;
   final List<Key>? rowKeys;
-  final Alignment? alignment;
   final DropdownStyle dropdownStyle;
+  final List<DropdownValue>? dropdownValues;
 
   const _TestWidget(
       {required this.dropdownStyle,
-      this.alignment,
+      this.dropdownValues,
       this.listviewKey,
       this.rowKeys,
+      this.targetKey,
       this.dropdownKey,
       this.buttonKey,
       Key? key})
@@ -37,15 +39,23 @@ class _TestWidget extends StatefulWidget {
 }
 
 class _TestWidgetState extends State<_TestWidget> {
-  final List<DropdownValue> _valuesList = DropdownValue.fromListOfStrings([
-    "1st value",
-    "2nd value",
-    "3rd value",
-    "4th value",
-    "5th value",
-  ]);
+  late final List<DropdownValue> _valuesList;
 
   String _selectedValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    _valuesList = widget.dropdownValues ??
+        DropdownValue.fromListOfStrings([
+          "1st value",
+          "2nd value",
+          "3rd value",
+          "4th value",
+          "5th value",
+        ]);
+  }
 
   void _onValueSelected(DropdownValue selectedValue) {
     setState(() {
@@ -56,27 +66,31 @@ class _TestWidgetState extends State<_TestWidget> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SizedBox(
-          child: Align(
-              child: ModularCustomizableDropdown.displayOnTap(
-                  listviewKey: widget.listviewKey,
-                  rowKeys: widget.rowKeys,
-                  overlayEntryKey: widget.dropdownKey,
-                  onValueSelect: _onValueSelected,
-                  style: widget.dropdownStyle,
-                  allDropdownValues: _valuesList,
-                  target: Column(
-                    children: [
-                      Text(_selectedValue),
-                      const SizedBox(height: 8),
-                      ElevatedButton(
-                        key: widget.buttonKey,
-                        // Do nothing
-                        onPressed: () {},
-                        child: const Text("Expand Dropdown"),
-                      ),
-                    ],
-                  )))),
+      home: Scaffold(
+        body: SizedBox(
+            child: Align(
+                child: ModularCustomizableDropdown.displayOnTap(
+                    listviewKey: widget.listviewKey,
+                    rowKeys: widget.rowKeys,
+                    overlayEntryKey: widget.dropdownKey,
+                    onValueSelect: _onValueSelected,
+                    style: widget.dropdownStyle,
+                    allDropdownValues: _valuesList,
+                    target: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      key: widget.targetKey,
+                      children: [
+                        Text(_selectedValue),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          key: widget.buttonKey,
+                          // Do nothing
+                          onPressed: () {},
+                          child: const Text("Expand Dropdown"),
+                        ),
+                      ],
+                    )))),
+      ),
     );
   }
 }
@@ -322,12 +336,128 @@ void main() {
         const buttonKey = Key("buttonKey");
       });
 
-      // TODO this is the new case.
       // If after wrapping around, the dropdown finds that it will still overflow the screen,
       // it should try to limit its visible height and have the user scroll the rest.
       group(
           "The visible part (the listview part) of the dropdown should never overflow the screen.",
-          () {});
+          () {
+        // Steps
+        // Find the position of the target's absolute top
+        // Give the dropdown the alignment of Alignment.top...
+        // Make sure the dropdown's invertYAxisAlignmentWhenOverflow is false
+        // Give the dropdown a really long list of values to ensure overflow.
+        // Assert that the listview's height == target's top offset
+        group("Top alignments", () {
+          void testTopOverflow(
+            WidgetTester tester, {
+            required int valueCount,
+            required Alignment alignment,
+          }) async {
+            const listviewKey = Key("listviewKey");
+            const buttonKey = Key("buttonKey");
+            const targetKey = Key("targetKey");
+
+            await tester.pumpWidget(_TestWidget(
+              listviewKey: listviewKey,
+              targetKey: targetKey,
+              buttonKey: buttonKey,
+              dropdownValues: DropdownValue.fromListOfStrings(
+                  List.generate(valueCount, (index) => "Dummy value")),
+              dropdownStyle: DropdownStyle(
+                  dropdownMaxHeight: DropdownMaxHeight(
+                    byRows: valueCount.toDouble(),
+                  ),
+                  invertYAxisAlignmentWhenOverflow: false,
+                  alignment: alignment),
+            ));
+            await tester.pumpAndSettle();
+
+            final target = find.byKey(targetKey);
+            await tester.tap(target);
+            await tester.pumpAndSettle();
+
+            final targetSize = tester.getSize(target);
+            final dropdownVisibleSize = tester.getSize(find.byKey(listviewKey));
+            final targetAbsoluteTop =
+                tester.getCenter(target).dy - targetSize.height / 2;
+
+            expect(dropdownVisibleSize.height, targetAbsoluteTop);
+          }
+
+          testWidgets("Alignment.topLeft", (tester) async {
+            testTopOverflow(tester,
+                valueCount: 100, alignment: Alignment.topLeft);
+          });
+          testWidgets("Alignment.topCenter", (tester) async {
+            testTopOverflow(tester,
+                valueCount: 100, alignment: Alignment.topCenter);
+          });
+          testWidgets("Alignment.topRight", (tester) async {
+            testTopOverflow(tester,
+                valueCount: 100, alignment: Alignment.topRight);
+          });
+        });
+        group("Center alignments", () {});
+        // Steps
+        // Find the position of the target's absolute bottom
+        // Give the dropdown the alignment of Alignment.bottom...
+        // Make sure the dropdown's invertYAxisAlignmentWhenOverflow is false
+        // Give the dropdown a really long list of values to ensure overflow.
+        // Assert that the listview's height is exactly the screenHeight - target's bottom
+        group("Bottom alignments", () {
+          void testBottomOverflow(
+            WidgetTester tester, {
+            required int valueCount,
+            required Alignment alignment,
+          }) async {
+            const listviewKey = Key("listviewKey");
+            const buttonKey = Key("buttonKey");
+            const targetKey = Key("targetKey");
+
+            await tester.pumpWidget(_TestWidget(
+              listviewKey: listviewKey,
+              buttonKey: buttonKey,
+              targetKey: targetKey,
+              dropdownValues: DropdownValue.fromListOfStrings(
+                  List.generate(valueCount, (index) => "Dummy value")),
+              dropdownStyle: DropdownStyle(
+                  dropdownMaxHeight: DropdownMaxHeight(
+                    byRows: valueCount.toDouble(),
+                  ),
+                  invertYAxisAlignmentWhenOverflow: false,
+                  alignment: alignment),
+            ));
+            await tester.pumpAndSettle();
+
+            final target = find.byKey(targetKey);
+            await tester.tap(target);
+            await tester.pumpAndSettle();
+
+            final screenSize = tester.getRect(find.byType(Scaffold));
+            final targetSize = tester.getSize(target);
+            final dropdownVisibleHeight =
+                tester.getSize(find.byKey(listviewKey));
+            final targetAbsoluteBottom =
+                tester.getCenter(target).dy + targetSize.height / 2;
+
+            expect(screenSize.height - targetAbsoluteBottom,
+                dropdownVisibleHeight.height);
+          }
+
+          testWidgets("Bottom center", (tester) async {
+            testBottomOverflow(tester,
+                valueCount: 100, alignment: Alignment.bottomCenter);
+          });
+          testWidgets("Bottom left", (tester) async {
+            testBottomOverflow(tester,
+                valueCount: 100, alignment: Alignment.bottomLeft);
+          });
+          testWidgets("Bottom right", (tester) async {
+            testBottomOverflow(tester,
+                valueCount: 100, alignment: Alignment.bottomRight);
+          });
+        });
+      });
     });
   });
 

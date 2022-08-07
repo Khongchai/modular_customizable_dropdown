@@ -242,10 +242,6 @@ class _ModularCustomizableDropdownState
 
   final LayerLink _layerLink = LayerLink();
 
-  /// true = is about to be expanded.
-  /// false = dismissed.
-  // bool _isInBuildingPhase = true;
-
   /// For obtaining size before paint
   late List<GlobalKey> _offStageListTileKeys;
 
