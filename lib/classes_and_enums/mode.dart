@@ -6,6 +6,7 @@ enum ReactMode {
   tapReact,
 
   ///React to tap and focus
+  @Deprecated("Might come back to this later, but deprecated for now")
   focusReact,
 
   ///React to callback obtained through targetBuilder

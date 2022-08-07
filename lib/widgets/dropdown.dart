@@ -285,7 +285,6 @@ class _ModularCustomizableDropdownState
             }
           },
           child: Column(
-            // height 182
             mainAxisSize: MainAxisSize.min,
             children: [
               // Offstage widget size to see whether we need to move the dropdown to the
