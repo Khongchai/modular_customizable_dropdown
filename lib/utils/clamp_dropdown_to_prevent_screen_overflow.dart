@@ -18,10 +18,12 @@ ClampResult clampDropdownHeightToPreventScreenOverflow({
       min(screenHeight, inversionCheckedAbsoluteDropdownBottomPos) -
           inversionCheckedAbsoluteDropdownBottomPos;
 
-  final ySubtract = topSubtract + bottomSubtract;
+  final ySubtract = topSubtract.abs() + bottomSubtract.abs();
 
-  final overflowCheckedHeight = dropdownHeight - ySubtract.abs();
+  final overflowCheckedHeight = dropdownHeight - ySubtract;
 
   return ClampResult(
-      overflowCheckedHeight: overflowCheckedHeight, topSubtract: topSubtract);
+      overflowCheckedHeight: overflowCheckedHeight,
+      topSubtract: topSubtract,
+      bottomSubtract: bottomSubtract);
 }

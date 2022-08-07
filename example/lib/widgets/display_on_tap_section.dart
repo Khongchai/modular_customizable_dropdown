@@ -20,24 +20,27 @@ class DisplayOnTapSection extends StatelessWidget {
         const SizedBox(height: 20),
         ModularCustomizableDropdown.displayOnTap(
           onValueSelect: onValueSelect,
-          allDropdownValues: dropdownValues,
+          // allDropdownValues: dropdownValues,
+          allDropdownValues: DropdownValue.fromListOfStrings(
+              List.generate(100, (e) => "Dummy value")),
           style: const DropdownStyle(
             dropdownMaxHeight: DropdownMaxHeight(
               // Means show 4 rows with the 4th rows having only half its full
               // height.
-              byRows: 3.5,
+              byRows: 100,
             ),
             dropdownWidth: DropdownWidth(scale: 0.7),
             onTapInkColor: Colors.red,
             explicitMarginBetweenDropdownAndTarget: 5,
-            alignment: Alignment.topLeft,
+            // alignment: Alignment.topCenter,
+            alignment: Alignment.center,
             descriptionStyle: TextStyle(
               fontSize: 12,
               color: Colors.grey,
             ),
             // Can also do explicit margin.
             // explicitMarginBetweenDropdownAndTarget: 5,
-            invertYAxisAlignmentWhenOverflow: true,
+            invertYAxisAlignmentWhenOverflow: false,
           ),
           target: ElevatedButton(
             child:

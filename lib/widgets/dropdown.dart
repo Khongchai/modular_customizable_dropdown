@@ -499,8 +499,6 @@ class _ModularCustomizableDropdownState
       screenHeight: MediaQuery.of(context).size.height,
     );
 
-    // final yDiffBeforeAndAfterClamp =
-    //     _preCalculatedDropdownHeight - finalDropdownHeight;
     final relativeOffsetAfterClamping = Offset(relativeOffsetBeforeClamping.dx,
         relativeOffsetBeforeClamping.dy + clampResult.topSubtract);
 
