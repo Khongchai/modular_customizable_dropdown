@@ -18,7 +18,7 @@ import 'full_screen_dismissible_area.dart';
 import 'list_tile_that_changes_color_on_tap.dart';
 
 // TODO list
-//
+// TODO this case would fail: alignment = Alignment.leftCenter && byRows = someValue < values.length
 // TODO edit readme
 
 /// A dropdown extension for any widget.

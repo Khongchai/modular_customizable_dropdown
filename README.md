@@ -25,13 +25,37 @@ By default, the dropdown will appear directly below the _target_'s position.
 ModularCustomizableDropdown.displayOnTap(
     target: const SizedBox(width: 100, child: Text("I'm the target widget")),
     onValueSelect: (DropdownValue _selectedVal) => debugPrint(_selectedVal.toString()),
-    allDropdownValues: values,
+    allDropdownValues: _values,
 )
 ```
 
 These lines are all you need to get the dropdown working. Once the target widget is tapped, the dropdown will appear right below it.
 
-Read further for further details on customizing the looks and the behavior of the dropdown.
+The drodown accepts a value of type DropdownValue. The class accepts three properties:
+
+1. value: the title that's going to be displayed in the dropdown rows.
+2. description: an optional property. This will be rendered directly below the title. The space between title and description is customizable through the DropdownStyle class.
+3. meta: whatever additional data you'd like to be associated with this value.
+
+```dart
+// view full file https://github.com/Khongchai/modular_customizable_dropdown/blob/main/lib/classes_and_enums/dropdown_value.dart
+class DropdownValue {
+  final String value;
+  final String? description;
+  final dynamic metadata;
+
+  const DropdownValue({
+    required this.value,
+    this.description,
+    this.metadata,
+  });
+
+  static fromListOfStrings(List<String> values) {
+    return values.map((e) => DropdownValue(value: e)).toList();
+  }
+}
+
+```
 
 _For a thorough example, see the main.dart file in the example folder or clone this package's repo and run the file._
 
@@ -48,10 +72,10 @@ ModularCustomizableDropdown.displayOnTap(
     style: const DropdownStyle(
         //This will scale the width of the dropdown to be 1.2 of the target's width.
         dropdownWidth: DropdownWidth(scale: 1.2),
-        //The height of the dropdown will fit exactly 4 rows of items.
+        //The height of the dropdown will fit exactly 4 rows.
         dropdownMaxHeight: DropdownMaxHeight(byRows: 4),
         //The dropdown will be positioned above the target with its left side aligned with the target's.
-        dropdownAlignment: DropdownAlignment.topLeft,
+        dropdownAlignment: Alignment.topLeft,
         //Pretty self-explanatory
         defaultItemColor: LinearGradient(colors: [
             Colors.white, Colors.blue
@@ -78,35 +102,40 @@ _Note: Your width needs to be different from the target for the horizontal align
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/center_left_not_working.png" height=400>
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/center_left_working.png" height=400>
 
-3. The expand animation adjusts automatically to the provided DropdownAlignment. For example if the target is above the dropdown, the dropdown
-   will expand from top, and vice versa. If _DropdownAlignment == DropdownAlignment.center_, the dropdown will expands in both vertical directions.
+3. The expand animation adjusts automatically to the provided Alignment. For example if the target is above the dropdown, the dropdown
+   will expand from top, and vice versa. If _Alignment == Alignment.center_, the dropdown will expands in both vertical directions.
 
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_bottom_slow.gif" height=400>
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_mid_slow.gif" height=400>
 <img src="https://raw.githubusercontent.com/Khongchai/modular_customizable_dropdown/main/images/expand_top_slow.gif" height=400>
 
-Only the y axis value in the DropdownAlignment class affects the origin of the transition. You can play around by providing the
-dropdown values without using the static const properties like _DropdownValue(-1, 0.7)_.
+Only the y axis value in the Alignment class affects the origin of the transition. You can play around by providing the
+dropdown values without using the static const properties like _Alignment(-1, 0.7)_.
 
-4. Max Height can be described using pixels or the number of rows to be visible before scrolling.
+4. Max Height can be described using pixels or the number of rows to be visible before scrolling. You can also pass in a decimal nuber as the value of the byRows property, for example, byRows = 3.2 will get you 4 rows with the 4th row having only 2/10 times its original width.
 
 ```dart
 class DropdownMaxHeight {
-   ///Define the max height of the dropdown using the number of dropdown rows,
-   ///for example, if byRows = 3, the height of the dropdown will be equal to the height
-   ///of three rows. The user will have to scroll if the list grows larger.
-   ///
-   /// This will be ignored if byPixels is provided
-   final double byRows;
+  ///Define the max height of the dropdown using the number of dropdown rows,
+  ///for example, if byRows = 3, the height of the dropdown will be equal to the height
+  ///of three rows. The user will have to scroll if the list grows larger.
+  ///
+  /// This is double because sometimes, you don't want, for example, 5 exact rows,
+  /// but something more like 5.5 (only show half of the 6th rows) just to let the
+  /// user know  that the dropdown is scrollable -- that there is more stuff below.
+  ///
+  /// This will be ignored if byPixels is provided
+  final double byRows;
 
-   ///Define the max height of the dropdown using explicit pixels, for example, byPixels = 300,
-   ///and the dropdown won't grow taller than 300 pixels
-   ///
-   /// byRows will be ignored if this params is provided
-   final double? byPixels;
+  ///Define the max height of the dropdown using explicit pixels, for example, byPixels = 300,
+  ///and the dropdown won't grow taller than 300 pixels
+  ///
+  /// byRows will be ignored if this params is provided
+  final double? byPixels;
 
-   const DropdownMaxHeight({this.byRows = 5, this.byPixels});
+  const DropdownMaxHeight({this.byRows = 5, this.byPixels});
 }
+
 ```
 
 ## Behaviors
@@ -145,4 +174,10 @@ class DropdownWidth {
 
 3. The target widget is basically the child of the dropdown whose build method gets called everytime a value is tapped, so all optimization best practices apply. See [this link](https://docs.flutter.dev/perf/rendering/best-practices) for more details.
 
-4. DropdownAlignment's x and y properties can be more than 1 and less than -1. This would be like relative top/bottom margin.
+4. The alignment's x and y properties can be more than 1 and less than -1. This would be like relative top/bottom margin.
+
+5. The dropdown will NEVER over flow the screen. Regardless of the alignment, it will limit its height such that the visible portion is clamped between 0 and screenHeight, the rest will have to be scrolled.
+
+```
+
+```
