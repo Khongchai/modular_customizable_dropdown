@@ -20,11 +20,13 @@ class _TestWidget extends StatefulWidget {
   final Key? targetKey;
   final Key? listviewKey;
   final List<Key>? rowKeys;
+  final Alignment? testContainerAlignment;
   final DropdownStyle dropdownStyle;
   final List<DropdownValue>? dropdownValues;
 
   const _TestWidget(
       {required this.dropdownStyle,
+      this.testContainerAlignment,
       this.dropdownValues,
       this.listviewKey,
       this.rowKeys,
@@ -69,6 +71,7 @@ class _TestWidgetState extends State<_TestWidget> {
       home: Scaffold(
         body: SizedBox(
             child: Align(
+                alignment: widget.testContainerAlignment ?? Alignment.center,
                 child: ModularCustomizableDropdown.displayOnTap(
                     listviewKey: widget.listviewKey,
                     rowKeys: widget.rowKeys,
@@ -506,10 +509,79 @@ void main() {
     // Note: Screen width doesn't really matter
     group("Dropdown's position", () {
       group(
+          "Dropdown should wrap around when it finds that its top will overflow the screen",
+          () {
+        // Make sure that the target is rendered at the top of the screen.
+        // Set the dropdown's alignment to Alignment.top...
+        // When expanded, expect the top section of the dropdown to be equals
+        // to the bottom of the target.
+        testWidgets("Top alignment, wraps to bottom", (tester) async {
+          const listviewKey = Key("listviewKey");
+          const buttonKey = Key("buttonKey");
+          const targetKey = Key("targetKey");
+
+          await tester.pumpWidget(const _TestWidget(
+            listviewKey: listviewKey,
+            buttonKey: buttonKey,
+            targetKey: targetKey,
+            testContainerAlignment: Alignment.topCenter,
+            dropdownStyle: DropdownStyle(
+                invertYAxisAlignmentWhenOverflow: true,
+                alignment: Alignment.topCenter),
+          ));
+          await tester.pumpAndSettle();
+
+          final target = find.byKey(targetKey);
+          await tester.tap(target);
+          await tester.pumpAndSettle();
+
+          final targetSize = tester.getSize(target);
+          final dropdown = find.byKey(listviewKey);
+          final dropdownAbsoluteTop = tester.getCenter(dropdown).dy -
+              tester.getSize(dropdown).height / 2;
+          final targetAbsoluteBottom =
+              tester.getCenter(target).dy + targetSize.height / 2;
+
+          expect(dropdownAbsoluteTop, targetAbsoluteBottom);
+        });
+      });
+
+      group(
           "Dropdown should wrap around when it finds that its bottom will overflow the screen",
           () {
-        const listviewKey = Key("listviewKey");
-        const buttonKey = Key("buttonKey");
+        // Make sure that the target is rendered at the bottom of the screen.
+        // Set the dropdown's alignment to Alignment.bottom...
+        // When expanded, expect the bottom of the dropdown to be equals to the
+        // top of the target.
+        testWidgets("Top alignment, wraps to bottom", (tester) async {
+          const listviewKey = Key("listviewKey");
+          const buttonKey = Key("buttonKey");
+          const targetKey = Key("targetKey");
+
+          await tester.pumpWidget(const _TestWidget(
+            listviewKey: listviewKey,
+            buttonKey: buttonKey,
+            targetKey: targetKey,
+            testContainerAlignment: Alignment.bottomCenter,
+            dropdownStyle: DropdownStyle(
+                invertYAxisAlignmentWhenOverflow: true,
+                alignment: Alignment.bottomCenter),
+          ));
+          await tester.pumpAndSettle();
+
+          final target = find.byKey(targetKey);
+          await tester.tap(target);
+          await tester.pumpAndSettle();
+
+          final dropdown = find.byKey(listviewKey);
+          final dropdownSize = tester.getSize(dropdown);
+          final targetAbsoluteTop =
+              tester.getCenter(target).dy - tester.getSize(target).height / 2;
+          final dropdownAbsoluteBottom =
+              tester.getCenter(dropdown).dy + dropdownSize.height / 2;
+
+          expect(dropdownAbsoluteBottom, targetAbsoluteTop);
+        });
       });
 
       // If after wrapping around, the dropdown finds that it will still overflow the screen,
