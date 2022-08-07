@@ -10,7 +10,7 @@ Better documentation + can now control the animation curve.
 
 **Breaking Change and Deprecation**:
 
-- allDropdownValues now accept a list of DropdownValue class instead of List<String>
+- allDropdownValues now accept a list of DropdownValue objects instead of a list of strings.
   
 - Deprecated display on focus (might come back and take a look at this again in the future).
 
