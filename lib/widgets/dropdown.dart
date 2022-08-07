@@ -19,6 +19,7 @@ import 'list_tile_that_changes_color_on_tap.dart';
 
 // TODO list
 // TODO this case would fail: alignment = Alignment.leftCenter && byRows = someValue < values.length
+// TODO test the above case
 // TODO edit readme
 
 /// A dropdown extension for any widget.
@@ -301,7 +302,10 @@ class _ModularCustomizableDropdownState
                     key: widget.offStageWidgetKey,
                     offstage: true,
                     child: SizedBox(
-                      width: _offStageTargetWidth,
+                      width: _offStageTargetWidth != null
+                          ? _offStageTargetWidth! *
+                              widget.dropdownStyle.dropdownWidth.scale
+                          : null,
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                         // Need to offstage the target as well to get the proper width.
                         SizedBox(
