@@ -41,7 +41,7 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
             alignment: Alignment.topCenter,
             //Can also do explicit margin, of course, though a bit verbose...
             // explicitMarginBetweenDropdownAndTarget: 5,
-            invertYAxisAlignmentWhenOverflow: false,
+            invertYAxisAlignmentWhenOverflow: true, // true is the default value
           ),
           targetBuilder: (_toggleDropdown) {
             toggleDropdown = _toggleDropdown;
