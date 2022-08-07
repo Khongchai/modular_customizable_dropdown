@@ -182,6 +182,66 @@ void main() {
       );
 
       testWidgets(
+        "byRows == 3 with different scale",
+        (tester) async {
+          const buttonKey = Key("Button key");
+
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              alignment: Alignment.bottomRight,
+              dropdownWidth: DropdownWidth(scale: 1.5),
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 3,
+              ),
+            ),
+          ));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+
+          // Should not be visible
+          expect(find.text(_fourthValue.value), findsNothing);
+          expect(find.text(_fifthValue.value), findsNothing);
+        },
+      );
+
+      testWidgets(
+        "byRows == 3 with a fixed width",
+        (tester) async {
+          const buttonKey = Key("Button key");
+
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              alignment: Alignment.bottomRight,
+              dropdownWidth: DropdownWidth(byPixels: 400),
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 3,
+              ),
+            ),
+          ));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+
+          // Should not be visible
+          expect(find.text(_fourthValue.value), findsNothing);
+          expect(find.text(_fifthValue.value), findsNothing);
+        },
+      );
+
+      testWidgets(
         "byRows == 4",
         (tester) async {
           const buttonKey = Key("Button key");
@@ -210,6 +270,68 @@ void main() {
       );
 
       testWidgets(
+        "byRows == 4 with a different scale.",
+        (tester) async {
+          const buttonKey = Key("Button key");
+
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              alignment: Alignment.topLeft,
+              dropdownWidth: DropdownWidth(
+                scale: 0.6,
+              ),
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 4,
+              ),
+            ),
+          ));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+          expect(find.text(_fourthValue.value), findsOneWidget);
+
+          // Should not be visible
+          expect(find.text(_fifthValue.value), findsNothing);
+        },
+      );
+
+      testWidgets(
+        "byRows == 4 with a fixed width.",
+        (tester) async {
+          const buttonKey = Key("Button key");
+
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              alignment: Alignment.topLeft,
+              dropdownWidth: DropdownWidth(byPixels: 100),
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 4,
+              ),
+            ),
+          ));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+          expect(find.text(_fourthValue.value), findsOneWidget);
+
+          // Should not be visible
+          expect(find.text(_fifthValue.value), findsNothing);
+        },
+      );
+
+      testWidgets(
         "byRows == 5, all should be visible",
         (tester) async {
           const buttonKey = Key("Button key");
@@ -217,6 +339,60 @@ void main() {
           await tester.pumpWidget(const _TestWidget(
             buttonKey: buttonKey,
             dropdownStyle: DropdownStyle(
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 5,
+              ),
+            ),
+          ));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+          expect(find.text(_fourthValue.value), findsOneWidget);
+          expect(find.text(_fifthValue.value), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        "byRows == 5, with a different scale",
+        (tester) async {
+          const buttonKey = Key("Button key");
+
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              dropdownWidth: DropdownWidth(scale: .5),
+              dropdownMaxHeight: DropdownMaxHeight(
+                byRows: 5,
+              ),
+            ),
+          ));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.text(_firstValue.value), findsOneWidget);
+          expect(find.text(_secondValue.value), findsOneWidget);
+          expect(find.text(_thirdValue.value), findsOneWidget);
+          expect(find.text(_fourthValue.value), findsOneWidget);
+          expect(find.text(_fifthValue.value), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        "byRows == 5, with a fixed width",
+        (tester) async {
+          const buttonKey = Key("Button key");
+
+          await tester.pumpWidget(const _TestWidget(
+            buttonKey: buttonKey,
+            dropdownStyle: DropdownStyle(
+              dropdownWidth: DropdownWidth(byPixels: 200),
               dropdownMaxHeight: DropdownMaxHeight(
                 byRows: 5,
               ),
@@ -521,49 +697,49 @@ void main() {
       group("Dropdown width", () {
         testWidgets("Width scale 1", (tester) async {
           const dropdownKey = Key("Dropdown Key");
-          const buttonKey = Key("Button Key");
+          const targetKey = Key("Target key");
 
           await tester.pumpWidget(const _TestWidget(
               dropdownKey: dropdownKey,
-              buttonKey: buttonKey,
+              targetKey: targetKey,
               dropdownStyle: DropdownStyle(
                   dropdownWidth: DropdownWidth(
                 scale: 1,
               ))));
           await tester.pumpAndSettle();
 
-          await tester.tap(find.byKey(buttonKey));
+          await tester.tap(find.byKey(targetKey));
           await tester.pumpAndSettle();
 
           final dropdownWidth = tester.getSize(find.byKey(dropdownKey));
-          final targetWidth = tester.getSize(find.byKey(buttonKey));
+          final targetWidth = tester.getSize(find.byKey(targetKey));
           expect(dropdownWidth.width, targetWidth.width);
         });
 
         testWidgets("Width scale 0.5", (tester) async {
           const dropdownKey = Key("Dropdown Key");
-          const buttonKey = Key("Button Key");
+          const targetKey = Key("Target key");
 
           await tester.pumpWidget(const _TestWidget(
               dropdownKey: dropdownKey,
-              buttonKey: buttonKey,
+              buttonKey: targetKey,
               dropdownStyle: DropdownStyle(
                   dropdownWidth: DropdownWidth(
                 scale: 0.5,
               ))));
           await tester.pumpAndSettle();
 
-          await tester.tap(find.byKey(buttonKey));
+          await tester.tap(find.byKey(targetKey));
           await tester.pumpAndSettle();
 
           final dropdownWidth = tester.getSize(find.byKey(dropdownKey));
-          final targetWidth = tester.getSize(find.byKey(buttonKey));
+          final targetWidth = tester.getSize(find.byKey(targetKey));
           expect(dropdownWidth.width, targetWidth.width * 0.5);
         });
 
         testWidgets("Width scale 1.3", (tester) async {
           const dropdownKey = Key("Dropdown Key");
-          const buttonKey = Key("Button Key");
+          const buttonKey = Key("Target Key");
 
           await tester.pumpWidget(const _TestWidget(
               dropdownKey: dropdownKey,
