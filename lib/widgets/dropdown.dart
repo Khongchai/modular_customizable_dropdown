@@ -361,6 +361,11 @@ class _ModularCustomizableDropdownState
         } else {
           debugPrint(e.toString());
         }
+      } catch (e) {
+        debugPrint(
+            "An error caught in the modular_customizable dropdown library."
+            " Details below");
+        debugPrint(e.toString());
       }
     });
   }
@@ -369,10 +374,16 @@ class _ModularCustomizableDropdownState
 
   void _updateListTileKeys() {
     _offStageListTileKeys =
-        widget.allDropdownValues.map((e) => GlobalKey()).toList();
+        widget.allDropdownValues.map((_) => GlobalKey()).toList();
   }
 
   void _precalculateDropdownHeight() {
+    // Check whether we need to perform the calculations.
+    // If the dropdown is not in a dismissed state, it means that the calculation
+    // has been done. Accessing the context of the list tiles will also return
+    // null as we also opt-out of the OffStage render.
+    if (_dropdownBuildPhase != DropdownBuildPhase.dismissed) return;
+
     assert(
         widget.dropdownStyle.dropdownMaxHeight.byPixels != 0 &&
             widget.dropdownStyle.dropdownMaxHeight.byRows != 0,

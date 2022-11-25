@@ -15,24 +15,24 @@ const _fifthValue =
     DropdownValue(value: "5th value", description: "5th description");
 
 class _TestWidget extends StatefulWidget {
-  final Key? buttonKey;
+  final Key? toggleDropdownButtonKey;
   final Key? dropdownKey;
   final Key? targetKey;
   final Key? listviewKey;
   final List<Key>? rowKeys;
   final Alignment? testContainerAlignment;
-  final DropdownStyle dropdownStyle;
+  final DropdownStyle? dropdownStyle;
   final List<DropdownValue>? dropdownValues;
 
   const _TestWidget(
-      {required this.dropdownStyle,
+      {this.dropdownStyle,
       this.testContainerAlignment,
       this.dropdownValues,
       this.listviewKey,
       this.rowKeys,
       this.targetKey,
       this.dropdownKey,
-      this.buttonKey,
+      this.toggleDropdownButtonKey,
       Key? key})
       : super(key: key);
 
@@ -77,7 +77,7 @@ class _TestWidgetState extends State<_TestWidget> {
                     rowKeys: widget.rowKeys,
                     overlayEntryKey: widget.dropdownKey,
                     onValueSelect: _onValueSelected,
-                    style: widget.dropdownStyle,
+                    style: widget.dropdownStyle ?? const DropdownStyle(),
                     allDropdownValues: _valuesList,
                     target: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -86,7 +86,7 @@ class _TestWidgetState extends State<_TestWidget> {
                         Text(_selectedValue),
                         const SizedBox(height: 8),
                         ElevatedButton(
-                          key: widget.buttonKey,
+                          key: widget.toggleDropdownButtonKey,
                           // Do nothing
                           onPressed: () {},
                           child: const Text("Expand Dropdown"),
@@ -111,7 +111,7 @@ void main() {
 
         await tester.pumpWidget(const _TestWidget(
           listviewKey: listviewKey,
-          buttonKey: buttonKey,
+          toggleDropdownButtonKey: buttonKey,
           dropdownStyle: DropdownStyle(
             dropdownMaxHeight: DropdownMaxHeight(
               byPixels: expectedHeight,
@@ -136,7 +136,7 @@ void main() {
 
         await tester.pumpWidget(const _TestWidget(
           listviewKey: listviewKey,
-          buttonKey: buttonKey,
+          toggleDropdownButtonKey: buttonKey,
           dropdownStyle: DropdownStyle(
             dropdownMaxHeight: DropdownMaxHeight(
               byPixels: expectedHeight,
@@ -162,7 +162,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               dropdownMaxHeight: DropdownMaxHeight(
                 byRows: 3,
@@ -190,7 +190,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               alignment: Alignment.bottomRight,
               dropdownWidth: DropdownWidth(scale: 1.5),
@@ -220,7 +220,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               alignment: Alignment.bottomRight,
               dropdownWidth: DropdownWidth(byPixels: 400),
@@ -250,7 +250,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               dropdownMaxHeight: DropdownMaxHeight(
                 byRows: 4,
@@ -278,7 +278,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               alignment: Alignment.topLeft,
               dropdownWidth: DropdownWidth(
@@ -310,7 +310,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               alignment: Alignment.topLeft,
               dropdownWidth: DropdownWidth(byPixels: 100),
@@ -340,7 +340,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               dropdownMaxHeight: DropdownMaxHeight(
                 byRows: 5,
@@ -366,7 +366,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               dropdownWidth: DropdownWidth(scale: .5),
               dropdownMaxHeight: DropdownMaxHeight(
@@ -393,7 +393,7 @@ void main() {
           const buttonKey = Key("Button key");
 
           await tester.pumpWidget(const _TestWidget(
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             dropdownStyle: DropdownStyle(
               dropdownWidth: DropdownWidth(byPixels: 200),
               dropdownMaxHeight: DropdownMaxHeight(
@@ -440,7 +440,7 @@ void main() {
 
         await tester.pumpWidget(_TestWidget(
           listviewKey: listviewKey,
-          buttonKey: buttonKey,
+          toggleDropdownButtonKey: buttonKey,
           rowKeys: rowKeys,
           dropdownStyle: DropdownStyle(
             dropdownMaxHeight: DropdownMaxHeight(
@@ -522,7 +522,7 @@ void main() {
 
           await tester.pumpWidget(const _TestWidget(
             listviewKey: listviewKey,
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             targetKey: targetKey,
             testContainerAlignment: Alignment.topCenter,
             dropdownStyle: DropdownStyle(
@@ -553,14 +553,14 @@ void main() {
         // Set the dropdown's alignment to Alignment.bottom...
         // When expanded, expect the bottom of the dropdown to be equals to the
         // top of the target.
-        testWidgets("Top alignment, wraps to bottom", (tester) async {
+        testWidgets("Bottom alignment, wraps to top", (tester) async {
           const listviewKey = Key("listviewKey");
           const buttonKey = Key("buttonKey");
           const targetKey = Key("targetKey");
 
           await tester.pumpWidget(const _TestWidget(
             listviewKey: listviewKey,
-            buttonKey: buttonKey,
+            toggleDropdownButtonKey: buttonKey,
             targetKey: targetKey,
             testContainerAlignment: Alignment.bottomCenter,
             dropdownStyle: DropdownStyle(
@@ -608,7 +608,7 @@ void main() {
             await tester.pumpWidget(_TestWidget(
               listviewKey: listviewKey,
               targetKey: targetKey,
-              buttonKey: buttonKey,
+              toggleDropdownButtonKey: buttonKey,
               dropdownValues: DropdownValue.fromListOfStrings(
                   List.generate(valueCount, (index) => "Dummy value")),
               dropdownStyle: DropdownStyle(
@@ -658,7 +658,7 @@ void main() {
             await tester.pumpWidget(_TestWidget(
               listviewKey: listviewKey,
               targetKey: targetKey,
-              buttonKey: buttonKey,
+              toggleDropdownButtonKey: buttonKey,
               dropdownValues: DropdownValue.fromListOfStrings(
                   List.generate(valueCount, (index) => "Dummy value")),
               dropdownStyle: DropdownStyle(
@@ -711,7 +711,7 @@ void main() {
 
             await tester.pumpWidget(_TestWidget(
               listviewKey: listviewKey,
-              buttonKey: buttonKey,
+              toggleDropdownButtonKey: buttonKey,
               targetKey: targetKey,
               dropdownValues: DropdownValue.fromListOfStrings(
                   List.generate(valueCount, (index) => "Dummy value")),
@@ -765,7 +765,7 @@ void main() {
 
       await tester.pumpWidget(const _TestWidget(
         dropdownKey: dropdownKey,
-        buttonKey: buttonKey,
+        toggleDropdownButtonKey: buttonKey,
         dropdownStyle: DropdownStyle(
           dropdownMaxHeight: DropdownMaxHeight(
             byRows: 5,
@@ -797,7 +797,7 @@ void main() {
       const buttonKey = Key("Button key");
 
       await tester.pumpWidget(const _TestWidget(
-        buttonKey: buttonKey,
+        toggleDropdownButtonKey: buttonKey,
         dropdownStyle: DropdownStyle(),
       ));
       await tester.pumpAndSettle();
@@ -841,7 +841,7 @@ void main() {
 
           await tester.pumpWidget(const _TestWidget(
               dropdownKey: dropdownKey,
-              buttonKey: targetKey,
+              toggleDropdownButtonKey: targetKey,
               dropdownStyle: DropdownStyle(
                   dropdownWidth: DropdownWidth(
                 scale: 0.5,
@@ -862,7 +862,7 @@ void main() {
 
           await tester.pumpWidget(const _TestWidget(
               dropdownKey: dropdownKey,
-              buttonKey: buttonKey,
+              toggleDropdownButtonKey: buttonKey,
               dropdownStyle: DropdownStyle(
                   dropdownWidth: DropdownWidth(
                 scale: 1.3,
@@ -877,6 +877,20 @@ void main() {
 
           expect(dropdownWidth.width, targetWidth.width * 1.3);
         });
+      });
+    });
+
+    // No need for any assertions, if no errors are thrown, all is well.
+    group("Smoke & edge case tests", () {
+      testWidgets(
+          "#1 Hitting enter on a text field should not cause a null error",
+          (tester) async {
+        // TODO
+      });
+
+      testWidgets("#2 Removing items from a list the dropdown is referencing",
+          (tester) async {
+        // TODO
       });
     });
   });
