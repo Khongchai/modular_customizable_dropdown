@@ -294,7 +294,8 @@ class _ModularCustomizableDropdownState
               // Offstage widget size to see whether we need to move the dropdown to the
               // top of the current widget when height exceeds screen height.
 
-              // No need to calculate anything if we're removing the dropdown.
+              // Pre-calculate the dropdown's position and size when it's in
+              // the dismissed state.
               if (_dropdownBuildPhase == DropdownBuildPhase.dismissed)
                 Offstage(
                     key: widget.offStageWidgetKey,
@@ -383,8 +384,7 @@ class _ModularCustomizableDropdownState
   void _precalculateDropdownHeight() {
     // Check whether we need to perform the calculations.
     // If the dropdown is not in a dismissed state, it means that the calculation
-    // has been done. Accessing the context of the list tiles will also return
-    // null as we also opt-out of the OffStage render.
+    // has been done.
     if (_dropdownBuildPhase != DropdownBuildPhase.dismissed) return;
 
     assert(
