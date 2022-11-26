@@ -881,16 +881,37 @@ void main() {
     });
 
     // No need for any assertions, if no errors are thrown, all is well.
-    group("Smoke & edge case tests", () {
-      testWidgets(
-          "#1 Hitting enter on a text field should not cause a null error",
+    group("Smoke and edge case tests", () {
+      testWidgets("#1 Removing items from a list the dropdown is referencing",
           (tester) async {
-        // TODO
-      });
+        const buttonKey = Key("Button key");
+        const dropdownKey = Key("Dropdown key");
+        final dropdownValues = [_firstValue, _secondValue, _thirdValue];
 
-      testWidgets("#2 Removing items from a list the dropdown is referencing",
-          (tester) async {
-        // TODO
+        Future<void> toggleDropdownAndTap(String value) async {
+          await tester.tap(find.byKey(buttonKey));
+          await tester.pumpAndSettle();
+
+          expect(find.byKey(dropdownKey), findsOneWidget);
+          final firstValueButton = find.text(value);
+          expect(firstValueButton, findsOneWidget);
+          await tester.tap(firstValueButton);
+          await tester.pumpAndSettle();
+          expect(find.byKey(dropdownKey), findsNothing);
+        }
+
+        await tester.pumpWidget(_TestWidget(
+          dropdownKey: dropdownKey,
+          toggleDropdownButtonKey: buttonKey,
+          dropdownValues: dropdownValues,
+        ));
+        await tester.pumpAndSettle();
+
+        await toggleDropdownAndTap(_firstValue.value);
+
+        dropdownValues.removeLast();
+
+        await toggleDropdownAndTap(_secondValue.value);
       });
     });
   });

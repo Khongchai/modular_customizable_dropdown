@@ -48,7 +48,7 @@ class DropdownValue {
   ///               .fromListOfStrings(widget.dropdownValues)
   ///     ...
   /// ```
-  static fromListOfStrings(List<String> values) {
+  static List<DropdownValue> fromListOfStrings(List<String> values) {
     return values.map((e) => DropdownValue(value: e)).toList();
   }
 }
