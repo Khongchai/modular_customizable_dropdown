@@ -29,7 +29,7 @@ class _DisplayOnCallbackSectionState extends State<DisplayOnCallbackSection> {
         ModularCustomizableDropdown.displayOnCallback(
           onValueSelect: widget.onValueSelect,
           allDropdownValues: widget.dropdownValues,
-          barrierDismissible: false,
+          barrierDismissible: true,
           style: const DropdownStyle(
             onTapInkColor: Colors.amber,
             dropdownWidth: DropdownWidth(scale: 1.2),

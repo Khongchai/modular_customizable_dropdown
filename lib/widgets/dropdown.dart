@@ -250,8 +250,14 @@ class _ModularCustomizableDropdownState
   late double _preCalculatedDropdownHeight;
   late List<double> _tileHeights;
 
+  // A cached version of the dropdown values that we can use to check in the
+  // didUpdateWidget method to update this widget only if the values have changed.
+  List<DropdownValue> _allDropdownValues = [];
+
   @override
   void initState() {
+    super.initState();
+
     if (widget.reactMode == ReactMode.focusReact) {
       widget.focusReactParams!.focusNode.addListener(() {
         _toggleOverlay(widget.focusReactParams!.focusNode.hasFocus);
@@ -259,15 +265,13 @@ class _ModularCustomizableDropdownState
     }
 
     _beginPostStateUpdateStage();
-
-    super.initState();
   }
 
   @override
   void didUpdateWidget(covariant ModularCustomizableDropdown oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget != widget) {
+    if (!listEquals(_allDropdownValues, widget.allDropdownValues)) {
       _beginPostStateUpdateStage();
     }
   }
@@ -279,7 +283,7 @@ class _ModularCustomizableDropdownState
         child: ConditionalTapEventListener(
           reactMode: widget.reactMode,
           onTap: () {
-            if (widget.allDropdownValues.isNotEmpty) {
+            if (_allDropdownValues.isNotEmpty) {
               _toggleOverlay(
                   _dropdownBuildPhase == DropdownBuildPhase.dismissed);
             }
@@ -307,9 +311,7 @@ class _ModularCustomizableDropdownState
                           key: _offStageTargetKey,
                           child: _buildTarget(),
                         ),
-                        for (int i = 0;
-                            i < widget.allDropdownValues.length;
-                            i++)
+                        for (int i = 0; i < _allDropdownValues.length; i++)
                           ListTileThatChangesColorOnTap(
                             key: _offStageListTileKeys[i],
                             onTap: null,
@@ -327,9 +329,8 @@ class _ModularCustomizableDropdownState
                             onTapTextStyle: widget.dropdownStyle.onTapTextStyle,
                             descriptionTextStyle:
                                 widget.dropdownStyle.descriptionStyle,
-                            title: widget.allDropdownValues[i].value,
-                            description:
-                                widget.allDropdownValues[i].description,
+                            title: _allDropdownValues[i].value,
+                            description: _allDropdownValues[i].description,
                           ),
                       ]),
                     )),
@@ -345,16 +346,19 @@ class _ModularCustomizableDropdownState
   /// This sets in motion all the calculation necessary to make sure that the dropdown
   /// sizes and positions itself correctly.
   void _beginPostStateUpdateStage() {
+    _allDropdownValues = List.from(widget.allDropdownValues);
+
+    _updateListTileKeys();
+
     // Reset in case barrierDismissible = false and the width of the target changes.
     _offStageTargetWidth = null;
 
-    _updateListTileKeys();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       try {
         _precalculateDropdownHeight();
       } on StateError catch (e) {
         debugPrint("Range error caught.");
-        if (widget.allDropdownValues.isEmpty) {
+        if (_allDropdownValues.isEmpty) {
           debugPrint("The passed in dropdown values list has length === 0");
           debugPrint(
               "With length zero, when the target is tapped. Nothing will happen.");
@@ -373,8 +377,7 @@ class _ModularCustomizableDropdownState
   // Abstraction - 1 stuff below.
 
   void _updateListTileKeys() {
-    _offStageListTileKeys =
-        widget.allDropdownValues.map((_) => GlobalKey()).toList();
+    _offStageListTileKeys = _allDropdownValues.map((_) => GlobalKey()).toList();
   }
 
   void _precalculateDropdownHeight() {
@@ -415,14 +418,14 @@ class _ModularCustomizableDropdownState
     } else {
       final int rowsAmount = min(
           widget.dropdownStyle.dropdownMaxHeight.byRows.ceil(),
-          widget.allDropdownValues.length);
+          _allDropdownValues.length);
 
       // If the provided row ratio is 2.5, then the third row should have only
       // half the height.
       // And we only do this when the height of the provided byRows is equals to or
       // smaller than the total length, otherwise we'll be truncating the height
       // of the wrong row.
-      if (rowsAmount <= widget.allDropdownValues.length) {
+      if (rowsAmount <= _allDropdownValues.length) {
         final double lastVisibleRowHeightRatio =
             widget.dropdownStyle.dropdownMaxHeight.byRows % 1;
         heights[rowsAmount - 1] *=
@@ -533,7 +536,7 @@ class _ModularCustomizableDropdownState
                 borderRadius: widget.dropdownStyle.borderRadius,
                 boxShadows: widget.dropdownStyle.boxShadows,
                 targetWidth: targetWidth,
-                allDropdownValues: widget.allDropdownValues,
+                allDropdownValues: _allDropdownValues,
                 dropdownAlignment: newAlignment,
                 listBuilder: (dropdownValue, index) {
                   return _buildDropdownRow(dropdownValue, index);
