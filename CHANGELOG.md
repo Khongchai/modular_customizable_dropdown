@@ -47,5 +47,10 @@ Better documentation + can now control the animation curve.
 - Added a return type to the DropdownValue.fromListOfStrings helper.
 - Minor re-render optimization. 
 
+## 2.0.2
+
+- Fixed element not mounted error that occurs sometimes when the page with the dropdown is popped.
+
+
 
 
