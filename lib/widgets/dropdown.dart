@@ -387,6 +387,10 @@ class _ModularCustomizableDropdownState
     // has been done.
     if (_dropdownBuildPhase != DropdownBuildPhase.dismissed) return;
 
+    // Added an additional mounted check because the page can pop while there are
+    // still some registered postFrameCallback waiting to be fired.
+    if (!mounted) return;
+
     assert(
         widget.dropdownStyle.dropdownMaxHeight.byPixels != 0 &&
             widget.dropdownStyle.dropdownMaxHeight.byRows != 0,
