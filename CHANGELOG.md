@@ -51,6 +51,9 @@ Better documentation + can now control the animation curve.
 
 - Fixed element not mounted error that occurs sometimes when the page with the dropdown is popped.
 
+## 2.0.3
+
+- Fixed dismounted dropdown element not checked with `mounted` flag when double tapping.
 
 
 
