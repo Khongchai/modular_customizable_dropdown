@@ -90,9 +90,12 @@ class _AnimatedListViewState extends State<AnimatedListView> {
 
         ///Set the animation duration to 0 after the transition in is finished.
         delayedAction(widget.animationDuration.inMilliseconds, () {
-          setState(() {
-            _animationDuration = const Duration(milliseconds: 0);
-          });
+          // To prevent setState() after state disposed
+          if (mounted) {
+            setState(() {
+              _animationDuration = const Duration(milliseconds: 0);
+            });
+          }
         });
       });
     });
